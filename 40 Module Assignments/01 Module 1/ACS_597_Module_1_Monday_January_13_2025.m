@@ -12,8 +12,6 @@
 
 %% To Do
 
-% Latex document.  Units not italized.  space between number and unit
-% 
 % Focus on interpretation.
 
 
