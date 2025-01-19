@@ -21,9 +21,10 @@
 close all; clear; clc;
 % restoredefaultpath;
 
-set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
+% set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
+set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.0 );
+set( 0, 'DefaultLineLineWidth', 1.5 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -110,12 +111,31 @@ temperature_range_celsius = 0:0.1:500;  % Celsius
     temperature_range_kelvin = temperature_range_celsius + 273.15;  % Kelvin
 
 
+FONT_SIZE = 14;
+
 figure( ); ...
-    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) );  hold on;
-    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.17481 ) );  grid on;
-        legend( 'Diameter = 5 cm', 'Diameter = 17.5 cm', 'Location', 'East')
-    xlabel( 'Temperature [Celsius]' );  ylabel( 'Lowest Cut-on Frequency [Hz]' );
-    title( 'Lowest Cut-on Frequency for a Circular Pipe with Air Flow Versus Air Temperature' );
+    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) ./ 1e3 );  hold on;
+    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.17481 ) ./ 1e3, '--' );  grid on;
+        legend( 'Duct Diameter = 5.0 cm', 'Duct Diameter = 17.5 cm', 'Location', 'East', 'FontSize', FONT_SIZE, 'Interpreter', 'Latex' );
+        set( gca, 'FontSize', FONT_SIZE );
+    %
+    xlabel( 'Temperature [Celsius]', 'FontSize', FONT_SIZE );
+        xl = get( gca, 'xlabel' );    pxl = get( xl, 'position' );  pxl( 2 ) = 1.1 * pxl( 2 );
+            set( xl, 'position', pxl );
+    %
+    ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', FONT_SIZE );
+        yl = get( gca, 'ylabel' );  pyl = get( yl, 'position' );  pyl( 1 ) = 1.2 * pyl( 1 );
+            set( yl, 'position', pyl );
+    %
+    caption = sprintf( 'Lowest Cut-on Frequency for a Circular Pipe with Air Flow Versus Air Temperature\n' );
+        title( caption, 'FontSize', FONT_SIZE );
+    %
+    ylim( [ 0  7 ] );
+
+
+% if ( PRINT_FIGURES == 1 )
+%     saveas( gcf, 'Cut-on Frequency Versus Temperature - Sunday, January 19, 2025.pdf' );
+% end
 
 
 
@@ -150,27 +170,26 @@ fprintf( 1, '\n Problem 1e:  See Section Problem 1e of the Matlab script for the
 % For a circular pipe, the cut-on frequency is higher in warm air than cold
 % air.
 
-
+% return
 
 %% Exploration - ph
 
-h_diameter = @( area )  2 .* sqrt( area ./ pi );
-
-area = 0.10;  % squared meters
-
-rectangular_smallest_dimension_set_meters = 0.5:-0.001:0.1;  % meters
-    largest_rectangular_duct_dimension_meters = area ./ rectangular_smallest_dimension_set_meters;
-
-figure( ); ...
-    plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_rectangular_duct( c_air, largest_rectangular_duct_dimension_meters ) );  hold on;
-    plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_circular_duct( c_air, h_diameter( area ) ).*ones( size( largest_rectangular_duct_dimension_meters ) ) );  grid on;
-        xticklabels( largest_rectangular_duct_dimension_meters );
-        %
-        legend( 'Rectangular Duct', 'Circular Duct', 'Location', 'East');
-    xlabel( 'Largest Rectangular Duct Dimension [meters]' );  ylabel( 'Lowest Cut-on Frequency [Hz]' );
-
-
-% rectangular_smallest_dimension_set_meters .* largest_rectangular_duct_dimension_meters  % Check
+% h_diameter = @( area )  2 .* sqrt( area ./ pi );
+% 
+% area = 0.10;  % squared meters
+% 
+% rectangular_smallest_dimension_set_meters = 0.1:-0.01:0.01;  % meters
+%     largest_rectangular_duct_dimension_meters = area ./ rectangular_smallest_dimension_set_meters;
+% 
+% figure( ); ...
+%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_rectangular_duct( c_air, largest_rectangular_duct_dimension_meters ) ./1e3 );  hold on;
+%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_circular_duct( c_air, h_diameter( area ) ).*ones( size( largest_rectangular_duct_dimension_meters ) ) ./ 1e3 );  grid on;
+%         legend( 'Rectangular Duct', 'Circular Duct', 'Location', 'East', 'FontSize', 16, 'Interpreter', 'Latex' );
+%         % xticklabels( largest_rectangular_duct_dimension_meters );
+%             tick2text( 'axis', 'x', 'xformat', '%.2f' );
+%         % set( gca, 'FontSize', 16 );
+%         %
+%     xlabel( 'Largest Rectangular Duct Dimension [meters]', 'FontSize', 16 );  ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', 16 );
     
 
 
@@ -184,6 +203,12 @@ if ( ~isempty( findobj( 'Type', 'figure' ) ) )
             autoArrangeFigures( 2, 2, 1 );
         end
 end
+
+
+if ( PRINT_FIGURES == 1 )
+    saveas( gcf, 'Cut-on Frequency Versus Temperature - Sunday, January 19, 2025.pdf' );
+end
+
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
