@@ -10,6 +10,14 @@
 
 
 
+%% To Do
+
+% Latex document.  Units not italized.  space between number and unit
+% 
+% Focus on interpretation.
+
+
+
 %% Environment
 
 close all; clear; clc;
@@ -30,7 +38,11 @@ PRINT_FIGURES = 0;
 
 %% Define Values and Functions
 
-c = 343;  % The speech of sound in meters per second.
+c_air = 343;  % The speed of sound in air in meters per second.
+c_water = 1500;  % The speed of sound in water in meters per second.
+
+gamma = 1.4;  % The ratio of specific heats [unitless].
+R = 287;  % The gas constant [Joules per ( kilogram * Kelvin)].
 
 
 h_f_cut_on_rectangular_duct = @( c, L )  0.5 .* c ./ L;
@@ -45,6 +57,9 @@ h_f_cut_on_circular_duct = @( c, d )  0.568 .* c ./ d;
 % L - The diameter of the circular duct.
 
 
+h_speed_of_sound_in_air = @( gamma, R, temperature_Kelvin)  sqrt( gamma .* R .* temperature_Kelvin );
+
+
 
 %% Problem 1a
 
@@ -53,40 +68,111 @@ h_f_cut_on_circular_duct = @( c, d )  0.568 .* c ./ d;
 % The largest dimension is Ly = 20 cm or 0.2 m.
 
 % The cut-on frequency is,
-h_f_cut_on_rectangular_duct( c, 0.2 );  % 857.5 Hz
-
-% Fco = 858;  Hz
-
-
-
+h_f_cut_on_rectangular_duct( c_air, 0.2 );  % 857.5 Hz (shown in class 858 Hz)
+    fprintf( 1, '\n Problem 1a:  The lowest cut-on frequency for the rectangular pipe with air is %3.1f Hz.\n', h_f_cut_on_rectangular_duct( c_air, 0.2 ) );
 
 
 
 %% Problem 1b
 
+% The cross-sectional dimensions for the rectangular duct are:  Lx = 12 cm and Ly = 20 cm.
+
+% The cross-sectional area of the rectangular duct is 12 cm * 20 cm = 240 cm^2 or 0.024 m^2.
+rectangular_duct_cross_sectional_area = 0.12 * 0.20;  % 0.024 m^2
+
+% The diameter of the circulat pipe is,
+circular_duct_diameter = sqrt( 0.024 / pi ) * 2;  % 0.17481 meters
+%
+% Check:
+    % pi * ( circular_duct_diameter / 2 )^2  CHECKED
+
+
+% The cut-on frequency for the circular duct is,
+h_f_cut_on_circular_duct( c_air, circular_duct_diameter );  % 1,114.5 Hz
+    fprintf( 1, '\n Problem 1b:  The lowest cut-on frequency for the circular pipe (of equal area) with air is %3.1f Hz.\n', h_f_cut_on_circular_duct( c_air, circular_duct_diameter ) );
 
 
 
+%% Problem 1c
+
+% The cut-on frequency for the circular duct with water is,
+h_f_cut_on_circular_duct( c_water, circular_duct_diameter );  % 4,873.9 Hz
+    fprintf( 1, '\n Problem 1c:  The lowest cut-on frequency for the circular pipe (of equal area) with water is %3.1f Hz.\n', h_f_cut_on_circular_duct( c_water, circular_duct_diameter ) );
+
+% The cut-on frequency should be higher because it is proportional to the
+% speed of sound in a given medium.
 
 
-% b.)  A = pir^2 = LxLy
-% 
-% 
-% c.)  fco increases with water.
-% 
-% 
-% d.)  
-% 
-% 
-% Latex document.  Units not italized.  space between number and unit
-% 
-% 
-% Focus on interpretation.
-% 
-% 
-% Plot ideas:
-%     1.)  Example:  Temperation, C;  Temperature [C] - y-axis and x-axis
-%     2.)  
+
+%% Problem 1d
+
+fprintf( 1, '\n Problem 1d:  See the figure.\n' );
+
+temperature_range_celsius = 0:0.1:500;  % Celsius
+    temperature_range_kelvin = temperature_range_celsius + 273.15;  % Kelvin
+
+
+figure( ); ...
+    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) );  hold on;
+    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.17481 ) );  grid on;
+        legend( 'Diameter = 5 cm', 'Diameter = 17.5 cm', 'Location', 'East')
+    xlabel( 'Temperature [Celsius]' );  ylabel( 'Lowest Cut-on Frequency [Hz]' );
+    title( 'Lowest Cut-on Frequency for a Circular Pipe with Air Flow Versus Air Temperature' );
+
+
+
+%% Problem 1e
+
+fprintf( 1, '\n Problem 1e:  See Section Problem 1e of the Matlab script for the answers.\n\n' );
+
+
+% Question:  Are cut-on frequencies higher for a circular or rectangular duct for a given cross-sectional area?
+
+% The lowest cut-on frequency is higher for a circular duct than for a
+% rectangular duct for a given cross-sectional area.
+
+% For the dimensions given in class, the rectangular duct is not square.
+% This produces a larger dimension and thus a smaller, lowest cut-on
+% frequency.
+
+% If the rectangular duct is square dimensions on the order of the circular
+% duct diameter with the same cross-sectional area, the the cut-on
+% frequencies are approximately equal.
+
+
+% Question:  What about in air versus water?
+
+% The lowest cut-on frequency is larger with water than air.  This due to
+% the fact that the cut-on frequency is proportional to the speed of sound
+% and the speed of sound in water is greater than it is in air.
+
+
+% Question:  What about cold versus hot air?
+
+% For a circular pipe, the cut-on frequency is higher in warm air than cold
+% air.
+
+
+
+%% Exploration - ph
+
+h_diameter = @( area )  2 .* sqrt( area ./ pi );
+
+area = 0.10;  % squared meters
+
+rectangular_smallest_dimension_set_meters = 0.5:-0.001:0.1;  % meters
+    largest_rectangular_duct_dimension_meters = area ./ rectangular_smallest_dimension_set_meters;
+
+figure( ); ...
+    plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_rectangular_duct( c_air, largest_rectangular_duct_dimension_meters ) );  hold on;
+    plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_circular_duct( c_air, h_diameter( area ) ).*ones( size( largest_rectangular_duct_dimension_meters ) ) );  grid on;
+        xticklabels( largest_rectangular_duct_dimension_meters );
+        %
+        legend( 'Rectangular Duct', 'Circular Duct', 'Location', 'East');
+    xlabel( 'Largest Rectangular Duct Dimension [meters]' );  ylabel( 'Lowest Cut-on Frequency [Hz]' );
+
+
+% rectangular_smallest_dimension_set_meters .* largest_rectangular_duct_dimension_meters  % Check
     
 
 
@@ -106,30 +192,5 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-
-
-%% Delete
-
-
-% %% Fireworks Time Series
-%
-% [ s, fs ] = audioread( 'Test_shoot_A.wav' );
-% %
-% assert( fs == 48e3, '*** Sample rate is not 48 kHz. ***' );
-% 
-% sample_period_seconds = 1 / fs;
-%     time_indices = ( 0:1:( size( s, 1 ) - 1 ) ) .* sample_period_seconds;
-% 
-% figure( ); ...
-%     plot( time_indices, s( :, 1 ) );  hold on;  % Channel 1
-%     plot( time_indices, s( :, 2 ) );  % Channel 2
-%     plot( time_indices, s( :, 3 ) );  % Channel 3
-%     plot( time_indices, s( :, 4 ) );  grid on;  % Channel 4
-%     legend( 'Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Location', 'NorthWest' );
-%     xlabel( 'Time [seconds]' );  ylabel( 'Amplitude [WU]' );  title( 'Fireworks Recording' );
-%     xlim( [ time_indices( [ 1 end ] ) ] );  ylim( [ -0.15 +0.34 ] );
-%     %
-%     if ( PRINT_FIGURES == 1 ), print( fullfile( '.', 'HS9_Q1_Time_Series.png' ), '-dpng' );  end
 
 
