@@ -114,23 +114,22 @@ temperature_range_celsius = 0:0.1:500;  % Celsius
 FONT_SIZE = 14;
 
 figure( ); ...
-    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) ./ 1e3 );  hold on;
-    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.17481 ) ./ 1e3, '--' );  grid on;
-        legend( 'Duct Diameter = 5.0 cm', 'Duct Diameter = 17.5 cm', 'Location', 'East', 'FontSize', FONT_SIZE, 'Interpreter', 'Latex' );
+    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) ./ 1e3 );  grid on;
+        legend( 'Duct Diameter = 5.0 cm', 'Location', 'East', 'FontSize', FONT_SIZE, 'Interpreter', 'Latex' );
         set( gca, 'FontSize', FONT_SIZE );
     %
     xlabel( 'Temperature [Celsius]', 'FontSize', FONT_SIZE );
-        xl = get( gca, 'xlabel' );    pxl = get( xl, 'position' );  pxl( 2 ) = 1.1 * pxl( 2 );
-            set( xl, 'position', pxl );
+        % xl = get( gca, 'xlabel' );    pxl = get( xl, 'position' );  pxl( 2 ) = 1.1 * pxl( 2 );
+        %     set( xl, 'position', pxl );
     %
     ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', FONT_SIZE );
-        yl = get( gca, 'ylabel' );  pyl = get( yl, 'position' );  pyl( 1 ) = 1.2 * pyl( 1 );
-            set( yl, 'position', pyl );
+        % yl = get( gca, 'ylabel' );  pyl = get( yl, 'position' );  pyl( 1 ) = 1.2 * pyl( 1 );
+        %     set( yl, 'position', pyl );
     %
     caption = sprintf( 'Lowest Cut-on Frequency for a Circular Pipe with Air Flow Versus Air Temperature\n' );
         title( caption, 'FontSize', FONT_SIZE );
     %
-    ylim( [ 0  7 ] );
+    ylim( [ 3  7 ] );
 
 
 % if ( PRINT_FIGURES == 1 )
