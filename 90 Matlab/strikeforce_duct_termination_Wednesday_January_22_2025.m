@@ -3,7 +3,11 @@
 
 %% Synopsis
 
-% Duct and termination from lectures 2 and 3.
+% Acoustic Horn Example
+
+% From ACS 597 - Noise Control Applications, Lecture 3 (Wednesday, January 22, 2025)
+
+% Material from lectures 2 and 3.
 
 
 
@@ -41,160 +45,73 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Values and Functions
+%% Constants
 
-c_air = 343;  % The speed of sound in air in meters per second.
-c_water = 1500;  % The speed of sound in water in meters per second.
-
-gamma = 1.4;  % The ratio of specific heats [unitless].
-R = 287;  % The gas constant [Joules per ( kilogram * Kelvin)].
-
-
-h_f_cut_on_rectangular_duct = @( c, L )  0.5 .* c ./ L;
-%
-% c - The speed of sound.
-% L - The largest cross-section dimension of the rectangular duct.
-
-
-h_f_cut_on_circular_duct = @( c, d )  0.568 .* c ./ d;
-%
-% c - The speec of sound.
-% L - The diameter of the circular duct.
-
-
-h_speed_of_sound_in_air = @( gamma, R, temperature_Kelvin)  sqrt( gamma .* R .* temperature_Kelvin );
+rho0 = 1.21;  % Density of air (kilograms per cubic-meter).
+c = 343;  % Speed of sound in air (meters per second).
 
 
 
-%% Problem 1a
+%% Define Shape
 
-% The cross-sectional dimensions for the rectangular duct are:  Lx = 12 cm and Ly = 20 cm.
-
-% The largest dimension is Ly = 20 cm or 0.2 m.
-
-% The cut-on frequency is,
-h_f_cut_on_rectangular_duct( c_air, 0.2 );  % 857.5 Hz (shown in class 858 Hz)
-    fprintf( 1, '\n Problem 1a:  The lowest cut-on frequency for the rectangular pipe with air is %3.1f Hz.\n', h_f_cut_on_rectangular_duct( c_air, 0.2 ) );
+number_of_segments = 20;
+    segment_lengths = ones( number_of_segments, 1 ) .* 0.1;  % 20 segments, each 0.1 m long (2 meters total).
+    segment_diameters = ones( number_of_segments, 1 ) .* 0.01;  % 1 cm cross-section.
 
 
 
-%% Problem 1b
+%% Calculation
 
-% The cross-sectional dimensions for the rectangular duct are:  Lx = 12 cm and Ly = 20 cm.
+frequency_set = 1:1:5e3;  % Hertz
 
-% The cross-sectional area of the rectangular duct is 12 cm * 20 cm = 240 cm^2 or 0.024 m^2.
-rectangular_duct_cross_sectional_area = 0.12 * 0.20;  % 0.024 m^2
-
-% The diameter of the circulat pipe is,
-circular_duct_diameter = sqrt( 0.024 / pi ) * 2;  % 0.17481 meters
-%
-% Check:
-    % pi * ( circular_duct_diameter / 2 )^2  CHECKED
-
-
-% The cut-on frequency for the circular duct is,
-h_f_cut_on_circular_duct( c_air, circular_duct_diameter );  % 1,114.5 Hz
-    fprintf( 1, '\n Problem 1b:  The lowest cut-on frequency for the circular pipe (of equal area) with air is %3.1f Hz.\n', h_f_cut_on_circular_duct( c_air, circular_duct_diameter ) );
+horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
 
 
 
-%% Problem 1c
+%% Calculate Peak Placment for Plot
 
-% The cut-on frequency for the circular duct with water is,
-h_f_cut_on_circular_duct( c_water, circular_duct_diameter );  % 4,873.9 Hz
-    fprintf( 1, '\n Problem 1c:  The lowest cut-on frequency for the circular pipe (of equal area) with water is %3.1f Hz.\n', h_f_cut_on_circular_duct( c_water, circular_duct_diameter ) );
-
-% The cut-on frequency should be higher because it is proportional to the
-% speed of sound in a given medium.
+f_base = c / 4;
+    peak_set = f_base .* ( 1:1:58 );
 
 
 
-%% Problem 1d
+%% Plot
 
-fprintf( 1, '\n Problem 1d:  See the figure.\n' );
-
-temperature_range_celsius = 0:0.1:500;  % Celsius
-    temperature_range_kelvin = temperature_range_celsius + 273.15;  % Kelvin
-
-
-FONT_SIZE = 14;
+x = repmat( peak_set.', 1, 2 ).';
+y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
 
 figure( ); ...
-    plot( temperature_range_celsius, h_f_cut_on_circular_duct( h_speed_of_sound_in_air( gamma, R, temperature_range_kelvin ), 0.05 ) ./ 1e3 );  grid on;
-        legend( 'Duct Diameter = 5.0 cm', 'Location', 'East', 'FontSize', FONT_SIZE, 'Interpreter', 'Latex' );
-        set( gca, 'FontSize', FONT_SIZE );
+    plot( frequency_set, horn_amplification );  hold on;
+    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Horn Amplification Profile' );
     %
-    xlabel( 'Temperature [Celsius]', 'FontSize', FONT_SIZE );
-        % xl = get( gca, 'xlabel' );    pxl = get( xl, 'position' );  pxl( 2 ) = 1.1 * pxl( 2 );
-        %     set( xl, 'position', pxl );
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
     %
-    ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', FONT_SIZE );
-        % yl = get( gca, 'ylabel' );  pyl = get( yl, 'position' );  pyl( 1 ) = 1.2 * pyl( 1 );
-        %     set( yl, 'position', pyl );
-    %
-    caption = sprintf( 'Lowest Cut-on Frequency for a Circular Pipe with Air Flow Versus Air Temperature\n' );
-        title( caption, 'FontSize', FONT_SIZE );
-    %
-    ylim( [ 3  7 ] );
-
-
-% if ( PRINT_FIGURES == 1 )
-%     saveas( gcf, 'Cut-on Frequency Versus Temperature - Sunday, January 19, 2025.pdf' );
-% end
+    axis( [ -50  5e3+50  -65 65 ] );
 
 
 
-%% Problem 1e
+%% Interpretation
 
-fprintf( 1, '\n Problem 1e:  See Section Problem 1e of the Matlab script for the answers.\n\n' );
+% The total length of this horn is 2 meters.
 
+% At a 2 meter wavelength, the corresponding frequency is 171.5 Hz.
+f = c / 2;  % 171.5 Hz
 
-% Question:  Are cut-on frequencies higher for a circular or rectangular duct for a given cross-sectional area?
+% The peaks occur at frequencies of integer multiples of the half-wavelength.
 
-% The lowest cut-on frequency is higher for a circular duct than for a
-% rectangular duct for a given cross-sectional area.
-
-% For the dimensions given in class, the rectangular duct is not square.
-% This produces a larger dimension and thus a smaller, lowest cut-on
-% frequency.
-
-% If the rectangular duct is square dimensions on the order of the circular
-% duct diameter with the same cross-sectional area, the the cut-on
-% frequencies are approximately equal.
+% The broad shape (gradually increasing) comes from the end connection.
+%
+% ?
 
 
-% Question:  What about in air versus water?
-
-% The lowest cut-on frequency is larger with water than air.  This due to
-% the fact that the cut-on frequency is proportional to the speed of sound
-% and the speed of sound in water is greater than it is in air.
 
 
-% Question:  What about cold versus hot air?
 
-% For a circular pipe, the cut-on frequency is higher in warm air than cold
-% air.
 
-% return
-
-%% Exploration - ph
-
-% h_diameter = @( area )  2 .* sqrt( area ./ pi );
-% 
-% area = 0.10;  % squared meters
-% 
-% rectangular_smallest_dimension_set_meters = 0.1:-0.01:0.01;  % meters
-%     largest_rectangular_duct_dimension_meters = area ./ rectangular_smallest_dimension_set_meters;
-% 
-% figure( ); ...
-%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_rectangular_duct( c_air, largest_rectangular_duct_dimension_meters ) ./1e3 );  hold on;
-%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_circular_duct( c_air, h_diameter( area ) ).*ones( size( largest_rectangular_duct_dimension_meters ) ) ./ 1e3 );  grid on;
-%         legend( 'Rectangular Duct', 'Circular Duct', 'Location', 'East', 'FontSize', 16, 'Interpreter', 'Latex' );
-%         % xticklabels( largest_rectangular_duct_dimension_meters );
-%             tick2text( 'axis', 'x', 'xformat', '%.2f' );
-%         % set( gca, 'FontSize', 16 );
-%         %
-%     xlabel( 'Largest Rectangular Duct Dimension [meters]', 'FontSize', 16 );  ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', 16 );
     
 
 
