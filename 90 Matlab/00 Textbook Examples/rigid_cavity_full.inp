@@ -1,0 +1,283 @@
+! ----------------------------------------
+! Analysis of a rigid walled cavity
+! using a full harmonic analysis
+! ----------------------------------------
+! Carl Howard
+! May 2013
+
+FINISH
+/CLEAR					! Clear the database
+/CONFIG,NRES,5000		! Write up to 5000 lines per page
+/TITLE, Full harmonic response of rigid walled cavity
+/FILNAME,rigidfull 		! Set file name for outputs
+
+! -----------------
+! Format the output
+! -----------------
+/PAGE,10000,,10000  	! Control length of page
+/HEADER,OFF,OFF,OFF,OFF,OFF,OFF ! Page and table heading print control
+
+/PREP7
+
+pi=ACOS(-1)
+
+! Define the system parameters
+! Cavity
+! Dimensions of the room
+LX=2.5
+LY=3.0
+LZ=5.0
+
+! Acoustic Source
+x_a = 0.5
+y_a = 0.5
+z_a = 0.5
+
+mass_source=0.01	! [ kg/s]
+
+
+! Acoustic Receiver (0.300, 0.105, 0.715).
+x_b = 2.0
+y_b = 1.5
+z_b = 2.5
+
+
+! Define the properties of the fluid (air)
+speedair=343	! [m/s]
+densair=1.29	! [kg / m^3]
+
+
+MP,SONC,1,speedair	! [m/s] speed of sound in air
+MP,DENS,1,densair	! [kg/m^3] density of air
+R,1,20e-6			! [Pa] reference pressure
+
+! Define the element type
+! KEYOPT(2) = 1 means 
+!	Acoustic analysis without FSI interface (symmetric element matrix)
+ET,1,FLUID30,,1
+
+! Define the maximum frequency of interest
+maxfreq=200			! [Hz]
+
+numsteps=200		! number of frequency steps
+
+
+! Make sure that nodes will be created at precisely 
+! the source and receiver locations
+
+! Create a block volume
+BLOCK,0,LX,0,LY,0,LZ,   
+
+! Define the number of elements-per-wavelength
+! epw=10
+! Define the default element size
+! ESIZE,speedair/maxfreq/epw
+! Alternatively one can define the number of divisions along each line
+
+!LESIZE,ALL,,,20 
+
+esize,0.25
+
+! Change the view
+/VIEW, 1 ,1,2,3 
+/ANG, 1 
+/REP,FAST   
+
+! Use a rectangular mesh
+MSHKEY,1
+
+! Create the mesh
+VMESH,ALL   
+
+! Define the acoustic source
+! get the node number of where the acoustic source is placed.
+node_a=NODE(x_a,y_a,z_a)
+! Note that the node(x,y,z) command finds the node 
+! nearest to x,y,z
+
+! There are two ways that the acoustic source can be applied:
+! (1) Using a 'FLOW' load
+! (2) Using a mass source load.
+!
+! This example will use the mass source method,
+! as that is the preferred method with the ACT Acoustics extension
+!
+
+! Apply a 'mass source' load
+!BF, NODE, Lab, VAL1, VAL2, VAL3, VAL4
+! where VAL1 is the mass source with units kg/(s) when applied to a node.
+! See Section 8.3.4.2. Mass Source in the Wave Equation in the
+! Ansys Theory manual where the assumed units change depending
+! whether the load is applied to a point, line, surface, or volume
+BF,node_a,JS,mass_source
+
+! The alternative is to 
+! apply the 'flow' load which is an 
+! acoustic volume acceleration source.
+! See the comments in the solution section where the 
+! harmonic response is calculated on how to modify the
+! load for an acoustic volume velocity source.
+!F,node_a,FLOW,1
+
+
+
+! get the node number at the receiver location
+node_b=NODE(x_b,y_b,z_b)
+
+! The user might need to double check that there is a node
+! exactly at the desired location by checking the coordinates
+! of node_a and node_b
+NLIST,node_a
+NLIST,node_b
+FINISH
+
+!---------------------------
+! End of the pre-processing
+!---------------------------
+
+!---------------------------
+! Go into the solution module
+!---------------------------
+/SOLU   
+
+! Do a harmonic analysis using the FULL method
+ANTYPE,3					! Harmonic analysis
+! Use the full method and define some options
+! HROPT, Method, MAXMODE, MINMODE, MCout, Damp
+HROPT,FULL
+
+! Harmonic analysis output option
+! ON = Print complex displacements as real and imaginary components
+! OFF = Print complex displacements as amplitude and phase angle (degrees).
+HROUT,ON					
+
+OUTRES,ALL,ALL
+
+
+! Defines the frequency range in a harmonic analysis
+! HARFRQ, FREQB, FREQE 
+HARFRQ,0,maxfreq
+
+! Specifies the number of substeps to be taken this load step
+! NSUBST, NSBSTP, NSBMX, NSBMN, Carry 
+NSUBST,numsteps
+
+KBC,1 		! Stepped loads
+
+ALLS
+SAVE		! Save everything so far in case it crashes
+
+! If one is doing a normal harmonic analysis using the HARFRQ over
+! the desired analysis frequency range, then you can use the 
+! SOLVE command to calculate the results
+SOLVE
+
+
+FINISH		! exit
+!---------------------------
+! End of the solution module
+!---------------------------
+
+!----------------------------------
+! Go into the post-processor module
+!----------------------------------
+
+/POST26 
+! The postprocessing file is rigidfull.RST
+!FILE, ,RST		
+! Number of variable allowed
+NUMVAR,200		
+
+! Number of lines before a header is inserted in listings
+LINES,10000
+
+! Define how to plot complex variables
+! PLCPLX, KEY 
+! Specifies the part of a complex variable to display.
+! 0 = Amplitude.
+PLCPLX,0
+
+! PRCPLX, KEY 
+! Defines the output form for complex variables.
+! 1 = Amplitude and phase angle. Stored real and imaginary data are 
+! converted to amplitude and phase angle upon output. 
+! Data remain stored as real and imaginary parts.		
+! PRCPLX,1
+
+
+! Plot graphs with a logarithmic Y-axis
+/GROPT,LOGY,ON	
+! Save the pressure results at the receiver location
+NSOL,2,node_b,pres, ,p_receiver 
+XVAR,1		! Use frequency as the x-axis
+PLVAR,2 	! Plot the pressure at the receiver
+
+
+! Plot graphs with a linear Y-axis
+/GROPT,LOGY,OFF
+! Save the SPL  results at the receiver location
+NSOL,3,node_b,SPL, ,SPL_receiver 
+XVAR,1		! Use frequency as the x-axis
+
+!/PLOPTS,LOGO,0  ! should turn off logo but doesn't work with Academic version
+/PLOPTS,DATE,0  ! get rid of date info
+/PLOPTS,VERS,0  ! this will show ANSYS 14.5 as text instead of logo
+/PLOPTS,FRAME,0 ! turns off the outside frame
+/PLOPTS,INFO,0  ! This gets rid of the legend and also the logo stuff... good for graph plots.
+
+/GROPT,AXNSC,1.5  ! This will 1.5x the font size of the axis labels
+
+/AXLAB,X,Frequency [Hz]
+/AXLAB,Y,SPL [dB]
+/GROPT,DIVY,5		! only have 5 divisions on y-axis
+
+! Define some colours for the lines, fonts, axes
+/COLOR,GRBAK,BLAC   
+/COLOR,GRID,WHIT
+/COLOR,AXLAB,WHIT   
+/COLOR,AXES,WHIT
+/COLOR,AXNU,WHIT
+/COLOR,CURVE,WHIT,1 
+
+/DEVDISP,TEXT,1,150		! Increase legend font size 150 percent
+/DEVDISP,FONT,1,Arial
+/DEVDISP,FONT,2,Arial
+/DEVDISP,FONT,3,Arial
+
+
+PLVAR,3 	! Plot the pressure at the receiver
+
+
+
+! Export the sound pressure level
+/OUTPUT,ansys_MAPDL_FULL_SPL,txt
+PRVAR,3
+/OUTPUT
+
+
+!
+! Export the results
+!
+! Copy the pressure results into an array
+! VGET, Par, IR, TSTRT, KCPLX 
+! Moves a variable into an array parameter vector.
+VGET,freq,1, ,0
+VGET,p_REAL,2, ,0
+VGET,p_IMAG,2, ,1
+
+! Export the array to disk
+*CREATE,ansuitmp
+*CFOPEN,'ansys_MAPDL_FULL_p_masssource_1','txt',' '  
+*VWRITE,freq(1),p_real(1),p_imag(1) , , , , , , , , 
+(6x,F12.6,6x,D,6x,D) 
+*CFCLOS 
+*END
+/INPUT,ansuitmp 
+
+
+FINISH		! Exit the /POST26 postprocessor
+
+!----------------------------------
+! End of the post-processor module
+!----------------------------------
+/EOF

@@ -10,6 +10,12 @@
 % Material from lectures 2 and 3.
 
 
+% Assumptions:
+%
+%   No resistive terms (i.e., R_A is zero).
+%   No flow.
+
+
 
 %% To Do
 
@@ -29,7 +35,7 @@ close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
-addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
+addpath( genpath( '../00 Support' ), '-begin' );
 
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
@@ -51,6 +57,49 @@ rho0 = 1.21;  % Ratio of specific heats (unitless).
 c = 343;  % Speed of sound in air (meters per second).
 
 
+
+%% Measurements
+
+% Conversions:
+%
+%   1 inch equals 0.0254 meters
+%   1 foot equals 0.3048 meters
+
+% Muffler size:
+%
+%   Diameter:  10 inches (0.254 meters)
+%   Length:  18 inches (0.4572 meters)
+
+
+% Inlet:
+%
+%   Diameter:  2 inches (0.0508 meters)
+%   Length:  6 feet (1.8288 meters)
+
+
+% Outlet:
+%
+%   Diameter:  2 inches (0.0508 meters)
+%   Length:  1 foot (0.3048 meters)
+%   Unflanged.
+
+dimensions.
+
+
+
+%% Part a - Simple Expansion Chamber
+
+
+
+return
+
+%% Part b - Double-tuned Expansion Chamber
+
+return
+
+%% Part c - Cascaded, Double-tuned Expansion Chamber
+
+return
 
 %% Define Shape
 
