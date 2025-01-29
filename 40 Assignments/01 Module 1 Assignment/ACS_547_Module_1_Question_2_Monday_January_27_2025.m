@@ -56,40 +56,95 @@ PRINT_FIGURES = 0;
 rho0 = 1.21;  % Ratio of specific heats (unitless).
 c = 343;  % Speed of sound in air (meters per second).
 
+frequency_set = 0:1:5e3;  % Hertz
+
 
 
 %% Measurements
 
-% Conversions:
+% Conversions Factors
+convert.inches_to_meters = 0.0254;
+convert.foot_to_meters = 0.3048;
+
+
+% Inlet
+dimensions.inlet_diameter_meters = 2 * convert.inches_to_meters;  % 0.0508 meters
+dimensions.inlet_length_meters = 6 * convert.foot_to_meters;  % 1.82 meters
+
+% Muffler
+dimensions.muffler_diameter_meters = 10 * convert.inches_to_meters;  % 0.254 meters
+dimensions.muffler_length_meters = 18 * convert.inches_to_meters;  % 0.4572 meters
+
+% Outlet
+dimensions.outlet_diameter_meters = 2 * convert.inches_to_meters;  % 0.0508 meters
+dimensions.outlet_length_meters = 1 * convert.foot_to_meters;  % 0.3048 meters
 %
-%   1 inch equals 0.0254 meters
-%   1 foot equals 0.3048 meters
-
-% Muffler size:
-%
-%   Diameter:  10 inches (0.254 meters)
-%   Length:  18 inches (0.4572 meters)
-
-
-% Inlet:
-%
-%   Diameter:  2 inches (0.0508 meters)
-%   Length:  6 feet (1.8288 meters)
-
-
-% Outlet:
-%
-%   Diameter:  2 inches (0.0508 meters)
-%   Length:  1 foot (0.3048 meters)
-%   Unflanged.
-
-dimensions.
+outlet_flanged = false;
 
 
 
 %% Part a - Simple Expansion Chamber
 
+h_area_from_diameter = @( d )  pi .* d.^2 ./ 4;
 
+segment_diameters = [ ...
+    dimensions.outlet_diameter_meters, ...
+    dimensions.muffler_diameter_meters, ...
+    dimensions.inlet_diameter_meters, ...
+    ];
+
+segment_areas = h_area_from_diameter( segment_diameters );
+
+segment_lengths = [ ...
+    dimensions.outlet_length_meters, ...
+    dimensions.muffler_length_meters, ...
+    dimensions.inlet_length_meters, ...
+    ];
+
+
+
+f = 100;  % Hz
+
+T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
+
+T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
+
+T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
+
+T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 2 ), segment_areas( 2 ) );
+
+T_muffler_inlet_connection = [ 1 0;  0 segment_areas( 2 ) / segment_areas( 3 ) ];
+
+T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+
+
+T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total
+
+
+
+
+
+return
+
+horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
+
+f_base = c / 4;
+    peak_set = f_base .* ( 1:1:58 );
+
+x = repmat( peak_set.', 1, 2 ).';
+y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
+
+figure( ); ...
+    plot( frequency_set, horn_amplification );  hold on;
+    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Horn Amplification Profile' );
+    %
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
+    %
+    axis( [ -50  5e3+50  -65 65 ] );
 
 return
 
