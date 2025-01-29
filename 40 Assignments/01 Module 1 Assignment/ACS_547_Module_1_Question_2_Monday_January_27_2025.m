@@ -56,7 +56,7 @@ PRINT_FIGURES = 0;
 rho0 = 1.21;  % Ratio of specific heats (unitless).
 c = 343;  % Speed of sound in air (meters per second).
 
-frequency_set = 0:1:5e3;  % Hertz
+frequency_set = 0:0.1:5e3;  % Hertz
 
 
 
