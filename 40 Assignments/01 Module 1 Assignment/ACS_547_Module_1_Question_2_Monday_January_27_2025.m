@@ -81,9 +81,9 @@ dimensions.outlet_length_meters = 1 * convert.foot_to_meters;  % 0.3048 meters
 %
 outlet_flanged = false;
 
+% Inlet and Outlet Overhang
+dimensions.overhang = 3 *convert.inches_to_meters;  % 0.0762 meters
 
-
-%% Part a - Simple Expansion Chamber
 
 h_area_from_diameter = @( d )  pi .* d.^2 ./ 4;
 
@@ -91,7 +91,7 @@ segment_diameters = [ ...
     dimensions.outlet_diameter_meters, ...
     dimensions.muffler_diameter_meters, ...
     dimensions.inlet_diameter_meters, ...
-    ];
+    ].';
 
 segment_areas = h_area_from_diameter( segment_diameters );
 
@@ -99,35 +99,17 @@ segment_lengths = [ ...
     dimensions.outlet_length_meters, ...
     dimensions.muffler_length_meters, ...
     dimensions.inlet_length_meters, ...
-    ];
+    dimensions.overhang, ...
+    ].';
+
+
+Y_LIMITS = [ -10  200 ];
 
 
 
-f = 100;  % Hz
+%% Part a - Simple Expansion Chamber
 
-T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
- 
-T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-
-T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
-
-T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 2 ), segment_areas( 2 ) );
-
-T_muffler_inlet_connection = [ 1 0;  0 segment_areas( 2 ) / segment_areas( 3 ) ];
-    duct_connection_transfer_matrix( segment_areas( 2 ), segment_areas( 3 ) );
-
-T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
-
-
-T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
-
-
-% Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged )
-% 
-% transmission_loss = 10 * log10( abs( ( T_net(1, 1)  +  segment_areas(1)*T_net(1, 2)/(rho0*c)  +  (rho0*c)*T_net(2, 1)/segment_areas(1)  +  T_net(2, 2) ) / 2 )^2 )
-
-
-
+% Compute the transmission loss.
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
 
@@ -135,18 +117,18 @@ nFreq = length( frequency_set );
 for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
-    
+
     T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
 
-    
+
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
         T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
     %
-    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 2 ), segment_areas( 2 ) );
+    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 2 ), segment_areas( 2 ) );
         T_muffler_inlet_connection = duct_connection_transfer_matrix( segment_areas( 2 ), segment_areas( 3 ) );
     %    
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
-    
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
+
     T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
 
 
@@ -158,124 +140,135 @@ for frequency_index = 1:1:nFreq
 end  % End:  for f = frequency_set
 
 
+% % Plot transmission loss profile.
+% zero_set = [ 0  3385 ];
+% 
+% x = repmat( zero_set.', 1, 2 ).';
+% y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
+% 
+% figure( ); ...
+%     plot( frequency_set, TL );  grid on;
+%     line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+%     title( 'Muffler Transmission Loss Profile' );
+%     %
+%     Ax = gca;
+%         Ax.XAxis.TickLabelInterpreter = 'latex';
+%         Ax.YAxis.TickLabelInterpreter = 'latex';
+%     %
+%     axis( [ -50  5e3+50  Y_LIMITS ] );
+%     %
+%     if ( PRINT_FIGURES == 1 )
+%         exportgraphics( gcf, 'Figure Problem 2a.pdf', 'Append', true );
+%     end
 
-%% Plot Tranmission Loss Profile
 
-close all;  clc;
+TL_parta = TL;
 
-
-peak_set = [ 0  3385 ]
-
-x = repmat( peak_set.', 1, 2 ).';
-y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
-
-figure( ); ...
-    plot( frequency_set, TL );  grid on;
-    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Muffler Transmission Loss Profile' );
-    %
-    Ax = gca;
-        Ax.XAxis.TickLabelInterpreter = 'latex';
-        Ax.YAxis.TickLabelInterpreter = 'latex';
-    %
-    axis( [ -50  5e3+50  -10 60 ] );
-
-return
-
-%% Cylindrical Duct with Constant Diameter
-
-horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
-
-f_base = c / 4;
-    peak_set = f_base .* ( 1:1:58 );
-
-x = repmat( peak_set.', 1, 2 ).';
-y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
-
-figure( ); ...
-    plot( frequency_set, horn_amplification );  hold on;
-    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Horn Amplification Profile' );
-    %
-    Ax = gca;
-        Ax.XAxis.TickLabelInterpreter = 'latex';
-        Ax.YAxis.TickLabelInterpreter = 'latex';
-    %
-    axis( [ -50  5e3+50  -65 65 ] );
-
-return
+% return
 
 %% Part b - Double-tuned Expansion Chamber
 
-return
+annulus_area_squared_meters = pi/4 * ( segment_diameters(2)^2 - segment_diameters(1)^2 );
+
+% Compute the transmission loss.
+nFreq = length( frequency_set );
+    TL = zeros( nFreq, 1 );
+
+
+% k = 2*pi*f/c;  % The wave number for the respective frequency.
+
+epsilon = segment_diameters(3) / segment_diameters(2);  % 0.2
+%
+% Using Ji (2005):
+L_o = segment_diameters(3) * ( 0.8216 - 0.0644*epsilon - 0.694*epsilon^2 );
+    % Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
+
+% T_branch = [ 1  0;  1/Z_A  1 ];
+
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
+    
+    T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
+
+    
+    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
+        % T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
+    %
+    k = 2*pi*f/c;  % The wave number for the respective frequency.
+    Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
+        T_branch_1 = [ 1  0;  1/Z_A  1 ];
+    %
+    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(2) - 2*segment_lengths(4), segment_areas( 2 ) );
+    %
+    T_branch_2 = [ 1  0;  1/Z_A  1 ];
+    %    
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+
+
+    T_net = T_inlet * T_branch_2 * T_muffler * T_branch_1 * T_outlet * T_total;
+
+
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+
+    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(1)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+
+end  % End:  for f = frequency_set
+
+
+% % Plot transmission loss profile.
+% zero_set = [ 0  3385 ];
+% 
+% x = repmat( zero_set.', 1, 2 ).';
+% y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
+% 
+% figure( ); ...
+%     plot( frequency_set, TL );  grid on;
+%     line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+%     title( 'Muffler Transmission Loss Profile' );
+%     %
+%     Ax = gca;
+%         Ax.XAxis.TickLabelInterpreter = 'latex';
+%         Ax.YAxis.TickLabelInterpreter = 'latex';
+%     %
+%     axis( [ -50  5e3+50  Y_LIMITS ] );
+%     %
+%     if ( PRINT_FIGURES == 1 )
+%         exportgraphics( gcf, 'Figure Problem 2b.pdf', 'Append', true );
+%     end
+
+
+TL_partb = TL;    
+
+% return
 
 %% Part c - Cascaded, Double-tuned Expansion Chamber
 
-return
+% return
 
-%% Define Shape
-
-number_of_segments = 20;
-    segment_lengths = ones( number_of_segments, 1 ) .* 0.1;  % 20 segments, each 0.1 m long (2 meters total).
-    segment_diameters = ones( number_of_segments, 1 ) .* 0.01;  % 1 cm cross-section.
-
-
-
-%% Calculation
-
-frequency_set = 1:1:5e3;  % Hertz
-
-horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
-
-
-
-%% Calculate Peak Placment for Plot
-
-f_base = c / 4;
-    peak_set = f_base .* ( 1:1:58 );
-
-
-
-%% Plot
-
-x = repmat( peak_set.', 1, 2 ).';
-y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
+%% Plot all Transmission Loss Profiles
 
 figure( ); ...
-    plot( frequency_set, horn_amplification );  hold on;
-    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+    plot( frequency_set, TL_parta );  hold on;
+    plot( frequency_set, TL_partb );  grid on;
+        legend( 'Simple Expansion Chamber', 'Double-tuned Expansion Chamber' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Horn Amplification Profile' );
+    title( 'Transmission Loss Profiles' );
     %
     Ax = gca;
         Ax.XAxis.TickLabelInterpreter = 'latex';
         Ax.YAxis.TickLabelInterpreter = 'latex';
     %
-    axis( [ -50  5e3+50  -65 65 ] );
+    axis( [ -50  5e3+50  Y_LIMITS ] );
+    %
+    if ( PRINT_FIGURES == 1 )
+        exportgraphics( gcf, 'Figure TL All Profiles.pdf', 'Append', true );
+    end
 
-
-
-%% Interpretation
-
-% The total length of this horn is 2 meters.
-
-% At a 2 meter wavelength, the corresponding frequency is 171.5 Hz.
-f = c / 2;  % 171.5 Hz
-
-% The peaks occur at frequencies of integer multiples of the half-wavelength.
-
-% The broad shape (gradually increasing) comes from the end connection.
-%
-% ?
-
-
-
-
-
-
-    
 
 
 %% Clean-up
