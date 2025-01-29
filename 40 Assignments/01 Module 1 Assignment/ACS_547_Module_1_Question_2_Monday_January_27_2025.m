@@ -122,20 +122,68 @@ T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_
 T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
 
 
-Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged )
+% Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged )
+% 
+% transmission_loss = 10 * log10( abs( ( T_net(1, 1)  +  segment_areas(1)*T_net(1, 2)/(rho0*c)  +  (rho0*c)*T_net(2, 1)/segment_areas(1)  +  T_net(2, 2) ) / 2 )^2 )
 
-transmission_loss = 10 * log10( abs( ( T_net(1, 1)  +  segment_areas(1)*T_net(1, 2)/(rho0*c)  +  (rho0*c)*T_net(2, 1)/segment_areas(1)  +  T_net(2, 2) ) / 2 )^2 )
 
 
+nFreq = length( frequency_set );
+    TL = zeros( nFreq, 1 );
 
-for frequency in [ frequency_set ]
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
+    
+    T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
 
     
+    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
+        T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
+    %
+    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 2 ), segment_areas( 2 ) );
+        T_muffler_inlet_connection = duct_connection_transfer_matrix( segment_areas( 2 ), segment_areas( 3 ) );
+    %    
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+    
+    T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
 
-end
 
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+
+    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(1)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+
+end  % End:  for f = frequency_set
+
+
+
+%% Plot Tranmission Loss Profile
+
+close all;  clc;
+
+
+peak_set = [ 0  3385 ]
+
+x = repmat( peak_set.', 1, 2 ).';
+y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
+
+figure( ); ...
+    plot( frequency_set, TL );  grid on;
+    line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Muffler Transmission Loss Profile' );
+    %
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
+    %
+    axis( [ -50  5e3+50  -10 60 ] );
 
 return
+
+%% Cylindrical Duct with Constant Diameter
 
 horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
 
