@@ -128,6 +128,12 @@ transmission_loss = 10 * log10( abs( ( T_net(1, 1)  +  segment_areas(1)*T_net(1,
 
 
 
+for frequency in [ frequency_set ]
+
+    
+
+end
+
 
 return
 
