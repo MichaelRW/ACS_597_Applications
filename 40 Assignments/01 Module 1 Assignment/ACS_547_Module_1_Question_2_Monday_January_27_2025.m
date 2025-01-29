@@ -106,7 +106,7 @@ segment_lengths = [ ...
 f = 100;  % Hz
 
 T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
-
+ 
 T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
 
 T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
@@ -114,12 +114,17 @@ T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 
 T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 2 ), segment_areas( 2 ) );
 
 T_muffler_inlet_connection = [ 1 0;  0 segment_areas( 2 ) / segment_areas( 3 ) ];
+    duct_connection_transfer_matrix( segment_areas( 2 ), segment_areas( 3 ) );
 
 T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
 
 
-T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total
+T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
 
+
+Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged )
+
+transmission_loss = 10 * log10( abs( ( T_net(1, 1)  +  segment_areas(1)*T_net(1, 2)/(rho0*c)  +  (rho0*c)*T_net(2, 1)/segment_areas(1)  +  T_net(2, 2) ) / 2 )^2 )
 
 
 
