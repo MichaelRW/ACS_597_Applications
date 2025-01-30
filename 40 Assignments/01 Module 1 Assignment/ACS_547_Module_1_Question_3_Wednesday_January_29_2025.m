@@ -69,9 +69,60 @@ hole_diameter = 0.006;  % Meters
 
 %% Part a
 
-% Determine the length of the recorder to produce 523 Hz.
+% % Determine the length of the recorder to produce 523 Hz.
+% 
+% % The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
+% 
+% a = 0.009 / 2;  % Meters
+%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+% 
+% f = 523;  % Hz
+%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
+% 
+% S = pi/4*(0.009)^2;  % squared-meters
+% 
+% 
+% test_lengths = 0:0.0001:0.1;
+%     test_lengths = test_lengths + 0.09;
+% 
+% 
+% nLengths = length( test_lengths );
+%     A = zeros( nLengths, 1 );
+% 
+% 
+% for iLength = 1:1:nLengths
+% 
+%     L = test_lengths(iLength);
+% 
+%     T_total = [ 1 0; 0 1 ];
+% 
+%     L_e = L + L_o;
+%         Z = 1j * rho0 * c / S * tan( k* L_e );
+% 
+%     T = [ ...
+%     cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
+%     1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
+%     ];
+% 
+% 
+%     T_total = T * T_total;
+%         T11 = T_total(1, 1);  T12 = T_total(1, 2);
+% 
+%     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+% 
+% end
+% 
+% 
+% figure( ); ...
+%     plot( test_lengths * 1e3, A );  grid on;
+%     xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
+%     title( 'Amplification Versus Recorder Length' );
 
-% The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
+
+
+%% Part b
+
+L = 0.162.6;  % Meters
 
 a = 0.009 / 2;  % Meters
     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
@@ -99,13 +150,33 @@ for iLength = 1:1:nLengths
     L_e = L + L_o;
         Z = 1j * rho0 * c / S * tan( k* L_e );
 
-    T = [ ...
+
+    T_1 = [ ...
     cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
     1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
     ];
 
 
-    T_total = T * T_total;
+    epsilon = 0.006 / 0.009;  % 0.67
+        a = 0.006 / 2;
+
+    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
+        L_e = 0.004 + 2*L_o;
+    %
+    Z_A = 1j * rho0 * 2 * pi * f * L_e / ( pi*0.006^2/4 );
+        T_Branch = [ 1  0;  1/Z_A  1 ];
+    %
+    % R_A is neglected (energy loss).
+
+
+    T_2 = [ ...
+    cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
+    1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
+    ];
+
+
+
+    T_total = T_2 * T_Branch * T_1 * T_total;
         T11 = T_total(1, 1);  T12 = T_total(1, 2);
 
     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
@@ -117,6 +188,8 @@ figure( ); ...
     plot( test_lengths * 1e3, A );  grid on;
     xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Recorder Length' );
+
+
 
 
 
