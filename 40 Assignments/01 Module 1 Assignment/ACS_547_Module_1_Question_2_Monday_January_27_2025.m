@@ -314,26 +314,49 @@ figure( ); ...
 
 
 
-%% RMS and Cumulative Values
-
-clc;
-
-rms( TL_parta )
-rms( TL_partb )
-rms( TL_partc )
-
-temp = TL_partc;
-    temp( 195 < TL_partc ) = 195;
-        rms( temp )
+normalized_frequency_set = ( 2 * pi * frequency_set ./ c ) * 0.4572 / pi;
+% k = 2*pi*f/c;  % The wave number for the respective frequency.
 
 figure( ); ...
-    plot( cumtrapz( TL_parta ) );  hold on;
-    plot( cumtrapz( TL_partb ) );
-    plot( cumtrapz( TL_partc ) );  grid on;
+    plot( normalized_frequency_set, TL_parta );  hold on;
+    plot( normalized_frequency_set, TL_partb );
+    plot( normalized_frequency_set, TL_partc, 'LineStyle', '--' );  grid on;
+        legend( ...
+            'Simple Expansion Chamber', ...
+            'Double-tuned Expansion Chamber', ...
+            'Cascaded Double-tuned Expansion Chamber', ...
+            'Location', 'SouthOutside' );
+    xlabel( 'Normalized Frequency, $k \cdot <muffler length> / \pi$', 'Interpreter', 'latex' );  ylabel( 'Amplitude [dB]' );
+    title( 'Transmission Loss Profiles' );
+    %
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
+    %
+    % axis( [ -50  5e3+50  Y_LIMITS ] );
+    %
+    if ( PRINT_FIGURES == 1 )
+        exportgraphics( gcf, 'Figure TL All Profiles.pdf', 'Append', true );
+    end
 
 
 
+%% RMS and Cumulative Values
 
+% clc;
+% 
+% rms( TL_parta )
+% rms( TL_partb )
+% rms( TL_partc )
+% 
+% temp = TL_partc;
+%     temp( 195 < TL_partc ) = 195;
+%         rms( temp )
+% 
+% figure( ); ...
+%     plot( cumtrapz( TL_parta ) );  hold on;
+%     plot( cumtrapz( TL_partb ) );
+%     plot( cumtrapz( TL_partc ) );  grid on;
 
 
 
