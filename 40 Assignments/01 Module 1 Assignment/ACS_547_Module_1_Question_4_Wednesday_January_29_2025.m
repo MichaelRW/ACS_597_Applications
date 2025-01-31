@@ -97,7 +97,7 @@ outlet_flanged = true;  % Flanged end.
 
 TEST_FLAG = 1;  % 1: right-to-left.
 
-frequency_set = 0:1:2.5e3;
+frequency_set = 0:0.1:2.5e3;
     nFreq = length( frequency_set );
         TL = zeros( nFreq, 1 );
 
@@ -110,7 +110,7 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];
 
 
-    if ( TEST_FLAG == 0 )
+    if ( TEST_FLAG == 1 )
         
         % Right-to-left.
         %
@@ -151,13 +151,55 @@ TL_part_b = TL;
 
 % return
 
+%% Part c
+
+% Flow present (use Mach numbers).
+
+outlet_flanged = true;  % Flanged end.
+
+
+frequency_set = 0:0.1:2.5e3;
+    nFreq = length( frequency_set );
+        TL = zeros( nFreq, 1 );
+
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
+
+
+    T_total = [ 1 0; 0 1 ];
+
+    T_outlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
+
+    T_expansion = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );
+    
+    T_inlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
+
+    T_net = T_inlet * T_contraction * T_outlet * T_total;
+    
+    
+    % Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
+    Z = open_end_impedance( f, rho0, c, duct_1.length_meters, duct_1.area, outlet_flanged );
+    
+
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
+ 
+
+end  % End:  for f = frequency_set
+
+TL_part_c = TL;
+
+% return
+
 %% Plot
 
 Y_LIMITS = [ 0  50 ];
 
 figure( ); ...
     plot( frequency_set, TL_part_b );  hold on;
-    % plot( frequency_set, TL_partb );
+    plot( frequency_set, TL_part_c, '--' );
     % plot( frequency_set, TL_partc, 'LineStyle', '--' );  grid on;
     %     legend( ...
     %         'Simple Expansion Chamber', ...
