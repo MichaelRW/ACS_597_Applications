@@ -2,17 +2,7 @@
 
 %% Synopsis
 
-% Homework Set 1 - Cut-on Frequencies in Ducts and Pipes
-
-% Note:  Send draft of report before submission for comments.
-%
-% Dimensions are annontated in the class notes.
-
-
-
-%% To Do
-
-% Focus on interpretation.
+% Homework Set 1, Question 1 - Cut-on Frequencies in Ducts and Pipes
 
 
 
@@ -169,27 +159,6 @@ fprintf( 1, '\n Problem 1e:  See Section Problem 1e of the Matlab script for the
 % For a circular pipe, the cut-on frequency is higher in warm air than cold
 % air.
 
-% return
-
-%% Exploration - ph
-
-% h_diameter = @( area )  2 .* sqrt( area ./ pi );
-% 
-% area = 0.10;  % squared meters
-% 
-% rectangular_smallest_dimension_set_meters = 0.1:-0.01:0.01;  % meters
-%     largest_rectangular_duct_dimension_meters = area ./ rectangular_smallest_dimension_set_meters;
-% 
-% figure( ); ...
-%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_rectangular_duct( c_air, largest_rectangular_duct_dimension_meters ) ./1e3 );  hold on;
-%     plot( largest_rectangular_duct_dimension_meters, h_f_cut_on_circular_duct( c_air, h_diameter( area ) ).*ones( size( largest_rectangular_duct_dimension_meters ) ) ./ 1e3 );  grid on;
-%         legend( 'Rectangular Duct', 'Circular Duct', 'Location', 'East', 'FontSize', 16, 'Interpreter', 'Latex' );
-%         % xticklabels( largest_rectangular_duct_dimension_meters );
-%             tick2text( 'axis', 'x', 'xformat', '%.2f' );
-%         % set( gca, 'FontSize', 16 );
-%         %
-%     xlabel( 'Largest Rectangular Duct Dimension [meters]', 'FontSize', 16 );  ylabel( 'Lowest Cut-on Frequency [kHz]', 'FontSize', 16 );
-    
 
 
 %% Clean-up

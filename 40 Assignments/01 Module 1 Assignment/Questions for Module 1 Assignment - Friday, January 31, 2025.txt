@@ -22,14 +22,10 @@ MAIN QUESTION:
 
 
 
-QUESTION 1
-
-	NO QUESTIONS.	No class questions.
-
-	
 QUESTION 2
 
 	Are my plots correct?  Yes.  Check scaling.
+
 	
 	
 QUESTION 3
@@ -39,6 +35,7 @@ QUESTION 3
 		No.  Point impedance.
 	
 	Treat the non-hole condition as a quarter-wavelength or a half-wavelength duct?  (29/1/2025)
+
 	
 
 QUESTION 4
@@ -51,6 +48,7 @@ QUESTION 4
 	What is the correct equation for Mach number?  (30/1/2025)
 	
 		V / (S * c)
+
 
 
 QUESTION 5
@@ -68,3 +66,9 @@ QUESTION 5
 	
 	
 
+DONE - QUESTION 1 - Reviewed
+
+	NO QUESTIONS.	No class questions.
+	
+	
+	
