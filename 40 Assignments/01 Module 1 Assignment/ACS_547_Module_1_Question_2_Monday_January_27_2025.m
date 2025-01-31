@@ -121,6 +121,8 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];  % Start with the identity matrix.
 
 
+    % Right-to-left (1: duct;  2: muffler;  3: duct).
+    %
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
         T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
     %
