@@ -17,7 +17,22 @@
 % Search for FIXMEs.
 
 
-% 
+% In class note, the areas for the impedance might have bee wrong;  switch them?
+
+
+% Use negative Mach numbers in the equations.  The analysis for this case
+% is the same as for the horn example.  Inlet on the left, outlet on the
+% right.
+
+
+% The S in the diagram (pink area) for the Helmholtz resonator is the
+% cross-sectional area of the resonator neck connecting it to the tube.
+
+
+% For Lo2, use the value for a quarter-wavelength side tube.
+
+
+% The area expansion ratio is determined using the original duct diameters.
 
 
 

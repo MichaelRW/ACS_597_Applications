@@ -19,7 +19,12 @@
 % Search for FIXMEs.
 
 
-% 
+% In class note, the areas for the impedance might have bee wrong;  switch them?
+
+
+% Use negative Mach numbers in the equations.  The analysis for this case
+% is the same as for the horn example.  Inlet on the left, outlet on the
+% right.
 
 
 
