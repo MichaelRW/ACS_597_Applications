@@ -3,12 +3,11 @@
 
 %% Synopsis
 
-% Acoustic Horn Example
+% Homework Set 1, Question 2 - Muffler Design Comparison
 
-% From ACS 597 - Noise Control Applications, Lecture 3 (Wednesday, January 22, 2025)
 
-% Material from lectures 2 and 3.
 
+%% Note(s)
 
 % Assumptions:
 %
@@ -16,16 +15,10 @@
 %   No flow.
 
 
+% There is no damping in the system;  resonances will be artifically high.
 
-%% To Do
-
-% Focus on interpretation;  "big picture" understanding.
-
-% Do not repeat the prompt\question.
-
-% Code should have "meat" of understanding;  avoid over-commenting.
-
-% Code should use intuitive variable names.
+% The level for the simple expansion chamber is too high (about 50 dB).  It
+% should be around 
 
 
 

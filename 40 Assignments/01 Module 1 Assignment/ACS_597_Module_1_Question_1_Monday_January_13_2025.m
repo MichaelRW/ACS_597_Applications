@@ -11,6 +11,9 @@
 close all; clear; clc;
 % restoredefaultpath;
 
+% addpath( genpath( '' ), '-begin' );
+addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
+
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -25,10 +28,10 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Values and Functions
+%% Define Constants and Anonymous Functions
 
-c_air = 343;  % The speed of sound in air in meters per second.
-c_water = 1500;  % The speed of sound in water in meters per second.
+c_air = 343;  % The speed of sound in air (meters per second).
+c_water = 1500;  % The speed of sound in water (meters per second).
 
 gamma = 1.4;  % The ratio of specific heats [unitless].
 R = 287;  % The gas constant [Joules per ( kilogram * Kelvin)].

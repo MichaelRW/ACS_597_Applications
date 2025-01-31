@@ -2,29 +2,7 @@
 
 %% Synopsis
 
-% Problem 5, Intake Duct Silencer
-
-% From ACS 597 - Noise Control Applications, Lecture 3 (Wednesday, January 22, 2025)
-
-% Material from lecture 4.
-
-% Assumptions:  source is high-impedence;  load is Z_open;  no mean flow;
-
-% 
-
-
-
-%% To Do
-
-% CHECK:  equation for volumetric flow rate;  
-
-% Focus on interpretation;  "big picture" understanding.
-
-% Do not repeat the prompt\question.
-
-% Code should have "meat" of understanding;  avoid over-commenting.
-
-% Code should use intuitive variable names.
+% Homework Set 1, Question 5 - Intake Duct Silencer
 
 
 
@@ -50,10 +28,11 @@ PRINT_FIGURES = 0;
 
 
 
-%% Constants
+%% Define Constants and Anonymous Functions
 
 rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
+
 
 h_area = @( diameter)  pi * diameter^2 / 4;
 
