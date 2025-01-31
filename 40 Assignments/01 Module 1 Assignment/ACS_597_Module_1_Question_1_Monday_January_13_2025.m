@@ -2,7 +2,7 @@
 
 %% Synopsis
 
-% Homework Set 1, Question 1 - Cut-on Frequencies in Ducts and Pipes
+% Question 1 - Cut-on Frequencies in Ducts and Pipes
 
 
 

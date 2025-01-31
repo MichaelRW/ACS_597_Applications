@@ -2,7 +2,22 @@
 
 %% Synopsis
 
-% Homework Set 1, Question 5 - Intake Duct Silencer
+% Question 4 - Intake Duct
+
+
+
+%% To Do
+
+% Check loss profile.
+
+
+
+%% Note(s)
+
+% Search for FIXMEs.
+
+
+% 
 
 
 

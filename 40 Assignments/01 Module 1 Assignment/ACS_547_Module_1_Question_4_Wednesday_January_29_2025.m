@@ -1,29 +1,25 @@
 
 
-
 %% Synopsis
 
-% Problem 4, Intake Duct
-
-% From ACS 597 - Noise Control Applications, Lecture 3 (Wednesday, January 22, 2025)
-
-% Material from lectures 2 and 3.
-
-% Assumptions:  source is high-impedence;  load is Z_open;  no mean flow;
+% Question 4 - Intake Duct
 
 
 
 %% To Do
 
-% CHECK:  equation for volumetric flow rate;  
+% Check loss profile.
 
-% Focus on interpretation;  "big picture" understanding.
+% Implement the loss Helmholtz resonator.
 
-% Do not repeat the prompt\question.
 
-% Code should have "meat" of understanding;  avoid over-commenting.
 
-% Code should use intuitive variable names.
+%% Note(s)
+
+% Search for FIXMEs.
+
+
+% 
 
 
 

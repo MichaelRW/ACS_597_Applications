@@ -3,25 +3,29 @@
 
 %% Synopsis
 
-% Bugle Recorder
-
-% From ACS 597 - Noise Control Applications, Lecture 3 (Wednesday, January 22, 2025)
-
-% Material from lectures 2 and 3.
-
-% Assumptions:  source is high-impedence;  load is Z_open;  no mean flow;
+% Question 3 - Bugle Recorder
 
 
 
 %% To Do
 
-% Focus on interpretation;  "big picture" understanding.
+% Check loss profile.
 
-% Do not repeat the prompt\question.
 
-% Code should have "meat" of understanding;  avoid over-commenting.
 
-% Code should use intuitive variable names.
+%% Note(s)
+
+% Search for FIXMEs.
+
+
+% Diameters of holes should be smaller than a wavelength.
+
+
+% For the lowest frequency, use 1 duct sgement with an open-ended
+% impedance (see the example of the horn in class).
+
+
+% See "2025-01-31 13_07_33-Zoom Meeting.png".
 
 
 
