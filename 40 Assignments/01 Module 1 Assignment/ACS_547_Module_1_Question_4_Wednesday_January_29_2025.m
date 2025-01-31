@@ -29,8 +29,7 @@
 
 %% Environment
 
-% close all; clear; clc;
-clear; clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -176,13 +175,11 @@ for frequency_index = 1:1:nFreq
     
     T_inlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
 
-    T_net = T_inlet * T_contraction * T_outlet * T_total;
+    T_net = T_inlet * T_expansion * T_outlet * T_total;
     
     
-    % Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
-    Z = open_end_impedance( f, rho0, c, duct_1.length_meters, duct_1.area, outlet_flanged );
+    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
     
-
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
  
@@ -193,19 +190,89 @@ TL_part_c = TL;
 
 % return
 
+%% Part d
+
+% Flow present (use Mach numbers).
+% Helmholtz resonator in place (between lefthand duct and expansion).
+
+outlet_flanged = true;  % Flanged end.
+
+
+% Resonance
+w_o = 2*pi*136.6;  % Estimated from plot.
+
+
+% helmholtz_diameter_cavity = 
+% helmholtz_diameter_neck = 1e-3;
+%     helmholtz_L01 = 0.82 * ( 1 - 1.33*(helmholtz_diameter_neck/helmholtz_diameter_cavity ) );
+%     %
+%     epsilon = helmholtz_diameter_cavity / duct_1.length_meters;
+%     % helmholtz_L02 = 
+% 
+% helmholtz_volume = 1e-3;
+% 
+% % keyboard
+% 
+% helmholtz_L_neck = 1e-3;
+% Q = 2;
+% 
+% R_A = rho0*c / Q * sqrt( L_e / ( pi*helmholtz_diameter_neck^2/4 * helmholtz_volume ) );
+
+
+
+frequency_set = 0:0.1:2.5e3;
+    nFreq = length( frequency_set );
+        TL = zeros( nFreq, 1 );
+
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
+
+
+    T_total = [ 1 0; 0 1 ];
+
+    T_outlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
+
+    T_expansion = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );
+
+
+    % Z_A = 1j*rho0*2*pi*f(frequency_index) * L_e / ( pi*helmholtz_neck_diameter^2/4 )  -  1j*rho0*c^2/(helmholtz_volume*2*pi*f(frequency_index))  +  R_A;
+        % T_Helmholtz = [ 1  0;  1/Z_A  1 ];
+    
+
+    T_inlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
+
+
+    % T_net = T_inlet * T_Helmholtz * T_expansion * T_outlet * T_total;
+    T_net = T_inlet * T_expansion * T_outlet * T_total;
+    
+
+    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
+    
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
+ 
+
+end  % End:  for f = frequency_set
+
+TL_part_d = TL;
+
+% return
+
 %% Plot
 
 Y_LIMITS = [ 0  50 ];
 
 figure( ); ...
     plot( frequency_set, TL_part_b );  hold on;
-    plot( frequency_set, TL_part_c, '--' );
-    % plot( frequency_set, TL_partc, 'LineStyle', '--' );  grid on;
-    %     legend( ...
-    %         'Simple Expansion Chamber', ...
-    %         'Double-tuned Expansion Chamber', ...
-    %         'Cascaded Double-tuned Expansion Chamber', ...
-    %         'Location', 'SouthOutside' );
+    plot( frequency_set, TL_part_c, '-' );
+    plot( frequency_set, TL_part_d, '-.' );  grid on;
+    legend( ...
+        'No Flow - Part b', ...
+        'Flow - Part c', ...
+        'Flow and Resonator - Part d', ...
+        'Location', 'SouthOutside' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Transmission Loss Profiles' );
     %
