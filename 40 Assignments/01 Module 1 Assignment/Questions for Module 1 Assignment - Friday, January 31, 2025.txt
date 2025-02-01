@@ -28,9 +28,7 @@ MAIN QUESTION:
 
 
 
-QUESTION 2
 
-	Done - Are my plots correct?  Yes.  Check scaling.
 
 	
 	
@@ -78,3 +76,6 @@ DONE - QUESTION 1 - Reviewed
 	
 	
 	
+QUESTION 2
+
+	Done - Are my plots correct?  Yes.  Check scaling.

@@ -7,29 +7,6 @@
 
 
 
-%% To Do
-
-% Part "d" to be completed.
-%
-% Here, adjusting the internal length allows the resonances to be shifted.
-
-
-
-%% Note(s)
-
-
-% End corrections;  no physical meaning.
-
-
-% Peak occur at a quarter wavelength;  extension tube at outlet.
-%
-% 1 foot or 0.3048 meters.
-
-
-% Extension tube aids quarter wavelenths.
-
-
-
 %% Environment
 
 close all; clear; clc;

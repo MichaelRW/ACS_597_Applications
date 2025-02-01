@@ -15,12 +15,6 @@
 
 %% Note(s)
 
-% Search for FIXMEs.
-
-
-% Diameters of holes should be smaller than a wavelength.
-
-
 % For the lowest frequency, use 1 duct sgement with an open-ended
 % impedance (see the example of the horn in class).
 
@@ -32,6 +26,7 @@
 %% Environment
 
 close all; clear; clc;
+% clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -51,10 +46,13 @@ PRINT_FIGURES = 0;
 
 
 
-%% Constants
+%% Constants and Anonymous Functions
 
 rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
+
+
+h_R_A = @( rho0, c , S, k, delta_mu, 
 
 
 
@@ -73,143 +71,134 @@ hole_diameter = 0.006;  % Meters
 
 %% Part a
 
-% % Determine the length of the recorder to produce 523 Hz.
-% 
-% % The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
-% 
-% a = 0.009 / 2;  % Meters
-%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
-% 
-% f = 523;  % Hz
-%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
-% 
-% S = pi/4*(0.009)^2;  % squared-meters
-% 
-% 
-% test_lengths = 0:0.0001:0.1;
-%     test_lengths = test_lengths + 0.09;
-% 
-% 
-% nLengths = length( test_lengths );
-%     A = zeros( nLengths, 1 );
-% 
-% 
-% for iLength = 1:1:nLengths
-% 
-%     L = test_lengths(iLength);
-% 
-%     T_total = [ 1 0; 0 1 ];
-% 
-%     L_e = L + L_o;
-%         Z = 1j * rho0 * c / S * tan( k* L_e );
-% 
-%     T = [ ...
-%     cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
-%     1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
-%     ];
-% 
-% 
-%     T_total = T * T_total;
-%         T11 = T_total(1, 1);  T12 = T_total(1, 2);
-% 
-%     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
-% 
-% end
-% 
-% 
+% Determine the length of the recorder to produce 523 Hz.
+
+% The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
+
+a = 0.009 / 2;  % Meters
+    L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+
+f = 523;  % Hz
+    k = 2*pi*f/c;  % The wave number for the respective frequency.    
+
+S = pi/4*(0.009)^2;  % squared-meters
+
+
+test_lengths = 0:1e-3:1;
+    test_lengths = test_lengths + 0.09;
+
+nLengths = length( test_lengths );
+    A = zeros( nLengths, 1 );
+
+for iLength = 1:1:nLengths
+
+    L = test_lengths(iLength);
+
+    T_total = [ 1 0; 0 1 ];
+
+    L_e = L + L_o;
+        % Z = 1j * rho0 * c / S * tan( k* L_e );
+        Z = open_end_impedance( f, rho0, c, 0, S(1), 0 );
+
+    T = [ ...
+    cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
+    1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
+    ];
+
+
+    T_total = T * T_total;
+        T11 = T_total(1, 1);  T12 = T_total(1, 2);
+
+    A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+
+end
+
+
 % figure( ); ...
 %     plot( test_lengths * 1e3, A );  grid on;
 %     xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
 %     title( 'Amplification Versus Recorder Length' );
 
-
+% return
 
 %% Part b
 
-% L_net = 0.1626;  % Meters
-% 
-% a = 0.009 / 2;  % Meters
-%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
-% 
-% f = 698;  % Hz
-%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
-% 
-% S = pi/4*(0.009)^2;  % squared-meters
-% 
-% 
-% test_lengths = 0:0.00005:0.16;
-%     test_lengths = L_net - test_lengths;
-%         min( test_lengths )
-% 
-% 
-% nLengths = length( test_lengths );
-%     A = zeros( nLengths, 1 );
-% 
-% 
-% for iLength = 1:1:nLengths
-% 
-%     L = test_lengths(iLength);
-%         L_duct_2 = L;
-%         L_duct_1 = L_net - L_duct_2;
-%     %
-%     % Assume duct lengths are not offset by radius of hole\orifice side branch.
-% 
-%     % fprintf( 1, '', );
-% 
-% 
-%     T_total = [ 1 0; 0 1 ];
-% 
-% 
-%     % End duct.
-%     T_1 = [ ...
-%     cos(k*L_duct_1),                           1j*rho0*c/S*sin(k*L_duct_1); ...
-%     1j*S/(rho0*c)*sin(k*L_duct_1),      cos(k*L_duct_1) ...
-%     ];
-% 
-% 
-% 
-%     % Orifice side branch.
-%     epsilon = 0.006 / 0.009;  % 0.67
-%         a = 0.006 / 2;
-% 
-%     L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-%         L_e = 0.004 + 2*L_o;
-%     %
-%     Z_A = 1j * rho0 * 2 * pi * f * L_e / ( pi*0.006^2/4 );
-%         T_Branch = [ 1  0;  1/Z_A  1 ];
-%     %
-%     % R_A is neglected (energy loss).
-% 
-% 
-% 
-%     % Front duct.
-%     T_2 = [ ...
-%     cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
-%     1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
-%     ];
-% 
-% 
-% 
-%     % End termination.
-%     a = 0.009/2;  L_o = 0.61*a;
-%     L_e = L_duct_1 + L_o;  Z = 1j * rho0 * c / S * tan( k* L_e );
-% 
-% 
-%     T_total = T_2 * T_Branch * T_1 * T_total;
-%         T11 = T_total(1, 1);  T12 = T_total(1, 2);
-% 
-%     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
-% 
-% end
-% 
-% 
-% figure( ); ...
-%     plot( test_lengths * 1e3, A );  grid on;
-%         set( gca, 'XDir', 'reverse' );
-%     xlabel( 'Offset from End of 162.6 mm Length Recorder [mm]' );  ylabel( 'Amplitude [dB]' );
-%     title( 'Amplification Versus Offset from End of Recorder' );
+L_net = 0.325;  % Meters
+
+a = 0.009 / 2;  % Meters
+    L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+
+f = 698;  % Hz
+    k = 2*pi*f/c;  % The wave number for the respective frequency.    
+
+S = pi/4*(0.009)^2;  % squared-meters
 
 
+test_lengths = 0:0.00005:0.16;
+    test_lengths = L_net - test_lengths;
+
+nLengths = length( test_lengths );
+    A = zeros( nLengths, 1 );
+
+for iLength = 1:1:nLengths
+
+    L = test_lengths(iLength);
+        L_duct_2 = L;
+        L_duct_1 = L_net - L_duct_2;
+
+    T_total = [ 1 0; 0 1 ];
+
+
+    % End section.
+    T_1 = [ ...
+    cos(k*L_duct_1),                           1j*rho0*c/S*sin(k*L_duct_1); ...
+    1j*S/(rho0*c)*sin(k*L_duct_1),      cos(k*L_duct_1) ...
+    ];
+
+
+    % Orifice side branch.
+    epsilon = 0.006 / 0.009;  % 0.67
+        a = 0.006 / 2;
+    %
+    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
+        L_e = 0.004 + 2*L_o;
+    %
+    Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
+    %
+    k = 2*pi*f/c;  % The wave number for the respective frequency.
+    S_hole = pi/4*(0.006)^2;  % squared-meters
+    delta_mu 
+
+        R_A = h_R_A( rho0, c, S_hole, k, );
+        %
+        Z_A = Z_A + R_A;
+            T_Branch = [ 1  0;  1/Z_A  1 ];
+
+
+    % Section next to mouthpiece.
+    T_2 = [ ...
+    cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
+    1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
+    ];
+
+
+
+
+    T_total = T_2 * T_Branch * T_1 * T_total;
+        T11 = T_total(1, 1);  T12 = T_total(1, 2);
+
+    A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+
+end
+
+
+figure( ); ...
+    plot( test_lengths * 1e3, A );  grid on;
+        set( gca, 'XDir', 'reverse' );
+    xlabel( 'Offset from End of 162.6 mm Length Recorder [mm]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Amplification Versus Offset from End of Recorder' );
+
+return
 
 %% Part b Verification
 
