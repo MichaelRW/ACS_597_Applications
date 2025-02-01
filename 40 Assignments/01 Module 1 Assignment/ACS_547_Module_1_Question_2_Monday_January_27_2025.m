@@ -32,8 +32,7 @@
 
 %% Environment
 
-% close all; clear; clc;
-clear;  clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -243,16 +242,17 @@ for frequency_index = 1:1:nFreq
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
     %
     k = 2*pi*f/c; 
-        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
+        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0508 + L_o ) );  % Changed to 2 inches.
             T_branch_1 = [ 1  0;  1/Z_A  1 ];
     %
-    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(4), segment_areas( 2 ) );
+    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, 0.1016, segment_areas( 2 ) );  % Changed to 4 inches.
     %
     T_branch_2 = [ 1  0;  1/Z_A  1 ];
     %
-    T_branch_3 = [ 1  0;  1/Z_A  1 ];
+    Z3 = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.1016 + L_o ) );  % Changed to 4 inches.
+        T_branch_3 = [ 1  0;  1/Z3  1 ];
     %
-    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(4), segment_areas( 2 ) );
+    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, 0.0508, segment_areas( 2 ) );  % Changed to 2 inches.
     %
     T_branch_4 = [ 1  0;  1/Z_A  1 ];
     %
