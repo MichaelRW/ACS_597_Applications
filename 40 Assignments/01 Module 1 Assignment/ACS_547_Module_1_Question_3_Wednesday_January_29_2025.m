@@ -52,7 +52,10 @@ rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
 
 
-h_R_A = @( rho0, c , S, k, delta_mu, 
+h_R_A = @( rho0, c , S, k, delta_mu, D, w, gamma, h, epsilon, M ) ...
+    ( rho0*c/S )  * ( ( (k*delta_mu*D*w) / (2*S) )*( 1 + (gamma - 1)*sqrt(5/(3*gamma)) )  +  0.288*k*delta_mu*log10((4*S)/(pi*h^2))  +  (epsilon*S*k^2)/(2*pi)  +  0.7*M );
+%
+% See Equation 8.34 on page 479 of Bies et al (2024).
 
 
 
@@ -114,16 +117,17 @@ for iLength = 1:1:nLengths
 end
 
 
-% figure( ); ...
-%     plot( test_lengths * 1e3, A );  grid on;
-%     xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
-%     title( 'Amplification Versus Recorder Length' );
+figure( ); ...
+    plot( test_lengths * 1e3, A );  grid on;
+    xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Amplification Versus Recorder Length' );
 
 % return
 
 %% Part b
 
-L_net = 0.325;  % Meters
+% L_net = 0.325;  % Meters - First Peak
+L_net = 0.653;  % Meters - Second Peak
 
 a = 0.009 / 2;  % Meters
     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
@@ -134,7 +138,7 @@ f = 698;  % Hz
 S = pi/4*(0.009)^2;  % squared-meters
 
 
-test_lengths = 0:0.00005:0.16;
+test_lengths = 0:0.001:0.5;
     test_lengths = L_net - test_lengths;
 
 nLengths = length( test_lengths );
@@ -167,11 +171,16 @@ for iLength = 1:1:nLengths
     %
     k = 2*pi*f/c;  % The wave number for the respective frequency.
     S_hole = pi/4*(0.006)^2;  % squared-meters
-    delta_mu 
-
-        R_A = h_R_A( rho0, c, S_hole, k, );
+    mu = 1.83e-5;  % kg per meter-second;  online reference.
+        delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
+    D = pi * 0.006;
+    w = 2*pi*f;
+    gamma = 1.4;
+    h = 0.003;  % Larger of the edge radius or delta_mu.
+    Mach_number = 0;
+        R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
         %
-        Z_A = Z_A + R_A;
+        % Z_A = Z_A + R_A
             T_Branch = [ 1  0;  1/Z_A  1 ];
 
 
@@ -180,8 +189,6 @@ for iLength = 1:1:nLengths
     cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
     1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
     ];
-
-
 
 
     T_total = T_2 * T_Branch * T_1 * T_total;
@@ -217,18 +224,8 @@ nFreq = length( f );
     A = zeros( nFreq, 1 );
 
 
-% L_net = 0.1626;  % Too short;  Revisit Part a.
-%     L1 = 0.04725;        % 1,259 Hz;  1,650 Hz
-%     L1 = 0.04;             % 1,228 Hz;  1,827 Hz 
-%     L1 = 0.01;             % 1,058 Hz;  2,108 Hz
-%     L1 = 0.005;           % 1,041 Hz;  2,081 Hz
-
-L_net = 0.325;
-    % L1 = 0.01;         % 529 Hz;  1,057 Hz
-    L1 = 0.006;            % 525 Hz;
-    % L1 = 0.005;       % 524 Hz;  1,049 Hz
-    
-L2 = L_net - L1;
+L1 = 0.2
+    L2 = 0.325 - L1;
 
 
 for iFreq = 1:1:nFreq
@@ -264,11 +261,6 @@ for iFreq = 1:1:nFreq
     ];
 
 
-    % End termination.
-    a = 0.009/2;  L_o = 0.61*a;
-    L_e = L1 + L_o;  Z = 1j * rho0 * c / S * tan( k* L_e );
-
-
     T_total = T_2 * T_Branch * T_1 * T_total;    
 
     T11 = T_total(1, 1);  T12 = T_total(1, 2);
@@ -281,7 +273,6 @@ figure( ); ...
     plot( f, A );  grid on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Frequency' );
-
 
 
 
