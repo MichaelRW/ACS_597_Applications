@@ -278,10 +278,10 @@ TL_partd = TL;
 Y_LIMITS = [ -20  280 ];
 
 figure( ); ...
-    plot( frequency_set, TL_parta );  hold on;
-    plot( frequency_set, TL_partb );
-    plot( frequency_set, TL_partc, 'LineStyle', '--' );
-    plot( frequency_set, TL_partd, 'LineStyle', '--' );  grid on;
+    plot( frequency_set, TL_parta, 'LineWidth', 0.6, 'Color', 'b' );  hold on;
+    plot( frequency_set, TL_partb, 'LineWidth', 0.8, 'LineStyle', '--', 'Color', 'b' );
+    plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-.', 'Color', 'b' );
+    plot( frequency_set, TL_partd, 'LineWidth', 0.6, 'LineStyle', '-.', 'Color', 'b' );  grid on;
         legend( ...
             'Simple Expansion Chamber', ...
             'Double-tuned Expansion Chamber', ...
