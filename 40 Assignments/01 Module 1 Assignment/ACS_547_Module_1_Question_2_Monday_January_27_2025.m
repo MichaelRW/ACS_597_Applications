@@ -30,6 +30,9 @@
 
 % There is no damping in the system;  resonances will be artifically high.
 
+
+% Fixed
+%
 % The level for the simple expansion chamber is too high (about 50 dB).  It
 % should be around 20 dB (check termination impedance).
 
@@ -48,7 +51,8 @@
 
 %% Environment
 
-close all; clear; clc;
+% close all; clear; clc;
+clear;  clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -77,39 +81,33 @@ frequency_set = 0:1:5e3;  % Hertz
 
 
 
-%% Measurements
+%% Dimensions.
 
-% Conversions Factors
 convert.inches_to_meters = 0.0254;
 convert.foot_to_meters = 0.3048;
 
 
-% Inlet
 dimensions.inlet_diameter_meters = 2 * convert.inches_to_meters;  % 0.0508 meters
 dimensions.inlet_length_meters = 6 * convert.foot_to_meters;  % 1.82 meters
 
-% Muffler
 dimensions.muffler_diameter_meters = 10 * convert.inches_to_meters;  % 0.254 meters
 dimensions.muffler_length_meters = 18 * convert.inches_to_meters;  % 0.4572 meters
 
-% Outlet
 dimensions.outlet_diameter_meters = 2 * convert.inches_to_meters;  % 0.0508 meters
 dimensions.outlet_length_meters = 1 * convert.foot_to_meters;  % 0.3048 meters
-%
+
 outlet_flanged = false;
 
-% Inlet and Outlet Overhang
 dimensions.overhang = 3 *convert.inches_to_meters;  % 0.0762 meters
-
-
-h_area_from_diameter = @( d )  pi .* d.^2 ./ 4;
 
 segment_diameters = [ ...
     dimensions.outlet_diameter_meters, ...
     dimensions.muffler_diameter_meters, ...
     dimensions.inlet_diameter_meters, ...
     ].';
-
+%
+h_area_from_diameter = @( d )  pi .* d.^2 ./ 4;
+%
 segment_areas = h_area_from_diameter( segment_diameters );
 
 segment_lengths = [ ...
@@ -120,16 +118,11 @@ segment_lengths = [ ...
     ].';
 
 
-Y_LIMITS = [ -10  280 ];
-
-
 
 %% Part a - Simple Expansion Chamber
 
-% Compute the transmission loss.
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
-
 
 for frequency_index = 1:1:nFreq
 
@@ -154,9 +147,9 @@ for frequency_index = 1:1:nFreq
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
     Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(1)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
-end  % End:  for f = frequency_set
+end
 
 TL_parta = TL;
 
@@ -204,12 +197,13 @@ for frequency_index = 1:1:nFreq
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
     Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(1)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
-end  % End:  for f = frequency_set
+end
 
 
 TL_partb = TL;    
+
 
 % return
 
@@ -252,9 +246,9 @@ for frequency_index = 1:1:nFreq
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
     Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(1)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
-end  % End:  for f = frequency_set
+end
 
 TL_partc = TL;
 
@@ -308,6 +302,8 @@ TL_partc = TL;
 
 
 %% Plot all Transmission Loss Profiles
+
+Y_LIMITS = [ -20  280 ];
 
 figure( ); ...
     plot( frequency_set, TL_parta );  hold on;

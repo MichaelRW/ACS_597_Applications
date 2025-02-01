@@ -1,6 +1,12 @@
 
 
 
+TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+
+
+
+
+
 MAIN QUESTION:
 
 	No Flow:
@@ -24,7 +30,7 @@ MAIN QUESTION:
 
 QUESTION 2
 
-	Are my plots correct?  Yes.  Check scaling.
+	Done - Are my plots correct?  Yes.  Check scaling.
 
 	
 	
