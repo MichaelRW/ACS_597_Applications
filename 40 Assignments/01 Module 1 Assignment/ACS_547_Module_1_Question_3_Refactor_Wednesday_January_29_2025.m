@@ -12,6 +12,8 @@
 close all; clear; clc;
 % restoredefaultpath;
 
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
 % addpath( genpath( '' ), '-begin' );
 addpath( genpath( '../00 Support' ), '-begin' );
 
@@ -69,14 +71,17 @@ f = 523;  % Hz
 S = pi/4*(0.009)^2;  % squared-meters
 
 
-duct_lengths = [ 10e-2  10e-2  10e-2  10e-2 ];
+duct_lengths = 0.11262 * ones( 4, 1 );  % 523 Hz.
 
-test_lengths
-    A = zeros( nLengths, 1 );
 
-for iLength = 1:1:nLengths
+frequency_set = 0:0.1:8e2;
 
-    L = test_lengths(iLength);
+nFreq = length( frequency_set );
+    TL = zeros( nFreq, 1 );
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
 
     T_total = [ 1 0; 0 1 ];
 
@@ -111,16 +116,19 @@ for iLength = 1:1:nLengths
 
     % L_e = L + L_o;
 
-    Z = open_end_impedance( f, rho0, c, duct_lengths(4), pi/4*(0.009)^2, 0 );  % Unflanged.
-        A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
-
+    Z = open_end_impedance( f, rho0, c, duct_lengths(4), S, 0 );  % Unflanged.
+        A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
+            
 end
 
 
 figure( ); ...
-    plot( test_lengths * 1e3, A );  grid on;
-    xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
+    plot( frequency_set, A );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Recorder Length' );
+
+[ max_value, max_index ] = max( A );
+    frequency_set( max_index )
 
 return
 
