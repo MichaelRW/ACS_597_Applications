@@ -7,12 +7,6 @@
 
 
 
-%% To Do
-
-% Check loss profile.
-
-
-
 %% Note(s)
 
 % For the lowest frequency, use 1 duct sgement with an open-ended

@@ -25,7 +25,7 @@ format ShortG;
 
 pause( 1 );
 
-PRINT_FIGURES = 0;
+PRINT_FIGURES = 1;
 
 
 
@@ -94,7 +94,7 @@ for frequency_index = 1:1:nFreq
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
-    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
@@ -106,11 +106,11 @@ TL_parta = TL;
 %% Part b - Double-tuned Expansion Chamber
 
 annulus_area_squared_meters = pi/4 * ( segment_diameters(2)^2 - segment_diameters(1)^2 );
+    branch_diameter = sqrt( 4 * annulus_area_squared_meters / pi );
+        a = branch_diameter / 2;
 
-epsilon = segment_diameters(3) / segment_diameters(2);  % 0.2
-%
-% Using Ji (2005):
-L_o = segment_diameters(3) * ( 0.8216 - 0.0644*epsilon - 0.694*epsilon^2 );
+epsilon = branch_diameter / segment_diameters(2);  % 0.9787
+    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Using Ji (2005) - Slide 11, Lecture 3 notes.
 
 
 nFreq = length( frequency_set );
@@ -124,7 +124,7 @@ for frequency_index = 1:1:nFreq
 
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
     T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(2) - 2*segment_lengths(4), segment_areas( 2 ) );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
 
     k = 2*pi*f/c;
         Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
@@ -134,7 +134,7 @@ for frequency_index = 1:1:nFreq
     T_net = T_inlet * T_branch_2 * T_muffler * T_branch_1 * T_outlet * T_total;
         T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
-    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
@@ -155,9 +155,10 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];
 
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(4), segment_areas( 2 ) );
-    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(4), segment_areas( 2 ) );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, ( segment_lengths(2) - 4*segment_lengths(4) )/2, segment_areas( 2 ) );
+
+    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, ( segment_lengths(2) - 4*segment_lengths(4) )/2, segment_areas( 2 ) );
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
     
     k = 2*pi*f/c;
         Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
@@ -169,7 +170,7 @@ for frequency_index = 1:1:nFreq
     T_net = T_inlet * T_branch_4 * T_muffler_2 * T_branch_3 * T_branch_2 * T_muffler_1 * T_branch_1 * T_outlet * T_total;
         T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
-    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
@@ -192,7 +193,7 @@ for frequency_index = 1:1:nFreq
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
     T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, 0.1016, segment_areas( 2 ) );  % Changed to 4 inches.
     T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, 0.0508, segment_areas( 2 ) );  % Changed to 2 inches.
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_areas( 3 ), segment_areas( 3 ) );
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
 
     k = 2*pi*f/c; 
         Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0508 + L_o ) );  % Changed to 2 inches.
@@ -206,7 +207,7 @@ for frequency_index = 1:1:nFreq
     T_net = T_inlet * T_branch_4 * T_muffler_2 * T_branch_3 * T_branch_2 * T_muffler_1 * T_branch_1 * T_outlet * T_total;
         T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
-    Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
@@ -217,7 +218,7 @@ TL_partd = TL;
 
 %% Plot Transmission Loss Profiles
 
-Y_LIMITS = [ -20  280 ];
+Y_LIMITS = [ -20  240 ];
 
 h_figure_1 = figure( ); ...
     plot( frequency_set, TL_parta, 'LineWidth', 1.0, 'LineStyle', ':', 'Color', 'r' );  hold on;
@@ -238,7 +239,7 @@ h_figure_1 = figure( ); ...
     axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
-Y_LIMITS = [ -20  325 ];
+Y_LIMITS = [ -20  240 ];
 
 h_figure_2 = figure( ); ...
     plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'k' );  hold on;
