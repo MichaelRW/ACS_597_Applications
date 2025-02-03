@@ -1,7 +1,7 @@
 
 
 %\documentclass{book}\begin{document}<content\end{document}
-\documentclass[letter, 11pt]{texMemo}  % The texMemo package by Rob Oakes.
+\documentclass[letter, 11pt, margins=0.5in]{texMemo}  % The texMemo package by Rob Oakes.
 
 \usepackage{amsmath}
 \usepackage[colorlinks=true, citecolor=blue]{hyperref}
@@ -19,7 +19,7 @@
 \memodate{\today~(Submitted)}
 %\memoto{Dr. Dan Russell - College of Engineering, Penn State University}
 %\memofrom{Michael R. Wirtzfeld - Sound Discovery LLC\\}
-\memosubject{ACS 597 - Module 1 Assignement\\}
+\memosubject{Noise Control Applications - Module 1 Assignement\\}
 
 %\memologo{\includegraphics[width=1.0\textwidth]{SOUND_DISCOVERY_Business_Card.jpg}}
 
@@ -188,26 +188,46 @@ The square-root relationship between temperature and the speed of sound in air i
 \newpage
 \section*{Problem 2 - Muffler Design Comparison}
 
- Assumptions:
+For these muffler comparisons, it is assumed that there is no resistive terms (i.e., damping) and no flow.
 
-   No resistive terms (i.e., $R_A$ is zero).
-   No flow.
+   
+\subsection*{Problem 2a}
+
+Figure~\ref{figure:problem2figure1} shows the transmission loss profiles for the 
 
 There is no damping in the system;  resonances will be artificially high.
 
+Transmission loss - End corrections;  no physical meaning.
 
- End corrections;  no physical meaning.
+Peak occur at a quarter wavelength;  extension tube at outlet.
 
-
- Peak occur at a quarter wavelength;  extension tube at outlet.
-
- 1 foot or 0.3048 meters.
+Extension tube aids quarter wavelenths.
 
 
- Extension tube aids quarter wavelenths.
+\begin{figure}[!htb]
+
+    \center
+        \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
+
+    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber mufflers.}
+    \label{figure:problem2figure1}
+
+\end{figure}
 
 
-\subsection*{Problem 2a}
+\begin{figure}[!htb]
+
+    \center
+        \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf}
+
+    \caption{Transmission loss profiles for a cascaded double-tuned expansion chamber muffler and a modified, cascaded double-tuned expansion chamber mufflers.}
+    \label{figure:problem2figure2}
+
+\end{figure}
+
+
+
+
 
 \subsection*{Problem 2b}
 
