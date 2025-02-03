@@ -72,9 +72,10 @@ S = pi/4*(0.009)^2;  % squared-meters
 
 
 duct_lengths = 0.11262 * ones( 4, 1 );  % 523 Hz.
+    k = 2*pi*f/c;  % The wave number for the respective frequency.    
 
 
-frequency_set = 0:0.1:8e2;
+frequency_set = 0:0.1:1e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -109,12 +110,12 @@ for frequency_index = 1:1:nFreq
     T_hole_2 = [ 1 0;  0 1 ];
     T_hole_3 = [ 1 0;  0 1 ];
 
+    % L_e = L + L_o;
+
 
     % Net transfer function.
     T_total = T_segment_4 * T_hole_3 * T_segment_3 * T_hole_2 * T_segment_2 * T_hole_1 * T_segment_1 * T_total;
         T11 = T_total(1, 1);  T12 = T_total(1, 2);
-
-    % L_e = L + L_o;
 
     Z = open_end_impedance( f, rho0, c, duct_lengths(4), S, 0 );  % Unflanged.
         A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
