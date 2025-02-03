@@ -87,28 +87,46 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];
 
 
-    % Right-to-left - 1: duct;  2: muffler;  3: duct.
-    %
     T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-        T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];
-    %
     T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 2 ), segment_areas( 2 ) );
-        T_muffler_inlet_connection = duct_connection_transfer_matrix( segment_areas( 2 ), segment_areas( 3 ) );
-    %    
     T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
+    
+
+    % T_outlet_muffler_connection = [ 1  0;  0  segment_areas( 1 ) / segment_areas( 2 ) ];   
+    % T_muffler_inlet_connection = [ 1  0;  0  segment_areas( 2 ) / segment_areas( 3 ) ];   
 
 
-    T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
+    % T_net = T_inlet * T_muffler_inlet_connection * T_muffler * T_outlet_muffler_connection * T_outlet * T_total;
+    T_net = T_inlet * T_muffler * T_outlet * T_total;
         T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
+
     Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        % TL( frequency_index ) = 10 * log10( 0.25 * abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
 
 TL_parta = TL;
 
 
+Y_LIMITS = [ -20  280 ];
+
+figure( ); ...
+    plot( frequency_set, TL_parta, 'LineWidth', 0.6, 'Color', 'b' );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );  title( 'Transmission Loss Profiles' );    
+    %
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
+    %
+    % axis( [ -50  5e3+50  Y_LIMITS ] );
+    %
+    if ( PRINT_FIGURES == 1 )
+        exportgraphics( gcf, 'Figure TL All Profiles.pdf', 'Append', true );
+    end
+
+return
 
 %% Part b - Double-tuned Expansion Chamber
 
