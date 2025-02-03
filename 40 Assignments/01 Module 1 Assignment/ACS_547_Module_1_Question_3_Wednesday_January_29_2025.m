@@ -30,7 +30,7 @@ close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
-addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
+addpath( genpath( '../00 Support' ), '-begin' );
 
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
