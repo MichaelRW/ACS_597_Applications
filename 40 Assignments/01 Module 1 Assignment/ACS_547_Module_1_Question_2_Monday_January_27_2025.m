@@ -38,7 +38,7 @@ frequency_set = 0:1:5e3;  % Hertz
 
 
 
-%% Dimensions.
+%% Dimensions
 
 convert.inches_to_meters = 0.0254;
 convert.foot_to_meters = 0.3048;
@@ -273,9 +273,6 @@ end
 
 if ( PRINT_FIGURES == 1 )
         exportgraphics( h_figure_1, 'Assignment 1 - Question 2 Figure All TL Profiles.pdf', 'Append', true );
-end
-
-if ( PRINT_FIGURES == 1 )
         exportgraphics( h_figure_2, 'Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf', 'Append', true );
 end
 

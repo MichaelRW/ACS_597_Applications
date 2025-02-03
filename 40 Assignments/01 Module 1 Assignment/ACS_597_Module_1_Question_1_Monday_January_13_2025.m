@@ -125,11 +125,6 @@ figure( ); ...
     ylim( [ 3  7 ] );
 
 
-% if ( PRINT_FIGURES == 1 )
-%     saveas( gcf, 'Cut-on Frequency Versus Temperature - Sunday, January 19, 2025.pdf' );
-% end
-
-
 
 %% Problem 1e
 
