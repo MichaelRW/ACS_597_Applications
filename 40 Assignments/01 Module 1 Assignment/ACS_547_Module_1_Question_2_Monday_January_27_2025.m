@@ -25,7 +25,7 @@ format ShortG;
 
 pause( 1 );
 
-PRINT_FIGURES = 1;
+PRINT_FIGURES = 0;
 
 
 

@@ -20,7 +20,6 @@
 %% Environment
 
 close all; clear; clc;
-% clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -116,7 +115,7 @@ figure( ); ...
     xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Recorder Length' );
 
-% return
+return
 
 %% Part b
 
