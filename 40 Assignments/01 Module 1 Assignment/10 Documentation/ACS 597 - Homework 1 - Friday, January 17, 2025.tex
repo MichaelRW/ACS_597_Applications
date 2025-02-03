@@ -1,7 +1,7 @@
 
 
 %\documentclass{book}\begin{document}<content\end{document}
-\documentclass[letter, 11pt, margins=0.5in]{texMemo}  % The texMemo package by Rob Oakes.
+\documentclass[letter, 11pt, margins=0.25in]{texMemo}  % The texMemo package by Rob Oakes.
 
 \usepackage{amsmath}
 \usepackage[colorlinks=true, citecolor=blue]{hyperref}
@@ -30,10 +30,12 @@
 \maketitle
 
 
+\vspace{-0.25cm}
 \section*{Problem 1 - Cut-on Frequencies in Ducts and Pipes}
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 
+\vspace{-0.25cm}
 \subsection*{Problem 1a}
 
 The lowest cut-on frequency for a rectangular duct with air flow is given by equation,
@@ -55,7 +57,7 @@ With cross-sectional dimensions of $L_x = 12~cm$ and $L_y = 20~cm$, the lowest c
 
 
 
-
+\vspace{-0.25cm}
 \subsection*{Problem 1b}
 
 The lowest cut-on frequency for a circular duct with air flow with the same cross-sectional area as the rectangular duct in part (a.) can be calculated using equation,
@@ -95,7 +97,7 @@ Using Eq.~\ref{equation:circularDuct}, the lowest cut-on frequency for this circ
 
 
 
-
+\vspace{-0.25cm}
 \subsection*{Problem 1c}
 
 The lowest cut-on frequency for this circular duct with water flow can be calculated using Eq.~\ref{equation:circularDuct},
@@ -149,7 +151,7 @@ The square-root relationship between temperature and the speed of sound in air i
 
 
 
-
+\vspace{-0.25cm}
 \subsection*{Problem 1e}
 
  \textbf{Question:  Are cut-on frequencies higher for a circular or rectangular duct for a given cross-sectional area?}
@@ -192,27 +194,26 @@ The square-root relationship between temperature and the speed of sound in air i
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
-\vspace{0.25cm}
-For these muffler comparisons, it is assumed that there is no resistive terms (i.e., damping) and no flow.  Since transmission losses are plotted, the end corrections (i.e., load impedance at outlet of the system) have no physical meaning and are not accounted for in the computations.
+For these muffler comparisons, it is assumed that there is no resistive terms and no flow.  Since transmission losses are considered, the end corrections (i.e., load impedance at outlet of the system) have no physical meaning and are not accounted for in the computations.
 
 
-\subsection*{Problem 2a}
+\vspace{-0.25cm}
+\subsection*{Problems 2a, 2b, and 2c}
 
-Figure~\ref{figure:problem2figure1} shows the transmission loss profile for the simple expansion chamber (red, dashed line).
+\vspace{-0.25cm}
+Figure~\ref{figure:problem2figure1} shows the transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.
 
+The peaks for the simple expansion chamber (red, dashed line) are approximately 22 dB and occur at frequencies with a wavelength that is a quarter of the length of the expansion chamber.  Minimal loss occurs at half wavelength multiples.
 
+The addition of the extension tube inside the muffler produces a quarter wavelength resonator.  The side branch of Ji (2005;  Slide 11, Lecture 3 notes) was used to calculate $L_o$.  For the cascaded double-tuned expansion chamber, the extension tubes produce a secondary quarter wavelength resonator.
 
-
-
-Peak occur at a quarter wavelength;  extension tube at outlet.
-
-Extension tube aids quarter wavelenths.
+As noted in the office hours session, there is no damping which produces artificially high resonances.
 
 
 \begin{figure}[!htb]
 
     \center
-        \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
+        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
 
     \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber mufflers.}
     \label{figure:problem2figure1}
@@ -220,27 +221,33 @@ Extension tube aids quarter wavelenths.
 \end{figure}
 
 
+
+\subsection*{Problem 2d}
+
+Figure~\ref{figure:problem2figure2} shows the transmission loss profiles for a cascaded double-tuned expansion chamber, and a modified cascaded double-tuned expansion chamber muffler.
+
+Two modifications were made to the original system:
+
+\begin{enumerate}
+  \item The left 3" extension tube in the left chamber was shortened to 2" inches, making the respective muffler section 1" longer.
+  \item The left 3" extension tube in the right chamber was lengthened to 4", making the respective muffler section 1" shorter.
+\end{enumerate}
+
+\vspace{0.5cm}
 \begin{figure}[!htb]
 
     \center
-        \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf}
+        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf}
 
-    \caption{Transmission loss profiles for a cascaded double-tuned expansion chamber muffler and a modified, cascaded double-tuned expansion chamber mufflers.}
+    \caption{Transmission loss profiles for a cascaded double-tuned expansion chamber muffler and a modified version of this muffler.}
     \label{figure:problem2figure2}
 
 \end{figure}
 
+\vspace{0.25cm}
+These modifications change the symmetry of the cascaded system, and allow the resonate frequencies to be independently changed.
 
 
-
-
-\subsection*{Problem 2b}
-
-There is no damping in the system;  resonances will be artificially high.
-
-\subsection*{Problem 2c}
-
-There is no damping in the system;  resonances will be artificially high.
 
 
 
