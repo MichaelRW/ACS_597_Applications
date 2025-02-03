@@ -7,16 +7,6 @@
 
 
 
-%% Note(s)
-
-% For the lowest frequency, use 1 duct sgement with an open-ended
-% impedance (see the example of the horn in class).
-
-
-% See "2025-01-31 13_07_33-Zoom Meeting.png".
-
-
-
 %% Environment
 
 close all; clear; clc;
@@ -45,7 +35,7 @@ rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
 
 
-h_R_A = @( rho0, c , S, k, delta_mu, D, w, gamma, h, epsilon, M ) ...
+h_RA = @( rho0, c , S, k, delta_mu, D, w, gamma, h, epsilon, M ) ...
     ( rho0*c/S )  * ( ( (k*delta_mu*D*w) / (2*S) )*( 1 + (gamma - 1)*sqrt(5/(3*gamma)) )  +  0.288*k*delta_mu*log10((4*S)/(pi*h^2))  +  (epsilon*S*k^2)/(2*pi)  +  0.7*M );
 %
 % See Equation 8.34 on page 479 of Bies et al (2024).
@@ -54,10 +44,10 @@ h_R_A = @( rho0, c , S, k, delta_mu, D, w, gamma, h, epsilon, M ) ...
 
 %% Define Shape
 
-L_mouth_piece = 0.09;  % Meters
+mouth_piece_length = 0.09;  % Meters
 
-pipe.inner_diameter = 0.009;  % Meters
-pipe.thickness = 0.004;  % Meters
+pipe_diameter = 0.009;  % Meters
+pipe_thickness = 0.004;  % Meters
 
 % The recorder is unflanged.
 
@@ -67,7 +57,6 @@ hole_diameter = 0.006;  % Meters
 
 %% Part a
 
-% Determine the length of the recorder to produce 523 Hz.
 
 % The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
 
@@ -80,10 +69,9 @@ f = 523;  % Hz
 S = pi/4*(0.009)^2;  % squared-meters
 
 
-test_lengths = 0:1e-3:1;
-    test_lengths = test_lengths + 0.09;
+duct_lengths = [ 10e-2  10e-2  10e-2  10e-2 ];
 
-nLengths = length( test_lengths );
+test_lengths
     A = zeros( nLengths, 1 );
 
 for iLength = 1:1:nLengths
@@ -92,20 +80,39 @@ for iLength = 1:1:nLengths
 
     T_total = [ 1 0; 0 1 ];
 
-    L_e = L + L_o;
-        % Z = 1j * rho0 * c / S * tan( k* L_e );
-        Z = open_end_impedance( f, rho0, c, 0, S(1), 0 );
 
-    T = [ ...
-    cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
-    1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
-    ];
+    % Duct segments.
+    T_segment_1 = [ ...
+        cos(k* duct_lengths( 1 ) ),  1j*rho0*c/S*sin(k* duct_lengths( 1 ) ); ...
+        1j*S/(rho0*c)*sin(k* duct_lengths( 1 ) ),  cos(k* duct_lengths( 1 ) )  ];
+    %
+    T_segment_2 = [ ...
+        cos(k* duct_lengths( 2 ) ),  1j*rho0*c/S*sin(k* duct_lengths( 2 ) ); ...
+        1j*S/(rho0*c)*sin(k* duct_lengths( 2 ) ),  cos(k* duct_lengths( 2 ) )  ];
+    %
+    T_segment_3 = [ ...
+        cos(k* duct_lengths( 3 ) ),  1j*rho0*c/S*sin(k* duct_lengths( 3 ) ); ...
+        1j*S/(rho0*c)*sin(k* duct_lengths( 3 ) ),  cos(k* duct_lengths( 3 ) )  ];
+    %
+    T_segment_4 = [ ...
+        cos(k* ( duct_lengths( 4 ) + 90e-3 ) ),  1j*rho0*c/S*sin(k* ( duct_lengths( 4 ) + 90e-3 ) ); ...
+        1j*S/(rho0*c)*sin(k* ( duct_lengths( 4 ) + 90e-3 ) ),  cos(k* ( duct_lengths( 4 ) + 90e-3 ) )  ];
+
+        
+    % Holes
+    T_hole_1 = [ 1 0;  0 1 ];
+    T_hole_2 = [ 1 0;  0 1 ];
+    T_hole_3 = [ 1 0;  0 1 ];
 
 
-    T_total = T * T_total;
+    % Net transfer function.
+    T_total = T_segment_4 * T_hole_3 * T_segment_3 * T_hole_2 * T_segment_2 * T_hole_1 * T_segment_1 * T_total;
         T11 = T_total(1, 1);  T12 = T_total(1, 2);
 
-    A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+    % L_e = L + L_o;
+
+    Z = open_end_impedance( f, rho0, c, duct_lengths(4), pi/4*(0.009)^2, 0 );  % Unflanged.
+        A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
 
 end
 
@@ -171,7 +178,7 @@ for iLength = 1:1:nLengths
     gamma = 1.4;
     h = 0.003;  % Larger of the edge radius or delta_mu.
     Mach_number = 0;
-        R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
+        R_A = h_RA( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
         %
         % Z_A = Z_A + R_A
             T_Branch = [ 1  0;  1/Z_A  1 ];
