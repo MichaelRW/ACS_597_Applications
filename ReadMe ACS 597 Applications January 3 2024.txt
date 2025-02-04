@@ -6,10 +6,18 @@ Hashtags:  ##COMMENTS
 
 ##LECTURES
 
-	https://www.causalsystems.com/
-		Code and solutions.
 
-	https://psu.zoom.us/j/98643848972?pwd=rfAYscEBg7VFa7oEuR2afVI5dasDAV.1
+	February 2025
+	
+		https://github.com/Ylio7/room_eigenmodes_simulator
+
+
+	January 2025
+	
+		https://www.causalsystems.com/
+			Code and solutions.
+
+		https://psu.zoom.us/j/98643848972?pwd=rfAYscEBg7VFa7oEuR2afVI5dasDAV.1
 
 
 
