@@ -86,20 +86,21 @@ for frequency_index = 1:1:nFreq
 
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 2 ), segment_areas( 2 ) );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
+    T_outlet = duct_segment_transfer_matrix( f, rho0, c, 0.3048, 0.0020268 );
+    T_muffler = duct_segment_transfer_matrix( f, rho0, c, 0.4572, 0.050671 );
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, 1.8288, 0.0020268 );
 
     T_net = T_inlet * T_muffler * T_outlet * T_total;
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
-
-    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );  % CHECKED
+        %
+        % The transmission loss calculation does not require a load impedance.
 
 end
 
 TL_parta = TL;
+    max( TL_parta )  % 21.952 dB
 
 
 
@@ -222,13 +223,14 @@ Y_LIMITS = [ -20  240 ];
 
 h_figure_1 = figure( ); ...
     plot( frequency_set, TL_parta, 'LineWidth', 1.0, 'LineStyle', ':', 'Color', 'r' );  hold on;
-    plot( frequency_set, TL_partb, 'LineWidth', 0.9, 'LineStyle', '--', 'Color', 'b' );
-    plot( frequency_set, TL_partc, 'LineWidth', 0.9, 'LineStyle', '-', 'Color', 'k' );  grid on;
-        legend( ...
-            'Simple Expansion Chamber', ...
-            'Double-tuned Expansion Chamber', ...
-            'Cascaded Double-tuned Expansion Chamber', ...
-            'Location', 'SouthOutside' );
+    % plot( frequency_set, TL_partb, 'LineWidth', 0.9, 'LineStyle', '--', 'Color', 'b' );
+    % plot( frequency_set, TL_partc, 'LineWidth', 0.9, 'LineStyle', '-', 'Color', 'k' );  grid on;
+    grid on;
+        % legend( ...
+        %     'Simple Expansion Chamber', ...
+        %     'Double-tuned Expansion Chamber', ...
+        %     'Cascaded Double-tuned Expansion Chamber', ...
+        %     'Location', 'SouthOutside' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Transmission Loss Profiles' );
     %
@@ -239,23 +241,23 @@ h_figure_1 = figure( ); ...
     axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
-Y_LIMITS = [ -20  240 ];
-
-h_figure_2 = figure( ); ...
-    plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'k' );  hold on;
-    plot( frequency_set, TL_partd, 'LineWidth', 0.6, 'LineStyle', '--', 'Color', 'k' );  grid on;
-        legend( ...
-            'Cascaded Double-tuned Expansion Chamber', ...
-            'Modified Cascaded Double-tuned Expansion Chamber', ...
-            'Location', 'SouthOutside' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Transmission Loss Profiles - Cascaded and Modified Double-tuned Cascaded Systems' );
-    %
-    Ax = gca;
-        Ax.XAxis.TickLabelInterpreter = 'latex';
-        Ax.YAxis.TickLabelInterpreter = 'latex';
-    %
-    axis( [ -50  5e3+50  Y_LIMITS ] );
+% Y_LIMITS = [ -20  240 ];
+% 
+% h_figure_2 = figure( ); ...
+%     plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'k' );  hold on;
+%     plot( frequency_set, TL_partd, 'LineWidth', 0.6, 'LineStyle', '--', 'Color', 'k' );  grid on;
+%         legend( ...
+%             'Cascaded Double-tuned Expansion Chamber', ...
+%             'Modified Cascaded Double-tuned Expansion Chamber', ...
+%             'Location', 'SouthOutside' );
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Transmission Loss Profiles - Cascaded and Modified Double-tuned Cascaded Systems' );
+%     %
+%     Ax = gca;
+%         Ax.XAxis.TickLabelInterpreter = 'latex';
+%         Ax.YAxis.TickLabelInterpreter = 'latex';
+%     %
+%     axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
 
