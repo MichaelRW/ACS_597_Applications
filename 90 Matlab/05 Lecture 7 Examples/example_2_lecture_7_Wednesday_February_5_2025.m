@@ -3,9 +3,9 @@
 
 %% Synopsis
 
-% ACS 547, Lecture 7 - Example 1, Sabine Rooms
+% ACS 547, Lecture 7 - Example 2, Sabine Rooms
 
-% See slide 10 on "Lecture 07 - Sabine rooms - Filled.pptx".
+% See slide 15 on "Lecture 07 - Sabine rooms - Filled.pptx".
 
 
 
@@ -33,61 +33,114 @@ PRINT_FIGURES = 0;
 
 %% Information
 
-room.width = 10;  room.length = 10;  room.height = 5;  % meters
+room.width = 10;  room.length = 15;  room.height = 6;  % meters
 
-frequency = 250;  % Hz
+target_dB_level = 85;  % dB
 
-alpha.pre_treatment = 0.08;  % m^2 or Sabines
-alpha.treatment = 0.5;  % m^2 or Sabines
+% A room is 10 m × 15 m × 6 m high.  The room currently contains several machines 
+% and workers.  Four new machines are to be installed.  You are tasked with making sure 
+% the new machines do not bring the overall sound levels above 85 dB.
 
-directivity_factor = 2;  % Machine located in the center of the floor.
-
-
-
-%% Calculate the Old Room Constant
-
-S = 2*( room.width * room.length ) + 2*(room.height * room.length )  +  2*(room.height * room.width);  % 400 m^2
-
-room_constant_old = S * alpha.pre_treatment / ( 1 - alpha.pre_treatment );  % 34.8 m^2 or Sabines
-
-
-
-%% Calculate the New Room Constant
-
-alpha_new = ( ( (room.length * room.width) + (4 * room.length * room.height ) )*alpha.treatment  +  (room.length * room.width)*alpha.pre_treatment ) / S;  % 0.395
+% The machines are available in two models:
 %
-% Room area does not change.
-
-room_constant_new = S * alpha_new / ( 1 - alpha_new );  % 261.2 m^2 or Sabines
-
-
-room_constant_new / room_constant_old;  % 7.5 times more absorption.
+%   “Loud”, which produce sound power of 94 dB re: 1 pW
+%   “Quiet”, which produce sound power of 84 dB re: 1 pW, but cost $1,600 more each
 
 
+% What measurements must be done?
 
-%% Pressure Difference
+% What treatment options are available if the levels are too high?
 
-% In reverberant field (no term with depedence on distance from source).
-
-pressure_difference = 10*log10(  room_constant_old / room_constant_new );  % -8.8 dB
+% What is the most cost-effective solution?
 
 
 
-%% Plot of Level Difference Versus Distance from Source
+%% Step 1 - Baseline Measurements
 
-r = 0:0.1:10;  % meters
+% Measure the existing sound pressure levels with the machines TURNED ON.
+Lp = 75;  % dB re: 20e-6 Pascals (references varies with person and location).
 
-h_delta_Lp = @( D0, r, Rnew, Rold )  10*log10( D0./(4.*pi.*r.^2) + 4 / Rnew )  -  10*log10( D0./(4.*pi.*r.^2) + 4 / Rold );
+
+% Measure the reverberation time of the room with the machines TURNED OFF.
+T60 = 2.4;  % seconds
 
 
-figure( ); ...
-    plot( r, h_delta_Lp( 2, r, room_constant_new, room_constant_old ) );  grid on;
-    xlabel( 'Distance from Source [meters]' );  ylabel( 'Level Difference [dB]' );
-    title( 'Pressure Difference for a Point Source Versus Distance from the Source' );
+% Calculate the volume and area of the room.
+room_volume = room.width * room.length * room.height;  % 900 m^3
+room_area = 2*(room.width * room.height)  +  2*(room.length * room.height)  +  2*(room.width * room.length );  % 600 m^2
+
+
+%% Step 2 - Calculate Baseline Conditions
+
+h_average_aborption_coefficient = @( volume, area, c, T60 )  ( 55.25 .* volume) ./ ( area .* c .* T60 );
+
+h_room_constant = @( area, average_absorption_coefficient )  ( area .* average_absorption_coefficient ) ./ ( 1 - average_absorption_coefficient  );
+
+
+alpha_average = h_average_aborption_coefficient( room_volume, room_area, 343, T60 );  % 0.1 unitless
+
+room_constant = h_room_constant( room_area, alpha_average );  % 66.2 m^2 or Sabines
+
+
+
+%% Step 3 - Initial Predicted Level
+
+Lp_original = 75;  % dB re: 20e-6 Pascals - Level with the existing machines.
+
+
+% Calculate the sound pressure level for one new machine.
+Lw_quiet = 84;  % dB
+    Lp_new_quiet_one_machine = Lw_quiet + 10*log10( 4 / room_constant );  % 71.7 dB
+
+Lw_loud = 94;  % dB
+    Lp_new_loud_one_machine = Lw_loud + 10*log10( 4 / room_constant );  % 81.7 dB
+
+
+% Calculate the new total sound pressure levels for both types of machines.
+Lp_combined_quiet = 10*log10( 10^(75/10)  +  4*10^(Lp_new_quiet_one_machine/10) );  % 79.6 dB
+
+Lp_combined_load = 10*log10( 10^(75/10)  +  4*10^(Lp_new_loud_one_machine/10) );  % 88.0 dB
+
+
+
+%% Treatment Options
+
+% Option:  Bought loud machines and spent money on absorbing material?
+
+room_constant_old = room_constant;
+
+% Target level is 85 dB.  With the 4 loud machines the new level is 88 dB.
+
+% A pressure level difference of -3 dB is required to meet the target level.
+
+room_constant_new = room_constant_old / 10^( -3 / 10 );  % 134 m^2 or Sabines
+
+% If only the celing was covering in tile.
+alpha_new = ( ( room.width * room.length ) * 0.6  +  ( 2*(room.width * room.height) + 2*(room.length * room.height) + room.width*room.length ) * 0.1 ) / room_area;  % 0.225 unitless
+
+% The new room constant with the tiling added to the celing.
+room_constant_new_with_treatment = room_area * alpha_new / ( 1 - alpha_new );  % 174.2 m^2 or Sabines
 %
-% For small distances, there is no benefit of adding new absorption material.
+% The ceiling treatment (174.2 m^2) exceeds the required level (134 m^2),
+% which should be more than adequate.
+
+
+
+%% Cost Analysis
+
+loud_machine_cost = 0;
+
+% 4 quiet machines, which will meet the target pressure level of 85 dB.
+additional_cost_quiet_machines = 4 * ( 1600 + loud_machine_cost )
+
+
+% 4 loud machines with ceiling treatment that will meet the target pressure level of 85 dB.
+additional_cost_loud_machines = 4 * loud_machine_cost + 450.0;
+
+
+cost_difference = additional_cost_loud_machines - additional_cost_quiet_machines;  % -$5,950.00
 %
-% For distance approaching infinity, the level difference approaches -8.8 dB.
+% Buying the loud machines and use a ceiling treatment saves $5,950.00.
 
 
 
@@ -108,5 +161,21 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
+
+%% Overall, A-weighted Level
+
+% Note(s):
+%
+%   The above analysis was done using the unweighted sound level for the 500 Hz octave band.
+%
+%   If an overall level is to be calculated (i.e., across a set of octave bands), then this analysis
+%   must be done for all octave band center frequencies.  Once the unweighted sound pressure
+%   levels at the location are determned, the respective octave band A-weighting offsets are
+%   applied.
+%
+%   The overall A-weighted sound pressure levels is then calculated logarithmically add using the
+%   expression,
+%
+%   10*log10( sum( 10^(Lp_a/10) )
 
 
