@@ -31,7 +31,7 @@ PRINT_FIGURES = 0;
 
 %% Constants
 
-rho0 = 1.21;  % Ratio of specific heats (unitless).
+rho0 = 1.21;  % Air density (kg per m^3).
 c = 343;  % Speed of sound in air (meters per second).
 
 frequency_set = 0:1:5e3;  % Hertz
@@ -91,28 +91,30 @@ for frequency_index = 1:1:nFreq
     T_inlet = duct_segment_transfer_matrix( f, rho0, c, 1.8288, 0.0020268 );
 
     T_net = T_inlet * T_muffler * T_outlet * T_total;
+    % T_net = T_inlet *  T_total;  % Zero transmission loss for a straight duct.
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );  % CHECKED
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +   0.0020268*T12/(rho0*c)  +  (rho0*c)*T21/0.0020268  +  T22 ) / 2 )^2 );
         %
         % The transmission loss calculation does not require a load impedance.
 
 end
 
-TL_parta = TL;
-    max( TL_parta )  % 21.952 dB
+TL_parta = TL;  % The maximum peak value should be about 22 (21.952) dB.
+%
+% Expected behaviour:
+%
+%   1.)  0 dB at 0 Hz.
+%   2.)  The transmission loss of a straight duct section is zero;  energy out equals energy in.
+%   3.)  
 
 
 
 %% Part b - Double-tuned Expansion Chamber
 
-annulus_area_squared_meters = pi/4 * ( segment_diameters(2)^2 - segment_diameters(1)^2 );
-    branch_diameter = sqrt( 4 * annulus_area_squared_meters / pi );
-        a = branch_diameter / 2;
+annulus_area_squared_meters = pi/4 * ( 0.254^2 - 0.0508^2 );
 
-epsilon = branch_diameter / segment_diameters(2);  % 0.9787
-    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Using Ji (2005) - Slide 11, Lecture 3 notes.
-
+L_o = 0;  % Assume that the Lo extension is neglible.
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -123,24 +125,35 @@ for frequency_index = 1:1:nFreq
     
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-    T_muffler = duct_segment_transfer_matrix( f, rho0, c, segment_lengths(2) - 2*segment_lengths(4), segment_areas( 2 ) );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
+    T_outlet = duct_segment_transfer_matrix( f, rho0, c, (0.3048 + 0.0762), 0.0020268 );
+    T_muffler = duct_segment_transfer_matrix( f, rho0, c, (0.4572 - 2*0.0762), 0.050671 );
+    T_inlet = duct_segment_transfer_matrix( f, rho0, c, (1.8288 + 0.0762), 0.0020268 );
 
     k = 2*pi*f/c;
-        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
+        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0762 + L_o ) );
             T_branch_1 = [ 1  0;  1/Z_A  1 ];
-            T_branch_2 = [ 1  0;  1/Z_A  1 ];
+                T_branch_2 = T_branch_1;
 
     T_net = T_inlet * T_branch_2 * T_muffler * T_branch_1 * T_outlet * T_total;
-        T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
 
-    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
 
 end
 
-TL_partb = TL;    
+TL_partb = TL;
+%
+% Expected behaviour:
+%
+%   1.)  0 dB at 0 Hz.
+%   2.)  0 dB at same locations as a simple expansion chamber.
+%   3.)  Peaks at 1,125 Hz and 3,376 Hz;  
+
+% Frequency at which the quarter-wavelength is 0.0762 meters.
+343 / ( 4 * 0.0762 );  % 1,125 Hz.
+
+% Also work at three-quarter-wavelength.
+3 * 1125;  % 3,375 Hz
 
 
 
@@ -223,7 +236,7 @@ Y_LIMITS = [ -20  240 ];
 
 h_figure_1 = figure( ); ...
     plot( frequency_set, TL_parta, 'LineWidth', 1.0, 'LineStyle', ':', 'Color', 'r' );  hold on;
-    % plot( frequency_set, TL_partb, 'LineWidth', 0.9, 'LineStyle', '--', 'Color', 'b' );
+    plot( frequency_set, TL_partb, 'LineWidth', 0.9, 'LineStyle', '--', 'Color', 'b' );
     % plot( frequency_set, TL_partc, 'LineWidth', 0.9, 'LineStyle', '-', 'Color', 'k' );  grid on;
     grid on;
         % legend( ...
@@ -238,7 +251,7 @@ h_figure_1 = figure( ); ...
         Ax.XAxis.TickLabelInterpreter = 'latex';
         Ax.YAxis.TickLabelInterpreter = 'latex';
     %
-    axis( [ -50  5e3+50  Y_LIMITS ] );
+    % axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
 % Y_LIMITS = [ -20  240 ];
