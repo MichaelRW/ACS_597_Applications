@@ -3,9 +3,9 @@
 
 %% Synopsis
 
-% ACS 547, Lecture 7 - Example 2, Sabine Rooms
+% ACS 547, Sabine Room Milestone
 
-% See slide 15 on "Lecture 07 - Sabine rooms - Filled.pptx".
+% See slide 22 on "Lecture 07 - Sabine rooms - Filled.pptx".
 
 
 
@@ -33,114 +33,58 @@ PRINT_FIGURES = 0;
 
 %% Information
 
-room.width = 10;  room.length = 15;  room.height = 6;  % meters
+room.width = 8;  room.length = 6;  room.height = 3;  % meters
+    room_volume = room.width * room.length * room.height;  % 144 m^3
+    room_area = 2*(room.width*room.height)  +  2*(room.length*room.height)  + 2*(room.width*room.length);  % 180 m^2
 
-target_dB_level = 85;  % dB
-
-% A room is 10 m × 15 m × 6 m high.  The room currently contains several machines 
-% and workers.  Four new machines are to be installed.  You are tasked with making sure 
-% the new machines do not bring the overall sound levels above 85 dB.
-
-% The machines are available in two models:
+alpha_average_walls_and_floor = 0.05;  % For the walls and the floor.
+alpha_average_ceiling = 0.15;  % For the ceiling.
 %
-%   “Loud”, which produce sound power of 94 dB re: 1 pW
-%   “Quiet”, which produce sound power of 84 dB re: 1 pW, but cost $1,600 more each
-
-
-% What measurements must be done?
-
-% What treatment options are available if the levels are too high?
-
-% What is the most cost-effective solution?
+% For the 125 Hz octave band.
 
 
 
-%% Step 1 - Baseline Measurements
+%% Part a - Estimate the reverberant sound pressure level.
 
-% Measure the existing sound pressure levels with the machines TURNED ON.
-Lp = 75;  % dB re: 20e-6 Pascals (references varies with person and location).
+Lw = 10*log10( 25e-3 / 1e-12 );  % 103.98 dB
 
+average_absorption_coefficient = ( (room.width*room.length)*alpha_average_ceiling  +  (room.width*room.length  +  2*(room.width*room.height)  + 2*(room.length*room.height) )*alpha_average_walls_and_floor ) / room_area;  % 0.076667 unitless
 
-% Measure the reverberation time of the room with the machines TURNED OFF.
-T60 = 2.4;  % seconds
-
-
-% Calculate the volume and area of the room.
-room_volume = room.width * room.length * room.height;  % 900 m^3
-room_area = 2*(room.width * room.height)  +  2*(room.length * room.height)  +  2*(room.width * room.length );  % 600 m^2
+room_constant = room_area * average_absorption_coefficient / ( 1 - average_absorption_coefficient );  % 14.9 m^2 or Sabines
 
 
-%% Step 2 - Calculate Baseline Conditions
-
-h_average_aborption_coefficient = @( volume, area, c, T60 )  ( 55.25 .* volume) ./ ( area .* c .* T60 );
-
-h_room_constant = @( area, average_absorption_coefficient )  ( area .* average_absorption_coefficient ) ./ ( 1 - average_absorption_coefficient  );
-
-
-alpha_average = h_average_aborption_coefficient( room_volume, room_area, 343, T60 );  % 0.1 unitless
-
-room_constant = h_room_constant( room_area, alpha_average );  % 66.2 m^2 or Sabines
+sound_pressure_level = Lw + 10*log10( 4 / room_constant );  % 98.3 dB
 
 
 
-%% Step 3 - Initial Predicted Level
+%% Part b
 
-Lp_original = 75;  % dB re: 20e-6 Pascals - Level with the existing machines.
+D0 = 1;
 
+r = 0:0.05:12;  % meters
 
-% Calculate the sound pressure level for one new machine.
-Lw_quiet = 84;  % dB
-    Lp_new_quiet_one_machine = Lw_quiet + 10*log10( 4 / room_constant );  % 71.7 dB
-
-Lw_loud = 94;  % dB
-    Lp_new_loud_one_machine = Lw_loud + 10*log10( 4 / room_constant );  % 81.7 dB
-
-
-% Calculate the new total sound pressure levels for both types of machines.
-Lp_combined_quiet = 10*log10( 10^(75/10)  +  4*10^(Lp_new_quiet_one_machine/10) );  % 79.6 dB
-
-Lp_combined_load = 10*log10( 10^(75/10)  +  4*10^(Lp_new_loud_one_machine/10) );  % 88.0 dB
-
-
-
-%% Treatment Options
-
-% Option:  Bought loud machines and spent money on absorbing material?
-
-room_constant_old = room_constant;
-
-% Target level is 85 dB.  With the 4 loud machines the new level is 88 dB.
-
-% A pressure level difference of -3 dB is required to meet the target level.
-
-room_constant_new = room_constant_old / 10^( -3 / 10 );  % 134 m^2 or Sabines
-
-% If only the celing was covering in tile.
-alpha_new = ( ( room.width * room.length ) * 0.6  +  ( 2*(room.width * room.height) + 2*(room.length * room.height) + room.width*room.length ) * 0.1 ) / room_area;  % 0.225 unitless
-
-% The new room constant with the tiling added to the celing.
-room_constant_new_with_treatment = room_area * alpha_new / ( 1 - alpha_new );  % 174.2 m^2 or Sabines
+h_Lp_direct = @( Lw, D0, r )  Lw + 10*log10( D0./(4.*pi.*r.^2) );
+h_Lp_reverberant = @( Lw, room_constant )  Lw + 10*log10( 4 ./ room_constant );
 %
-% The ceiling treatment (174.2 m^2) exceeds the required level (134 m^2),
-% which should be more than adequate.
+h_Lp_net = @( Lw, D0, r, room_constant )  Lw + 10*log10( D0./(4.*pi.*r.^2) + 4/room_constant ) + 10*log10( 343*1.2/400 );
 
 
+figure( ); ...
+    plot( r, h_Lp_direct( Lw, D0, r ) );  hold on;
+    plot( r, ones( size(r) ).*h_Lp_reverberant( Lw, room_constant) );
+    plot( r, h_Lp_net( Lw, D0, r, room_volume ));  grid on;
+        legend( 'Direct $L_p$', 'Reverberant $L_p$', 'Total $L_p$', 'Interpreter', 'Latex' );
+    %
+    text( 0.545, 100, 'Critical Distance $\approx$ 0.55 meters.', 'Interpreter', 'Latex' );
+    %
+    xlabel( 'Distance from Source [meters]' );  ylabel( 'Sound Pressure Level [dB re:20e-6 Pascals]' );
+    title( 'Sound Pressure Components from Direct and Reverberant Fields from 125 Hz Point Source' );
+    %
+    set( gca, 'XScale', 'log' );
 
-%% Cost Analysis
 
-loud_machine_cost = 0;
-
-% 4 quiet machines, which will meet the target pressure level of 85 dB.
-additional_cost_quiet_machines = 4 * ( 1600 + loud_machine_cost );
-
-
-% 4 loud machines with ceiling treatment that will meet the target pressure level of 85 dB.
-additional_cost_loud_machines = 4 * loud_machine_cost + 450.0;
-
-
-cost_difference = additional_cost_loud_machines - additional_cost_quiet_machines;  % -$5,950.00
-%
-% Buying the loud machines and use a ceiling treatment saves $5,950.00.
+% Estimate the critical distance (see page 84 of "06-Indoors.pdf" notes for ACS 537).
+rc = 0.141 * sqrt( D0 * room_constant );  % 0.5451 meters
 
 
 
