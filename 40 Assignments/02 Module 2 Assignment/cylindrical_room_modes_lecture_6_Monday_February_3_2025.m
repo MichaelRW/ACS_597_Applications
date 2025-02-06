@@ -35,62 +35,102 @@ PRINT_FIGURES = 0;
 
 room.radius = 3;  room.length = 10;  % meters
 
-return
 
-%% ph
 
-room.width = 8;  room.length = 6;  room.height = 3;  % meters
-    room_volume = room.width * room.length * room.height;  % 144 m^3
-    room_area = 2*(room.width*room.height)  +  2*(room.length*room.height)  + 2*(room.width*room.length);  % 180 m^2
+%% Test Circular Mode Function
 
-alpha_average_walls_and_floor = 0.05;  % For the walls and the floor.
-alpha_average_ceiling = 0.15;  % For the ceiling.
+% psi = circular_mode_shape( 3, 1, 2, false );  % 3.7261 - CHECKED FROM CLASS (PLOT NOT CREATED)
+% psi = circular_mode_shape( 3, 1, 2, true );  % 3.7261 - CHECKED FROM CLASS (PLOT CREATED)
+
+
+
+%% Natural Frequencies Function
+
+h_natural_frequencies = @( c, nx, ntheta, nr, Lx, cylinder_radius, plot_flag )  (c/2) .* sqrt( (nx/Lx).^2  + (circular_mode_shape(nr, ntheta, cylinder_radius, plot_flag )/cylinder_radius).^2 );
+
+
+NX_SIZE = 20;
+NTHETA_SIZE = 7;
+NR_SIZE = 4;
+    natural_frequencies = nan( NX_SIZE, NTHETA_SIZE, NR_SIZE );
+
+for nx = 0:1:NX_SIZE
+    for ntheta = 0:1:NTHETA_SIZE
+        for nr = 0:1:NR_SIZE
+            natural_frequencies( nx+1, ntheta+1, nr+1 ) = h_natural_frequencies( 343, nx, ntheta, nr, 10, 3, false );
+        end
+    end
+end
+
+
+
+%% Part a - Find 10 Lowest Resonance Frequencies
+
+% https://www.mathworks.com/matlabcentral/answers/1883747-how-to-find-the-5-minimum-values-in-a-multidimensional-matrix-and-the-indices-to-which-these-entries
+
+% nr MIGHT ALWAYS be zero.
+
+NUMBER_OF_LOWEST_FREQUENCIES = 11;
+
+[ sortedValues, sortedIndices ] = sort( natural_frequencies(:) );  % 21-by-8-by-5 -> 840 elements
+
+smallestValues = sortedValues( 1:NUMBER_OF_LOWEST_FREQUENCIES );
 %
-% For the 125 Hz octave band.
+% 0
+% 17.15
+% 33.505
+% 34.3
+% 37.64
+% 47.949
+% 51.45
+% 55.577
+% 58.163
+% 61.398
+% 65.31
+
+smallestIndices = sortedIndices(1:NUMBER_OF_LOWEST_FREQUENCIES);
+
+
+[ x, y, z ] = ind2sub( size(natural_frequencies), smallestIndices );
+    [ x y z ] - 1;
+
+
+% Verify the calculated mode indices.
+h_natural_frequencies( 343, 0, 0, 0, 10, 3, false );  % 0 Hz
+h_natural_frequencies( 343, 1, 0, 0, 10, 3, false );  % 17.2 Hz
+h_natural_frequencies( 343, 0, 1, 0, 10, 3, false );  % 33.5 Hz
+h_natural_frequencies( 343, 2, 0, 0 , 10, 3, false );  % 34.3 Hz
+h_natural_frequencies( 343, 1, 1, 0 , 10, 3, false );  % 37.6 Hz
+h_natural_frequencies( 343, 2, 1, 0 , 10, 3, false );  % 48.0 Hz
+h_natural_frequencies( 343, 3, 0, 0 , 10, 3, false );  % 51.5 Hz
+h_natural_frequencies( 343, 0, 2, 0 , 10, 3, false );  % 55.6 Hz
+h_natural_frequencies( 343, 1, 2, 0 , 10, 3, false );  % 58.2 Hz
+h_natural_frequencies( 343, 3, 1, 0 , 10, 3, false );  % 61.4 Hz
+h_natural_frequencies( 343, 2, 2, 0 , 10, 3, false );  % 65.3 Hz
 
 
 
-%% Part a - Estimate the reverberant sound pressure level.
+%% Part b - Two 
 
-Lw = 10*log10( 25e-3 / 1e-12 );  % 103.98 dB
+[ (1:11).'  abs( smallestValues - 53 ) ]
 
-average_absorption_coefficient = ( (room.width*room.length)*alpha_average_ceiling  +  (room.width*room.length  +  2*(room.width*room.height)  + 2*(room.length*room.height) )*alpha_average_walls_and_floor ) / room_area;  % 0.076667 unitless
+temp = [ x y z ] - 1;
+    temp( 7:8, :, : )
 
-room_constant = room_area * average_absorption_coefficient / ( 1 - average_absorption_coefficient );  % 14.9 m^2 or Sabines
+% Modes:
+%   ( 3, 0, 0 ) and ( 0, 2, 0 )
 
+h_natural_frequencies( 343, 3, 0, 0, 10, 3, true );  % 51.5 Hz
 
-sound_pressure_level = Lw + 10*log10( 4 / room_constant );  % 98.3 dB
-
-
-
-%% Part b
-
-D0 = 1;
-
-r = 0:0.05:12;  % meters
-
-h_Lp_direct = @( Lw, D0, r )  Lw + 10*log10( D0./(4.*pi.*r.^2) );
-h_Lp_reverberant = @( Lw, room_constant )  Lw + 10*log10( 4 ./ room_constant );
-%
-h_Lp_net = @( Lw, D0, r, room_constant )  Lw + 10*log10( D0./(4.*pi.*r.^2) + 4/room_constant ) + 10*log10( 343*1.2/400 );
+h_natural_frequencies( 343, 0, 2, 0, 10, 3, true );  % 55.6 Hz
 
 
-figure( ); ...
-    plot( r, h_Lp_direct( Lw, D0, r ) );  hold on;
-    plot( r, ones( size(r) ).*h_Lp_reverberant( Lw, room_constant) );
-    plot( r, h_Lp_net( Lw, D0, r, room_volume ));  grid on;
-        legend( 'Direct $L_p$', 'Reverberant $L_p$', 'Total $L_p$', 'Interpreter', 'Latex' );
-    %
-    text( 0.545, 100, 'Critical Distance $\approx$ 0.55 meters.', 'Interpreter', 'Latex' );
-    %
-    xlabel( 'Distance from Source [meters]' );  ylabel( 'Sound Pressure Level [dB re:20e-6 Pascals]' );
-    title( 'Sound Pressure Components from Direct and Reverberant Fields from 125 Hz Point Source' );
-    %
-    set( gca, 'XScale', 'log' );
 
+%% Part c
 
-% Estimate the critical distance (see page 84 of "06-Indoors.pdf" notes for ACS 537).
-rc = 0.141 * sqrt( D0 * room_constant );  % 0.5451 meters
+% For mode ( 3, 0, 0 ), place the source in the center of the cylinder at 5 meters.
+
+% For mode ( 0, 2, 0 ), place the source in the center of the cylinder.
 
 
 
@@ -111,21 +151,5 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-%% Overall, A-weighted Level
-
-% Note(s):
-%
-%   The above analysis was done using the unweighted sound level for the 500 Hz octave band.
-%
-%   If an overall level is to be calculated (i.e., across a set of octave bands), then this analysis
-%   must be done for all octave band center frequencies.  Once the unweighted sound pressure
-%   levels at the location are determned, the respective octave band A-weighting offsets are
-%   applied.
-%
-%   The overall A-weighted sound pressure levels is then calculated logarithmically add using the
-%   expression,
-%
-%   10*log10( sum( 10^(Lp_a/10) )
 
 
