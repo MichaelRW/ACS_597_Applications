@@ -109,86 +109,73 @@ A_parta = A;  clear A;
 
 %% Part b
 
-% % L_net = 0.325;  % Meters - First Peak
-% L_net = 0.653;  % Meters - Second Peak
-% 
-% a = 0.009 / 2;  % Meters
-%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
-% 
-% f = 698;  % Hz
-%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
-% 
-% S = pi/4*(0.009)^2;  % squared-meters
-% 
-% 
-% test_lengths = 0:0.001:0.5;
-%     test_lengths = L_net - test_lengths;
-% 
-% nLengths = length( test_lengths );
-%     A = zeros( nLengths, 1 );
-% 
-% for iLength = 1:1:nLengths
-% 
-%     L = test_lengths(iLength);
-%         L_duct_2 = L;
-%         L_duct_1 = L_net - L_duct_2;
-% 
-%     T_total = [ 1 0; 0 1 ];
-% 
-% 
-%     % End section.
-%     T_1 = [ ...
-%     cos(k*L_duct_1),                           1j*rho0*c/S*sin(k*L_duct_1); ...
-%     1j*S/(rho0*c)*sin(k*L_duct_1),      cos(k*L_duct_1) ...
-%     ];
-% 
-% 
-%     % Orifice side branch.
-%     epsilon = 0.006 / 0.009;  % 0.67
-%         a = 0.006 / 2;
-%     %
-%     L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-%         L_e = 0.004 + 2*L_o;
-%     %
-%     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
-%     %
-%     k = 2*pi*f/c;  % The wave number for the respective frequency.
-%     S_hole = pi/4*(0.006)^2;  % squared-meters
-%     mu = 1.83e-5;  % kg per meter-second;  online reference.
-%         delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
-%     D = pi * 0.006;
-%     w = 2*pi*f;
-%     gamma = 1.4;
-%     h = 0.003;  % Larger of the edge radius or delta_mu.
-%     Mach_number = 0;
-%         R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
-%         %
-%         % Z_A = Z_A + R_A
-%             T_Branch = [ 1  0;  1/Z_A  1 ];
-% 
-% 
-%     % Section next to mouthpiece.
-%     T_2 = [ ...
-%     cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
-%     1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
-%     ];
-% 
-% 
-%     T_total = T_2 * T_Branch * T_1 * T_total;
-%         T11 = T_total(1, 1);  T12 = T_total(1, 2);
-% 
-%     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
-% 
-% end
-% 
-% 
-% figure( ); ...
-%     plot( test_lengths * 1e3, A );  grid on;
-%         set( gca, 'XDir', 'reverse' );
-%     xlabel( 'Offset from End of 162.6 mm Length Recorder [mm]' );  ylabel( 'Amplitude [dB]' );
-%     title( 'Amplification Versus Offset from End of Recorder' );
+epsilon = 0.006 / 0.009;  % 0.67
 
-% return
+a = 0.006 / 2;
+
+
+L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
+L_e = 0.004 + 2*L_o;
+    Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
+
+    
+k = 2*pi*f/c;  % The wave number for the respective frequency.
+S_hole = pi/4*(0.006)^2;  % squared-meters
+mu = 1.83e-5;  % kg per meter-second;  online reference.
+delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
+D = pi * 0.006;
+w = 2*pi*f;
+gamma = 1.4;
+h = 0.003;  % Larger of the edge radius or delta_mu.
+Mach_number = 0;
+R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
+%
+% Z_A = Z_A + R_A
+T_Branch = [ 1  0;  1/Z_A  1 ];
+
+
+duct_lengths = 0.235/4 * ones( 4, 1 );
+
+
+frequency_set = 0:0.1:2e3;
+
+nFreq = length( frequency_set );
+    TL = zeros( nFreq, 1 );
+
+for frequency_index = 1:1:nFreq
+
+    f = frequency_set( frequency_index );
+
+    T_total = [ 1 0; 0 1 ];
+
+    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct - Outlet
+    T2 = [ 1 0;  0 1 ];  % Hole
+    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    T4 = [ 1 0;  0 1 ];  % Hole
+    T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    T6 = [ 1 0;  0 1 ];  % Hole
+    T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
+
+    
+    T_total =  T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
+
+    Z = open_end_impedance( f, rho0, c, 0, pipe_area, flanged );
+    
+    T11 = T_total(1, 1);  T12 = T_total(1, 2);
+        A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
+            
+end
+
+
+A_partb = A;  clear A;
+
+figure( ); ...
+    plot( frequency_set, A_partb );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Amplification Versus Recorder Length' );
+
+return
 
 %% Part b Verification
 
