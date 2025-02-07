@@ -109,29 +109,10 @@ A_parta = A;  clear A;
 
 %% Part b
 
-epsilon = 0.006 / 0.009;  % 0.67
+L_o = 0.001;  % See Lecture 3, Slide 16
+    L_e = 0.004 + 2*L_o;  %Lecture 3, Slide 16
 
-a = 0.006 / 2;
-
-
-L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-L_e = 0.004 + 2*L_o;
-    Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
-
-    
-k = 2*pi*f/c;  % The wave number for the respective frequency.
-S_hole = pi/4*(0.006)^2;  % squared-meters
-mu = 1.83e-5;  % kg per meter-second;  online reference.
-delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
-D = pi * 0.006;
-w = 2*pi*f;
-gamma = 1.4;
-h = 0.003;  % Larger of the edge radius or delta_mu.
-Mach_number = 0;
-R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
-%
-% Z_A = Z_A + R_A
-T_Branch = [ 1  0;  1/Z_A  1 ];
+epsilon = 0.5;
 
 
 duct_lengths = 0.235/4 * ones( 4, 1 );
@@ -141,6 +122,7 @@ frequency_set = 0:0.1:2e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
+    ZA = zeros( nFreq, 1 );
 
 for frequency_index = 1:1:nFreq
 
@@ -148,9 +130,23 @@ for frequency_index = 1:1:nFreq
 
     T_total = [ 1 0; 0 1 ];
 
-    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct - Outlet
+
+    OFFSET = 0.006;
+
+
+    Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
+    R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, 0.5, 0 );
+        Z_A = Z_A + R_A;  
+            Z_A = Z_A * 1e-6;  ZA( frequency_index ) = Z_A;
+            T_Hole = [ 1  0;  1/Z_A  1 ];
+
+
+    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct - Outlet
+
     T2 = [ 1 0;  0 1 ];  % Hole
-    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    T2 = T_Hole;
+
+    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + OFFSET, pipe_area );  % Duct
     T4 = [ 1 0;  0 1 ];  % Hole
     T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
     T6 = [ 1 0;  0 1 ];  % Hole
@@ -170,10 +166,16 @@ end
 
 A_partb = A;  clear A;
 
+
 figure( ); ...
     plot( frequency_set, A_partb );  grid on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Recorder Length' );
+
+
+% figure( ); ...
+%     semilogy( frequency_set, abs( ZA )  );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
 
 return
 
