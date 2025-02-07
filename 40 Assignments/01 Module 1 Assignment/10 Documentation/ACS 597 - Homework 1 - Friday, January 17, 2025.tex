@@ -113,7 +113,7 @@ The lowest cut-on frequency for water is considerable larger than it is for air 
 
 
 
-\newpage
+\vspace{-0.25cm}
 \subsection*{Problem 1d}
 
 The speed of sound in air is calculated by,
@@ -194,7 +194,14 @@ The square-root relationship between temperature and the speed of sound in air i
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
-For these muffler comparisons, it is assumed that there is no resistive terms and no flow.  Since transmission losses are considered, the end corrections (i.e., load impedance at outlet of the system) have no physical meaning and are not accounted for in the computations.
+For these muffler comparisons, the following assumptions were made:
+
+\begin{itemize}
+  \item There is no flow.
+  \item There are no resistive terms.
+  \item The load impedance was not included because the transmission loss does not require them.
+  \item For Parts b, c, and d, the side branch length offset, $L_o$, was set to zero.
+\end{itemize}
 
 
 \vspace{-0.25cm}
