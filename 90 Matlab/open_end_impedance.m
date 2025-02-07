@@ -16,7 +16,7 @@ function [ Z ] = open_end_impedance( f, rho0, c, L, S, flanged )
 %   flanged:  The end state of the circular duct (boolean).
 
 
-a = sqrt( S / pi );  % Radius of circular section.
+a = sqrt( S / pi );  % Diameter of circular section.
 
 k = 2*pi*f/c;  % The wave number for the respective frequency.
 

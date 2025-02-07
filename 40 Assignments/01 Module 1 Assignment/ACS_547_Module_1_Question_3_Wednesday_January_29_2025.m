@@ -13,9 +13,6 @@
 % impedance (see the example of the horn in class).
 
 
-% See "2025-01-31 13_07_33-Zoom Meeting.png".
-
-
 
 %% Environment
 
@@ -67,205 +64,211 @@ hole_diameter = 0.006;  % Meters
 
 %% Part a
 
-% Determine the length of the recorder to produce 523 Hz.
+% The estimated total length of the recorder is 0.325 meters.
 
-% The total length of the recorder, including the 0.09 meter long mouthpiece, is L.
+% The estimated length of the pipe extension is 0.235 meters.
 
-a = 0.009 / 2;  % Meters
-    L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+% Estimation was done by trial-and-error.
 
-f = 523;  % Hz
-    k = 2*pi*f/c;  % The wave number for the respective frequency.    
+pipe_net_length = 0.325;
+pipe_area = pi*0.009^2/4;
 
-S = pi/4*(0.009)^2;  % squared-meters
+flanged = false;
 
 
-test_lengths = 0:1e-3:1;
-    test_lengths = test_lengths + 0.09;
+frequency_set = 1:1:2e3;
 
-nLengths = length( test_lengths );
-    A = zeros( nLengths, 1 );
+nFreq = length( frequency_set );
+    A = zeros( nFreq, 1 );
 
-for iLength = 1:1:nLengths
+for frequency_index = 1:1:nFreq
 
-    L = test_lengths(iLength);
+    f = frequency_set( frequency_index );
 
     T_total = [ 1 0; 0 1 ];
 
-    L_e = L + L_o;
-        % Z = 1j * rho0 * c / S * tan( k* L_e );
-        Z = open_end_impedance( f, rho0, c, 0, S(1), 0 );
+    T_segment = duct_segment_transfer_matrix( f, rho0, c, pipe_net_length, pipe_area );
 
-    T = [ ...
-    cos(k*L),                           1j*rho0*c/S*sin(k*L); ...
-    1j*S/(rho0*c)*sin(k*L),      cos(k*L) ...
-    ];
+    T_total = T_segment * T_total;
 
+    Z = open_end_impedance( f, rho0, c, 0, pipe_area, flanged );
 
-    T_total = T * T_total;
-        T11 = T_total(1, 1);  T12 = T_total(1, 2);
-
-    A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+    T11 = T_total(1, 1);  T12 = T_total(1, 2);    
+        A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
 
 end
 
+A_parta = A;  clear A;
 
-figure( ); ...
-    plot( test_lengths * 1e3, A );  grid on;
-    xlabel( 'Total Recorder Length [mm]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Amplification Versus Recorder Length' );
+% figure( ); ...
+%     plot( frequency_set, A_parta, 'LineWidth', 0.8 );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+%         legend( 'C5' );
 
-return
+% return
 
 %% Part b
 
-% L_net = 0.325;  % Meters - First Peak
-L_net = 0.653;  % Meters - Second Peak
+% % L_net = 0.325;  % Meters - First Peak
+% L_net = 0.653;  % Meters - Second Peak
+% 
+% a = 0.009 / 2;  % Meters
+%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+% 
+% f = 698;  % Hz
+%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
+% 
+% S = pi/4*(0.009)^2;  % squared-meters
+% 
+% 
+% test_lengths = 0:0.001:0.5;
+%     test_lengths = L_net - test_lengths;
+% 
+% nLengths = length( test_lengths );
+%     A = zeros( nLengths, 1 );
+% 
+% for iLength = 1:1:nLengths
+% 
+%     L = test_lengths(iLength);
+%         L_duct_2 = L;
+%         L_duct_1 = L_net - L_duct_2;
+% 
+%     T_total = [ 1 0; 0 1 ];
+% 
+% 
+%     % End section.
+%     T_1 = [ ...
+%     cos(k*L_duct_1),                           1j*rho0*c/S*sin(k*L_duct_1); ...
+%     1j*S/(rho0*c)*sin(k*L_duct_1),      cos(k*L_duct_1) ...
+%     ];
+% 
+% 
+%     % Orifice side branch.
+%     epsilon = 0.006 / 0.009;  % 0.67
+%         a = 0.006 / 2;
+%     %
+%     L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
+%         L_e = 0.004 + 2*L_o;
+%     %
+%     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
+%     %
+%     k = 2*pi*f/c;  % The wave number for the respective frequency.
+%     S_hole = pi/4*(0.006)^2;  % squared-meters
+%     mu = 1.83e-5;  % kg per meter-second;  online reference.
+%         delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
+%     D = pi * 0.006;
+%     w = 2*pi*f;
+%     gamma = 1.4;
+%     h = 0.003;  % Larger of the edge radius or delta_mu.
+%     Mach_number = 0;
+%         R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
+%         %
+%         % Z_A = Z_A + R_A
+%             T_Branch = [ 1  0;  1/Z_A  1 ];
+% 
+% 
+%     % Section next to mouthpiece.
+%     T_2 = [ ...
+%     cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
+%     1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
+%     ];
+% 
+% 
+%     T_total = T_2 * T_Branch * T_1 * T_total;
+%         T11 = T_total(1, 1);  T12 = T_total(1, 2);
+% 
+%     A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
+% 
+% end
+% 
+% 
+% figure( ); ...
+%     plot( test_lengths * 1e3, A );  grid on;
+%         set( gca, 'XDir', 'reverse' );
+%     xlabel( 'Offset from End of 162.6 mm Length Recorder [mm]' );  ylabel( 'Amplitude [dB]' );
+%     title( 'Amplification Versus Offset from End of Recorder' );
 
-a = 0.009 / 2;  % Meters
-    L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
-
-f = 698;  % Hz
-    k = 2*pi*f/c;  % The wave number for the respective frequency.    
-
-S = pi/4*(0.009)^2;  % squared-meters
-
-
-test_lengths = 0:0.001:0.5;
-    test_lengths = L_net - test_lengths;
-
-nLengths = length( test_lengths );
-    A = zeros( nLengths, 1 );
-
-for iLength = 1:1:nLengths
-
-    L = test_lengths(iLength);
-        L_duct_2 = L;
-        L_duct_1 = L_net - L_duct_2;
-
-    T_total = [ 1 0; 0 1 ];
-
-
-    % End section.
-    T_1 = [ ...
-    cos(k*L_duct_1),                           1j*rho0*c/S*sin(k*L_duct_1); ...
-    1j*S/(rho0*c)*sin(k*L_duct_1),      cos(k*L_duct_1) ...
-    ];
-
-
-    % Orifice side branch.
-    epsilon = 0.006 / 0.009;  % 0.67
-        a = 0.006 / 2;
-    %
-    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-        L_e = 0.004 + 2*L_o;
-    %
-    Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
-    %
-    k = 2*pi*f/c;  % The wave number for the respective frequency.
-    S_hole = pi/4*(0.006)^2;  % squared-meters
-    mu = 1.83e-5;  % kg per meter-second;  online reference.
-        delta_mu = sqrt( (2 * mu ) / ( 2*pi*f * rho0 ) );
-    D = pi * 0.006;
-    w = 2*pi*f;
-    gamma = 1.4;
-    h = 0.003;  % Larger of the edge radius or delta_mu.
-    Mach_number = 0;
-        R_A = h_R_A( rho0, c, S_hole, k, delta_mu, D, w, gamma, h, epsilon, Mach_number );
-        %
-        % Z_A = Z_A + R_A
-            T_Branch = [ 1  0;  1/Z_A  1 ];
-
-
-    % Section next to mouthpiece.
-    T_2 = [ ...
-    cos(k*L_duct_2),                           1j*rho0*c/S*sin(k*L_duct_2); ...
-    1j*S/(rho0*c)*sin(k*L_duct_2),      cos(k*L_duct_2) ...
-    ];
-
-
-    T_total = T_2 * T_Branch * T_1 * T_total;
-        T11 = T_total(1, 1);  T12 = T_total(1, 2);
-
-    A( iLength ) = -10*log10( abs( T11 + T12 / Z )^2 );
-
-end
-
-
-figure( ); ...
-    plot( test_lengths * 1e3, A );  grid on;
-        set( gca, 'XDir', 'reverse' );
-    xlabel( 'Offset from End of 162.6 mm Length Recorder [mm]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Amplification Versus Offset from End of Recorder' );
-
-return
+% return
 
 %% Part b Verification
 
-a = 0.009 / 2;  % Meters
-    L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+% a = 0.009 / 2;  % Meters
+%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
+% 
+% f = 698;  % Hz
+%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
+% 
+% S = pi/4*(0.009)^2;  % squared-meters
+% 
+% 
+% f = 0:1:5e3;
+% 
+% nFreq = length( f );
+%     A = zeros( nFreq, 1 );
+% 
+% 
+% L1 = 0.2
+%     L2 = 0.325 - L1;
+% 
+% 
+% for iFreq = 1:1:nFreq
+% 
+%     k = 2*pi*f(iFreq)/c;
+% 
+%     T_total = [ 1 0; 0 1 ];
+% 
+%     % End duct.
+%     T_1 = [ ...
+%     cos(k*L1),                           1j*rho0*c/S*sin(k*L1); ...
+%     1j*S/(rho0*c)*sin(k*L1),      cos(k*L1) ...
+%     ];
+% 
+% 
+%     % Orifice side branch.
+%     epsilon = 0.006 / 0.009;  % 0.67
+%         a = 0.006 / 2;
+% 
+%     L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
+%         L_e = 0.004 + 2*L_o;
+%     %
+%     Z_A = 1j * rho0 * 2 * pi * f(iFreq) * L_e / ( pi*0.006^2/4 );
+%         T_Branch = [ 1  0;  1/Z_A  1 ];
+%     %
+%     % R_A is neglected (energy loss).
+% 
+% 
+%     % Front duct.
+%     T_2 = [ ...
+%     cos(k*L2),                           1j*rho0*c/S*sin(k*L2); ...
+%     1j*S/(rho0*c)*sin(k*L2),      cos(k*L2) ...
+%     ];
+% 
+% 
+%     T_total = T_2 * T_Branch * T_1 * T_total;    
+% 
+%     T11 = T_total(1, 1);  T12 = T_total(1, 2);
+%         A( iFreq ) = -10*log10( abs( T11 + T12 / Z )^2 );
+% 
+% end
+% 
+% 
+% figure( ); ...
+%     plot( f, A );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+%     title( 'Amplification Versus Frequency' );
 
-f = 698;  % Hz
-    k = 2*pi*f/c;  % The wave number for the respective frequency.    
-
-S = pi/4*(0.009)^2;  % squared-meters
 
 
-f = 0:1:5e3;
-
-nFreq = length( f );
-    A = zeros( nFreq, 1 );
-
-
-L1 = 0.2
-    L2 = 0.325 - L1;
-
-
-for iFreq = 1:1:nFreq
-
-    k = 2*pi*f(iFreq)/c;
-
-    T_total = [ 1 0; 0 1 ];
-
-    % End duct.
-    T_1 = [ ...
-    cos(k*L1),                           1j*rho0*c/S*sin(k*L1); ...
-    1j*S/(rho0*c)*sin(k*L1),      cos(k*L1) ...
-    ];
-
-
-    % Orifice side branch.
-    epsilon = 0.006 / 0.009;  % 0.67
-        a = 0.006 / 2;
-
-    L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-        L_e = 0.004 + 2*L_o;
-    %
-    Z_A = 1j * rho0 * 2 * pi * f(iFreq) * L_e / ( pi*0.006^2/4 );
-        T_Branch = [ 1  0;  1/Z_A  1 ];
-    %
-    % R_A is neglected (energy loss).
-
-
-    % Front duct.
-    T_2 = [ ...
-    cos(k*L2),                           1j*rho0*c/S*sin(k*L2); ...
-    1j*S/(rho0*c)*sin(k*L2),      cos(k*L2) ...
-    ];
-
-
-    T_total = T_2 * T_Branch * T_1 * T_total;    
-
-    T11 = T_total(1, 1);  T12 = T_total(1, 2);
-        A( iFreq ) = -10*log10( abs( T11 + T12 / Z )^2 );
-
-end
-
+%% Plot Amplification Profiles
 
 figure( ); ...
-    plot( f, A );  grid on;
+    plot( frequency_set, A );  hold on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Amplification Versus Frequency' );
+        legend( ...
+                'Simple Expansion Chamber', ...
+                'Double-tuned Expansion Chamber', ...
+                'Cascaded Double-tuned Expansion Chamber', ...
+                'Location', 'SouthOutside' );
 
 
 

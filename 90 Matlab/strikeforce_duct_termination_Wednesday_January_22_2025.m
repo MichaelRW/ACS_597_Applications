@@ -64,7 +64,7 @@ number_of_segments = 20;
 
 frequency_set = 1:1:5e3;  % Hertz
 
-horn_amplification = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
+horn_amplification_profile = horn_amplification( frequency_set, segment_diameters, segment_lengths, rho0, c );
 
 
 
@@ -81,7 +81,7 @@ x = repmat( peak_set.', 1, 2 ).';
 y = repmat( [ -60; 60 ], 1, size( x, 2 ) );
 
 figure( ); ...
-    plot( frequency_set, horn_amplification );  hold on;
+    plot( frequency_set, horn_amplification_profile );  hold on;
     line( x, y, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 0.8 );  grid on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Horn Amplification Profile' );
