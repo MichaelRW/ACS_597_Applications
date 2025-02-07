@@ -86,11 +86,11 @@ for frequency_index = 1:1:nFreq
 
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, 0.3048, 0.0020268 );
-    T_muffler = duct_segment_transfer_matrix( f, rho0, c, 0.4572, 0.050671 );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, 1.8288, 0.0020268 );
+    T1 = duct_segment_transfer_matrix( f, rho0, c, 0.3048, 0.0020268 );  % Duct - Outlet
+    T2 = duct_segment_transfer_matrix( f, rho0, c, 0.4572, 0.050671 );  % Duct
+    T3 = duct_segment_transfer_matrix( f, rho0, c, 1.8288, 0.0020268 );  % Duct - Inlet
 
-    T_net = T_inlet * T_muffler * T_outlet * T_total;
+    T_net = T3 * T2 * T1 * T_total;
     % T_net = T_inlet *  T_total;  % Zero transmission loss for a straight duct.
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
@@ -106,7 +106,8 @@ TL_parta = TL;  % The maximum peak value should be about 22 (21.952) dB.
 %
 %   1.)  0 dB at 0 Hz.
 %   2.)  The transmission loss of a straight duct section is zero;  energy out equals energy in.
-%   3.)  
+
+max( TL_parta );  % 22 dB
 
 
 
@@ -126,20 +127,22 @@ for frequency_index = 1:1:nFreq
     
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, (0.3048 + 0.0762), 0.0020268 );
-    T_muffler = duct_segment_transfer_matrix( f, rho0, c, (0.4572 - 2*0.0762), 0.050671 );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, (1.8288 + 0.0762), 0.0020268 );
+    T1 = duct_segment_transfer_matrix( f, rho0, c, (0.3048 + 0.0762), 0.0020268 );
+    T3 = duct_segment_transfer_matrix( f, rho0, c, (0.4572 - 2*0.0762), 0.050671 );
+    T5 = duct_segment_transfer_matrix( f, rho0, c, (1.8288 + 0.0762), 0.0020268 );
 
     k = 2*pi*f/c;
         Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0762 + L_o ) );
-            T_branch_1 = [ 1  0;  1/Z_A  1 ];
-                T_branch_2 = T_branch_1;
+            T2 = [ 1  0;  1/Z_A  1 ];
+                T4 = T2;
 
-    T_net = T_inlet * T_branch_2 * T_muffler * T_branch_1 * T_outlet * T_total;
+    T_net = T5 * T4 * T3 * T2 * T1 * T_total;
 
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  0.0020268*T12/(rho0*c)  +  (rho0*c)*T21/0.0020268  +  T22 ) / 2 )^2 );
+        %
+        % The transmission loss calculation does not require a load impedance.
 
 end
 
@@ -152,10 +155,10 @@ TL_partb = TL;
 %   3.)  Peaks at 1,125 Hz and 3,376 Hz;  
 
 % Frequency at which the quarter-wavelength is 0.0762 meters.
-343 / ( 4 * 0.0762 );  % 1,125 Hz.
+% 343 / ( 4 * 0.0762 );  % 1,125 Hz.
 
 % Also work at three-quarter-wavelength.
-3 * 1125;  % 3,375 Hz
+% 3 * 1125;  % 3,375 Hz
 
 
 
@@ -206,28 +209,25 @@ nFreq = length( frequency_set );
 for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
-
+        k = 2*pi*f/c;
+            Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0762 + L_o ) );
+    
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, 0.1016, segment_areas( 2 ) );  % Changed to 4 inches.
-    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, 0.0508, segment_areas( 2 ) );  % Changed to 2 inches.
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
+    T1 = duct_segment_transfer_matrix( f, rho0, c, (0.3048 + 0.0762), 0.0020268 );  % Duct - Outlet
+    T2 = [ 1  0;  1/Z_A  1 ];  % Straight Side Branch
+    T3 = duct_segment_transfer_matrix( f, rho0, c, 0.0076, 0.050671 );  % Duct
+    T4 = T2;  % Straight Side Branch
+    T5 = duct_segment_transfer_matrix( f, rho0, c, 2*0.0762, 0.050671 );  % Duct
+    T6 = T2;  % Straight Side Branch
+    T7 = duct_segment_transfer_matrix( f, rho0, c, (0.29718 - 2*0.0762), 0.050671 );  % Duct
+    T8 = T2;  % Straight Side Branch
+    T9 = duct_segment_transfer_matrix( f, rho0, c, (1.8288 + 0.0762), 0.0020268 );  % Duct - Inlet
 
-    k = 2*pi*f/c; 
-        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0508 + L_o ) );  % Changed to 2 inches.
-            T_branch_1 = [ 1  0;  1/Z_A  1 ];
-            T_branch_2 = [ 1  0;  1/Z_A  1 ];
-            T_branch_4 = [ 1  0;  1/Z_A  1 ];
-        %
-        Z3 = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.1016 + L_o ) );  % Changed to 4 inches.
-            T_branch_3 = [ 1  0;  1/Z3  1 ];
-    
-    T_net = T_inlet * T_branch_4 * T_muffler_2 * T_branch_3 * T_branch_2 * T_muffler_1 * T_branch_1 * T_outlet * T_total;
-        T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+    T_net = T9 * T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
 
-    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  0.0020268*T12/(rho0*c)  +  (rho0*c)*T21/0.0020268  +  T22 ) / 2 )^2 );
 
 end
 
@@ -237,7 +237,7 @@ TL_partd = TL;
 
 %% Plot Transmission Loss Profiles
 
-Y_LIMITS = [ -20  240 ];
+Y_LIMITS = [ -5  320 ];
 
 h_figure_1 = figure( ); ...
     plot( frequency_set, TL_parta, 'LineWidth', 1.0, 'LineStyle', ':', 'Color', 'r' );  hold on;
@@ -256,26 +256,26 @@ h_figure_1 = figure( ); ...
         Ax.XAxis.TickLabelInterpreter = 'latex';
         Ax.YAxis.TickLabelInterpreter = 'latex';
     %
-    % axis( [ -50  5e3+50  Y_LIMITS ] );
+    axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
-% Y_LIMITS = [ -20  240 ];
-% 
-% h_figure_2 = figure( ); ...
-%     plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'k' );  hold on;
-%     plot( frequency_set, TL_partd, 'LineWidth', 0.6, 'LineStyle', '--', 'Color', 'k' );  grid on;
-%         legend( ...
-%             'Cascaded Double-tuned Expansion Chamber', ...
-%             'Modified Cascaded Double-tuned Expansion Chamber', ...
-%             'Location', 'SouthOutside' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-%     title( 'Transmission Loss Profiles - Cascaded and Modified Double-tuned Cascaded Systems' );
-%     %
-%     Ax = gca;
-%         Ax.XAxis.TickLabelInterpreter = 'latex';
-%         Ax.YAxis.TickLabelInterpreter = 'latex';
-%     %
-%     axis( [ -50  5e3+50  Y_LIMITS ] );
+Y_LIMITS = [ -5  315 ];
+
+h_figure_2 = figure( ); ...
+    plot( frequency_set, TL_partc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'k' );  hold on;
+    plot( frequency_set, TL_partd, 'LineWidth', 0.6, 'LineStyle', '--', 'Color', 'b' );  grid on;
+        legend( ...
+            'Cascaded Double-tuned Expansion Chamber', ...
+            'Modified Cascaded Double-tuned Expansion Chamber', ...
+            'Location', 'SouthOutside' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Transmission Loss Profiles - Cascaded and Modified Double-tuned Cascaded Systems' );
+    %
+    Ax = gca;
+        Ax.XAxis.TickLabelInterpreter = 'latex';
+        Ax.YAxis.TickLabelInterpreter = 'latex';
+    %
+    axis( [ -50  5e3+50  Y_LIMITS ] );
 
 
 
