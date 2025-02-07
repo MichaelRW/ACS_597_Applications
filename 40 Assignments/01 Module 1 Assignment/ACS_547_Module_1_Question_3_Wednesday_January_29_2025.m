@@ -19,6 +19,8 @@
 close all; clear; clc;
 % restoredefaultpath;
 
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
 % addpath( genpath( '' ), '-begin' );
 addpath( genpath( '../00 Support' ), '-begin' );
 
@@ -131,26 +133,42 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];
 
 
-    OFFSET = 0.006;
+    % All holes covered.
+    % 523 Hz - Length of pip is 0.235 meters.
+
+    % First hole uncovered (all other holes are covered).
+    % 698 Hz - Placement of first hole is 38.25 mm from the pipe end.
+
+    % Second hole uncovered (all other holes are covered).
 
 
     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
     R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, 0.5, 0 );
         Z_A = Z_A + R_A;  
-            Z_A = Z_A * 1e-6;  ZA( frequency_index ) = Z_A;
+            %
+            % Z_A = Z_A * 1e-6;
+            Z_A = Z_A ;
+            %
+            ZA( frequency_index ) = Z_A;
             T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
-    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct - Outlet
+    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.0205, pipe_area );  % Duct - Outlet
 
     T2 = [ 1 0;  0 1 ];  % Hole
-    T2 = T_Hole;
+    % T2 = T_Hole;
 
-    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + OFFSET, pipe_area );  % Duct
+    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.0205, pipe_area );  % Duct
+
     T4 = [ 1 0;  0 1 ];  % Hole
-    T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
-    T6 = [ 1 0;  0 1 ];  % Hole
-    T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    % T4 = T_Hole;
+
+    T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.01262, pipe_area );  % Duct
+
+    % T6 = [ 1 0;  0 1 ];  % Hole
+    T6 = T_Hole;
+
+    T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.01501, pipe_area );  % Duct
     T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
 
     
@@ -166,6 +184,8 @@ end
 
 A_partb = A;  clear A;
 
+[ max_value, max_index ] = max( A_partb );
+    frequency_set( max_index )
 
 figure( ); ...
     plot( frequency_set, A_partb );  grid on;
@@ -263,14 +283,14 @@ figure( ); ...
 
 %% Clean-up
 
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 2, 2, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 1 );
-        end
-end
+% if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+%     monitors = get( 0, 'MonitorPositions' );
+%         if ( size( monitors, 1 ) == 1 )
+%             autoArrangeFigures( 2, 2, 1 );
+%         elseif ( 1 < size( monitors, 1 ) )
+%             autoArrangeFigures( 2, 2, 1 );
+%         end
+% end
 
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
