@@ -116,6 +116,7 @@ annulus_area_squared_meters = pi/4 * ( 0.254^2 - 0.0508^2 );
 
 L_o = 0;  % Assume that the Lo extension is neglible.
 
+
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
 
@@ -135,6 +136,7 @@ for frequency_index = 1:1:nFreq
                 T_branch_2 = T_branch_1;
 
     T_net = T_inlet * T_branch_2 * T_muffler * T_branch_1 * T_outlet * T_total;
+
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
@@ -159,33 +161,36 @@ TL_partb = TL;
 
 %% Part c - Cascaded, Double-tuned Expansion Chamber
 
+annulus_area_squared_meters = pi/4 * ( 0.254^2 - 0.0508^2 );
+
+L_o = 0;  % Assume that the Lo extension is neglible.
+
+
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
 
 for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
+        k = 2*pi*f/c;
+            Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( 0.0762 + L_o ) );
     
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 1 ), segment_areas ( 1 ) );
-    T_muffler_1 = duct_segment_transfer_matrix( f, rho0, c, ( segment_lengths(2) - 4*segment_lengths(4) )/2, segment_areas( 2 ) );
+    T1 = duct_segment_transfer_matrix( f, rho0, c, (0.3048 + 0.0762), 0.0020268 );  % Duct - Outlet
+    T2 = [ 1  0;  1/Z_A  1 ];  % Straight Side Branch
+    T3 = duct_segment_transfer_matrix( f, rho0, c, (0.2286 - 2*0.0762), 0.050671 );  % Duct
+    T4 = T2;  % Straight Side Branch
+    T5 = duct_segment_transfer_matrix( f, rho0, c, 2*0.0762, 0.050671 );  % Duct
+    T6 = T2;  % Straight Side Branch
+    T7 = T3;  % Duct
+    T8 = T2;  % Straight Side Branch
+    T9 = duct_segment_transfer_matrix( f, rho0, c, (1.8288 + 0.0762), 0.0020268 );  % Duct - Inlet
 
-    T_muffler_2 = duct_segment_transfer_matrix( f, rho0, c, ( segment_lengths(2) - 4*segment_lengths(4) )/2, segment_areas( 2 ) );
-    T_inlet = duct_segment_transfer_matrix( f, rho0, c, segment_lengths( 3 ), segment_areas( 3 ) );
-    
-    k = 2*pi*f/c;
-        Z_A = -1j*rho0*c/annulus_area_squared_meters*cot(k * ( dimensions.overhang + L_o ) );
-            T_branch_1 = [ 1  0;  1/Z_A  1 ];
-            T_branch_2 = [ 1  0;  1/Z_A  1 ];
-            T_branch_3 = [ 1  0;  1/Z_A  1 ];
-            T_branch_4 = [ 1  0;  1/Z_A  1 ];
-    
-    T_net = T_inlet * T_branch_4 * T_muffler_2 * T_branch_3 * T_branch_2 * T_muffler_1 * T_branch_1 * T_outlet * T_total;
-        T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+    T_net = T9 * T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
 
-    % Z = open_end_impedance( f, rho0, c, segment_lengths( 1 ), segment_areas( 1 ), outlet_flanged );
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  segment_areas(3)*T12/(rho0*c)  +  (rho0*c)*T21/segment_areas(1)  +  T22 ) / 2 )^2 );
+    T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
+        TL( frequency_index ) = 10 * log10( abs( ( T11  +  0.0020268*T12/(rho0*c)  +  (rho0*c)*T21/0.0020268  +  T22 ) / 2 )^2 );
 
 end
 
@@ -237,13 +242,13 @@ Y_LIMITS = [ -20  240 ];
 h_figure_1 = figure( ); ...
     plot( frequency_set, TL_parta, 'LineWidth', 1.0, 'LineStyle', ':', 'Color', 'r' );  hold on;
     plot( frequency_set, TL_partb, 'LineWidth', 0.9, 'LineStyle', '--', 'Color', 'b' );
-    % plot( frequency_set, TL_partc, 'LineWidth', 0.9, 'LineStyle', '-', 'Color', 'k' );  grid on;
+    plot( frequency_set, TL_partc, 'LineWidth', 0.9, 'LineStyle', '-', 'Color', 'k' );  grid on;
     grid on;
-        % legend( ...
-        %     'Simple Expansion Chamber', ...
-        %     'Double-tuned Expansion Chamber', ...
-        %     'Cascaded Double-tuned Expansion Chamber', ...
-        %     'Location', 'SouthOutside' );
+        legend( ...
+            'Simple Expansion Chamber', ...
+            'Double-tuned Expansion Chamber', ...
+            'Cascaded Double-tuned Expansion Chamber', ...
+            'Location', 'SouthOutside' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Transmission Loss Profiles' );
     %
