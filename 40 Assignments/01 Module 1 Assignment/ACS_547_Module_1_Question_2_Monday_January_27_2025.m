@@ -290,17 +290,11 @@ if ( ~isempty( findobj( 'Type', 'figure' ) ) )
         end
 end
 
-
 if ( PRINT_FIGURES == 1 )
         exportgraphics( h_figure_1, 'Assignment 1 - Question 2 Figure All TL Profiles.pdf', 'Append', true );
         exportgraphics( h_figure_2, 'Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf', 'Append', true );
 end
 
-
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
-
-
-
-%% Reference(s)
 
 

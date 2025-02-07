@@ -170,16 +170,10 @@ if ( ~isempty( findobj( 'Type', 'figure' ) ) )
         end
 end
 
-
 if ( PRINT_FIGURES == 1 )
     saveas( gcf, 'Cut-on Frequency Versus Temperature - Sunday, January 19, 2025.pdf' );
 end
 
-
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
-
-
-
-%% Reference(s)
 
 
