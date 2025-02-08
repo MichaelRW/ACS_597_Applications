@@ -19,15 +19,13 @@
 close all; clear; clc;
 % restoredefaultpath;
 
-set( 0, 'DefaultFigureWindowStyle', 'docked' );
-
 % addpath( genpath( '' ), '-begin' );
 addpath( genpath( '../00 Support' ), '-begin' );
 
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -111,20 +109,59 @@ A_parta = A;  clear A;
 
 %% Part b
 
-L_o = 0.001;  % See Lecture 3, Slide 16
-    L_e = 0.004 + 2*L_o;  %Lecture 3, Slide 16
+epsilon = 0.006 / 0.004;  % Diameter of the hold divided by diameter of pipe section (1.5).
 
-epsilon = 0.5;
+switch ( 3 )
+
+    case 0  % Original Value
+
+        L_o = 0.00001;  % Estimate
+            L_e = 0.004 + 2*L_o;
+
+        fprintf( 1, '\nZero - Percentage change in pipe thickness:  %3.1f%%.\n\n', ( L_e - 0.004 ) / 0.004 * 100 );
+
+    case 1  % Ingard (2010)
+
+        a = 0.006 / 2;
+
+        L_o = ( 0.6*a + 0.85*a ) / 2;
+            L_e = 0.004 + 2*L_o;
+
+        fprintf( 1, '\nIngard (2010) - Percentage change in pipe thickness:  %3.1f%%.\n\n', ( L_e - 0.004 ) / 0.004 * 100 );
+
+    case 2  % Kurze and Riedel (2013)
+
+        e = epsilon^2;
+
+        a = 0.006 / 2;
+
+        L_o = pi*a*( 1 - 1.47*e^0.5 + 0.47*e^1.5 );
+            L_e = 0.004 + 2*L_o;
+
+        fprintf( 1, '\nKurze and Riedel (2013) - Percentage change in pipe thickness:  %3.1f%%.\n\n', ( L_e - 0.004 ) / 0.004 * 100 );
+
+    case 3  % Ji (2005)
+
+        a = 0.006 / 2;
+
+        L_o = a*( 0.9326 - 0.6196*epsilon);
+            L_e = 0.004 + 2*L_o;
+
+        fprintf( 1, '\nJi (2005) - Percentage change in pipe thickness:  %3.1f%%.\n\n', ( L_e - 0.004 ) / 0.004 * 100 );
+
+    otherwise
+        error ( '*** Invalid SWITCH Index ***' );
+
+end
 
 
 duct_lengths = 0.235/4 * ones( 4, 1 );
-
 
 frequency_set = 0:0.1:2e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
-    ZA = zeros( nFreq, 1 );
+    ZA_real = zeros( nFreq, 1 );  ZA_imaginary = zeros( nFreq, 1 );
 
 for frequency_index = 1:1:nFreq
 
@@ -134,41 +171,65 @@ for frequency_index = 1:1:nFreq
 
 
     % All holes covered.
-    % 523 Hz - Length of pip is 0.235 meters.
+    % 523 Hz - Length of pipe is 0.235 meters.
 
     % First hole uncovered (all other holes are covered).
-    % 698 Hz - Placement of first hole is 38.25 mm from the pipe end.
+    % 698 Hz - Placement of first hole is 38.25 mm from the end of the pipe.
+
 
     % Second hole uncovered (all other holes are covered).
+    % 880 Hz - Placement of the second hole is mm from the end of the pipe.
+
+
+    % Third hold uncovered (all other holes are covered).
+    % 1046 Hz - Placement of the third hole is mm from the end of the pipe.
 
 
     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
-    R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, 0.5, 0 );
-        Z_A = Z_A + R_A;  
-            %
-            % Z_A = Z_A * 1e-6;
-            Z_A = Z_A ;
-            %
-            ZA( frequency_index ) = Z_A;
+        ZA_imaginary( frequency_index ) = Z_A;
+    %
+    R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, epsilon, 0 );
+        ZA_real( frequency_index ) = R_A;
+    %
+    % Z_A = Z_A + R_A;
+    Z_A = R_A;
+        Z_A = Z_A * 1e-7;
             T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
-    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.0205, pipe_area );  % Duct - Outlet
 
-    T2 = [ 1 0;  0 1 ];  % Hole
-    % T2 = T_Hole;
+    if ( 0 )  % Hole 1 - 1 open and 0 closed.
+        T2 = T_Hole;
+        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.0206, pipe_area );  % Duct - Outlet
+        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.0206, pipe_area );  % Duct
+    else
+        T2 = [ 1 0;  0 1 ];  % Hole
+        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct - Outlet
+        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    end    
 
-    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.0205, pipe_area );  % Duct
 
-    T4 = [ 1 0;  0 1 ];  % Hole
-    % T4 = T_Hole;
+    if ( 0 )  % Hole 2 - 1 open and 0 closed.
+        T4 = T_Hole;
+        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.01262, pipe_area );  % Duct
+    else
+        T4 = [ 1 0;  0 1 ];  % Hole
+        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    end
 
-    T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.01262, pipe_area );  % Duct
 
-    % T6 = [ 1 0;  0 1 ];  % Hole
-    T6 = T_Hole;
+    if ( 0 )  % Hole 3 - 1 open and 0 closed.
+        T6 = T_Hole;
+        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.01501, pipe_area );  % Duct
+    else
+        T6 = [ 1 0;  0 1 ];  % Hole
+        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+    end
+    
+    
 
-    T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.01501, pipe_area );  % Duct
+    
+
     T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
 
     
@@ -184,8 +245,8 @@ end
 
 A_partb = A;  clear A;
 
-[ max_value, max_index ] = max( A_partb );
-    frequency_set( max_index )
+% [ max_value, max_index ] = max( A_partb );
+%     frequency_set( max_index )
 
 figure( ); ...
     plot( frequency_set, A_partb );  grid on;
@@ -193,9 +254,11 @@ figure( ); ...
     title( 'Amplification Versus Recorder Length' );
 
 
-% figure( ); ...
-%     semilogy( frequency_set, abs( ZA )  );  grid on;
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+figure( ); ...
+    semilogy( frequency_set, ZA_real  );  hold on;
+    semilogy( frequency_set, imag( ZA_imaginary )  );  grid on;
+        legend( 'Real Part', 'Imaginary Par' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
 
 return
 
