@@ -155,9 +155,13 @@ switch ( 3 )
 end
 
 
-duct_lengths = 0.235/4 * ones( 4, 1 );
+% All holes covered.
+% 523 Hz - Length of pipe is 0.235 meters.
 
-frequency_set = 0:0.1:2e3;
+duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz
+
+
+frequency_set = 0:1:2e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -170,68 +174,52 @@ for frequency_index = 1:1:nFreq
     T_total = [ 1 0; 0 1 ];
 
 
-    % All holes covered.
-    % 523 Hz - Length of pipe is 0.235 meters.
-
-    % First hole uncovered (all other holes are covered).
-    % 698 Hz - Placement of first hole is 38.25 mm from the end of the pipe.
-
-
-    % Second hole uncovered (all other holes are covered).
-    % 880 Hz - Placement of the second hole is mm from the end of the pipe.
-
-
-    % Third hold uncovered (all other holes are covered).
-    % 1046 Hz - Placement of the third hole is mm from the end of the pipe.
-
-
     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
         ZA_imaginary( frequency_index ) = Z_A;
     %
     R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, epsilon, 0 );
         ZA_real( frequency_index ) = R_A;
     %
-    % Z_A = Z_A + R_A;
-    Z_A = R_A;
+    Z_A = Z_A + R_A;
+    % Z_A = R_A;
         Z_A = Z_A * 1e-7;
             T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
 
-    if ( 0 )  % Hole 1 - 1 open and 0 closed.
+    if ( 1 )  % Hole 1 - 1 open and 0 closed.
         T2 = T_Hole;
-        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.0206, pipe_area );  % Duct - Outlet
-        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.0206, pipe_area );  % Duct
+            OFFSET = 0.0430;  % 696
+        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + OFFSET, pipe_area );  % Duct - Outlet
+        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(3) - OFFSET, pipe_area );  % Duct
     else
         T2 = [ 1 0;  0 1 ];  % Hole
         T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct - Outlet
-        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(3), pipe_area );  % Duct
     end    
 
 
     if ( 0 )  % Hole 2 - 1 open and 0 closed.
         T4 = T_Hole;
-        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - 0.01262, pipe_area );  % Duct
+            OFFSET = 0.0576;  % 880
+        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct
     else
         T4 = [ 1 0;  0 1 ];  % Hole
-        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(2), pipe_area );  % Duct
     end
 
 
     if ( 0 )  % Hole 3 - 1 open and 0 closed.
         T6 = T_Hole;
-        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + 0.01501, pipe_area );  % Duct
+            OFFSET = 0.00100;  % 
+        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct
     else
         T6 = [ 1 0;  0 1 ];  % Hole
-        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct
+        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(1), pipe_area );  % Duct
     end
-    
-    
-
     
 
     T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
-
     
     T_total =  T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
 
@@ -243,104 +231,20 @@ for frequency_index = 1:1:nFreq
 end
 
 
-A_partb = A;  clear A;
-
-% [ max_value, max_index ] = max( A_partb );
-%     frequency_set( max_index )
+[ max_value, max_index ] = max( A );
+    frequency_set( max_index )
 
 figure( ); ...
-    plot( frequency_set, A_partb );  grid on;
+    plot( frequency_set, A );  grid on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
     title( 'Amplification Versus Recorder Length' );
 
 
-figure( ); ...
-    semilogy( frequency_set, ZA_real  );  hold on;
-    semilogy( frequency_set, imag( ZA_imaginary )  );  grid on;
-        legend( 'Real Part', 'Imaginary Par' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-
-return
-
-%% Part b Verification
-
-% a = 0.009 / 2;  % Meters
-%     L_o = 0.61*a;  % Slide 18 of Lecture 2 slide set.
-% 
-% f = 698;  % Hz
-%     k = 2*pi*f/c;  % The wave number for the respective frequency.    
-% 
-% S = pi/4*(0.009)^2;  % squared-meters
-% 
-% 
-% f = 0:1:5e3;
-% 
-% nFreq = length( f );
-%     A = zeros( nFreq, 1 );
-% 
-% 
-% L1 = 0.2
-%     L2 = 0.325 - L1;
-% 
-% 
-% for iFreq = 1:1:nFreq
-% 
-%     k = 2*pi*f(iFreq)/c;
-% 
-%     T_total = [ 1 0; 0 1 ];
-% 
-%     % End duct.
-%     T_1 = [ ...
-%     cos(k*L1),                           1j*rho0*c/S*sin(k*L1); ...
-%     1j*S/(rho0*c)*sin(k*L1),      cos(k*L1) ...
-%     ];
-% 
-% 
-%     % Orifice side branch.
-%     epsilon = 0.006 / 0.009;  % 0.67
-%         a = 0.006 / 2;
-% 
-%     L_o = a * ( 0.9326 - 0.6196*epsilon );  % Lecture 3, Slide 11
-%         L_e = 0.004 + 2*L_o;
-%     %
-%     Z_A = 1j * rho0 * 2 * pi * f(iFreq) * L_e / ( pi*0.006^2/4 );
-%         T_Branch = [ 1  0;  1/Z_A  1 ];
-%     %
-%     % R_A is neglected (energy loss).
-% 
-% 
-%     % Front duct.
-%     T_2 = [ ...
-%     cos(k*L2),                           1j*rho0*c/S*sin(k*L2); ...
-%     1j*S/(rho0*c)*sin(k*L2),      cos(k*L2) ...
-%     ];
-% 
-% 
-%     T_total = T_2 * T_Branch * T_1 * T_total;    
-% 
-%     T11 = T_total(1, 1);  T12 = T_total(1, 2);
-%         A( iFreq ) = -10*log10( abs( T11 + T12 / Z )^2 );
-% 
-% end
-% 
-% 
 % figure( ); ...
-%     plot( f, A );  grid on;
+%     semilogy( frequency_set, ZA_real  );  hold on;
+%     semilogy( frequency_set, imag( ZA_imaginary )  );  grid on;
+%         legend( 'Real Part', 'Imaginary Par' );
 %     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-%     title( 'Amplification Versus Frequency' );
-
-
-
-%% Plot Amplification Profiles
-
-figure( ); ...
-    plot( frequency_set, A );  hold on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-        legend( ...
-                'Simple Expansion Chamber', ...
-                'Double-tuned Expansion Chamber', ...
-                'Cascaded Double-tuned Expansion Chamber', ...
-                'Location', 'SouthOutside' );
 
 
 
