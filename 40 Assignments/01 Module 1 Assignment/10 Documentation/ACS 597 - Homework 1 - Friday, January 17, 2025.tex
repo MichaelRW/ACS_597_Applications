@@ -4,6 +4,7 @@
 \documentclass[letter, 11pt, margins=0.25in]{texMemo}  % The texMemo package by Rob Oakes.
 
 \usepackage{amsmath}
+\usepackage{color, soul}
 \usepackage[colorlinks=true, citecolor=blue]{hyperref}
 \usepackage{enumitem}
 \usepackage{graphicx, lipsum}
@@ -11,9 +12,15 @@
 \usepackage[LGRgreek]{mathastext}
 
 \usepackage{matlab-prettifier}
+\usepackage{multirow}
 
 \usepackage{natbib}
 \bibliographystyle{apalike}
+
+\usepackage[table]{xcolor}
+\definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{Gray}{gray}{0.85}
 
 
 \memodate{\today~(Submitted)}
@@ -270,11 +277,39 @@ These modifications change the symmetry of the cascaded system, and allow the re
 
 Diameters of holes should be smaller than a wavelength.
 
-$R_A$ is neglected (energy loss).
+
+
+
+
 
 \subsection*{Problem 3a}
 
 \subsection*{Problem 3b}
+
+Table~\ref{table:holePlacementSummary} summarizes the 
+
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | c | }
+            \hline
+            \textbf{Note}  &  \textbf{Frequency [Hz]}  &  \textbf{Distance from End of Pipe [mm]}  \\
+            \hline
+                C5  &  523      &  0  \\
+                \rowcolor{Gray}
+                F5  &  698      &  0  \\
+                A5  &  880      &  0  \\
+                \rowcolor{Gray}
+                C6  &  1,046    &  0  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Measured $L_{Slow,A}$ sound pressure levels.  Distance between the SLM and sound source was approximately 0.3 meters.  The sound level of the quiet room was approximately 30.0 dB SPL A.}
+    \label{table:holePlacementSummary}
+\end{table}
 
 
 

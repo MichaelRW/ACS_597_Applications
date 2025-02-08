@@ -187,7 +187,7 @@ for frequency_index = 1:1:nFreq
 
 
 
-    if ( 1 )  % Hole 1 - 1 open and 0 closed.
+    if ( 0 )  % Hole 1 - 1 open and 0 closed.
         T2 = T_Hole;
             OFFSET = 0.0430;  % 696
         T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + OFFSET, pipe_area );  % Duct - Outlet
