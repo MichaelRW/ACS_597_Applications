@@ -159,7 +159,6 @@ for frequency_index = 1:1:nFreq
         T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
-
     switch ( 0 )
 
         case 0  % All holes covered.  523 Hz

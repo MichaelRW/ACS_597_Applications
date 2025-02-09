@@ -1,36 +1,15 @@
 
 
+
 %% Synopsis
 
 % Question 4 - Intake Duct
 
 
 
-%% To Do
-
-% Check loss profile.
-
-% Implement the loss Helmholtz resonator.
-
-
-
-%% Note(s)
-
-% Search for FIXMEs.
-
-
-% In class note, the areas for the impedance might have bee wrong;  switch them?
-
-
-% Use negative Mach numbers in the equations.  The analysis for this case
-% is the same as for the horn example.  Inlet on the left, outlet on the
-% right.
-
-
-
 %% Environment
 
-close all; clear; clc;
+% close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -62,94 +41,69 @@ h_area = @( diameter)  pi * diameter^2 / 4;
 %% Define Shape
 
 % Source
-duct_1.diameter_meters = 0.0254;  % 1 inch
-duct_1.length_meters = 0.1524;  % 6 inches
-duct_1.area = h_area( duct_1.diameter_meters );
+duct_1.diameter_meters = 0.0254;  % meters
+    duct_1.area = h_area( duct_1.diameter_meters );  % squared-meters
+duct_1.length_meters = 0.1524;  % meters
+    
 
 % Outlet
 duct_2.diameter_meters = 0.1016;  % 4 inches
+    duct_2.area = h_area( duct_2.diameter_meters );
 duct_2.length_meters = 0.127;  % 5 inches
-duct_2.area = h_area( duct_2.diameter_meters );
-%
-% Flanged.
 
-%
+% Flanged.
 
 flow_rate_cubic_meters_per_second = 1.04772 / 60;  % or 37 cubic-feet per minute
 
-% return
 
-%% Part a
+
+%% Part a - Mach Numbers
 
 % Calculate the Mach number of the flow in both pip sections.
 
-duct_1.Mach = -1.0 * flow_rate_cubic_meters_per_second / (pi * duct_1.diameter_meters^2 / 4 ) / c;  % 0.100 unitless
-duct_2.Mach = -1.0 * flow_rate_cubic_meters_per_second / (pi * duct_2.diameter_meters^2 / 4 ) / c;  % 0.00628 unitless
+duct_1.Mach = -1.0 * flow_rate_cubic_meters_per_second / ( (pi * duct_1.diameter_meters^2 / 4 ) * c );  % 0.100 unitless
+duct_2.Mach = -1.0 * flow_rate_cubic_meters_per_second / ( (pi * duct_2.diameter_meters^2 / 4 ) * c );  % 0.00628 unitless
 
-% return
 
-%% Part b
 
-% No flow.
+%% Part b - No Flow in Intake System
 
 outlet_flanged = true;  % Flanged end.
 
 
-TEST_FLAG = 1;  % 1: right-to-left.
-
-frequency_set = 0:0.1:2.5e3;
+frequency_set = 0:1:2.5e3;
     nFreq = length( frequency_set );
         TL = zeros( nFreq, 1 );
-
 
 for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
 
-
     T_total = [ 1 0; 0 1 ];
 
+    T1 = duct_segment_transfer_matrix( f, rho0, c, duct_2.length_meters, duct_2.area );
+    T2 = [ 1  0; 0  duct_2.area/duct_1.area ];
+    T3 = duct_segment_transfer_matrix( f, rho0, c, duct_1.length_meters, duct_1.area );
 
-    if ( TEST_FLAG == 1 )
-        
-        % Right-to-left.
-        %
-        T_outlet = duct_segment_transfer_matrix( f, rho0, c, duct_2.length_meters, duct_2.area );
-        T_contraction = [ 1  0; 0  duct_2.area/duct_1.area ];
-        T_inlet = duct_segment_transfer_matrix( f, rho0, c, duct_1.length_meters, duct_1.area );
+    T_net = T3 * T2 * T1 * T_total;
 
-        Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
-
-    else
-
-        % Left-to-right.
-        %
-        T_outlet = duct_segment_transfer_matrix( f, rho0, c, duct_1.length_meters, duct_1.area );
-        T_contraction = [ 1  0; 0  duct_1.area/duct_2.area ];
-        T_inlet = duct_segment_transfer_matrix( f, rho0, c, duct_2.length_meters, duct_2.area );
-
-        Z = open_end_impedance( f, rho0, c, duct_1.length_meters, duct_1.area, outlet_flanged );
-
-    end
-
-
-    T_net = T_inlet * T_contraction * T_outlet * T_total;
-
+    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
 
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
-
-    if ( TEST_FLAG == 1 )
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
-    else
-        TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_2.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_1.area  +  T22 ) / 2 )^2 );
-    end
 
+end
 
-end  % End:  for f = frequency_set
 
 TL_part_b = TL;
 
-% return
+
+figure( ); ...
+    plot( frequency_set, TL_part_b );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Transmission Loss Profile for Instake System with No Flow' );
+
+return
 
 %% Part c
 
