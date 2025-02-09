@@ -49,7 +49,7 @@ h_R_A = @( rho0, c , S, k, delta_mu, D, w, h ) ...
 h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k * sqrt( (2*3.178e-5) / (rho0*w) ) * D * 0.004 ) / (2*S) *1.4364 );
 
 h_RA_term_2 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
-    ( rho0*c/S )  *  0.288*k*delta_mu*log10((4*S)/(pi*h^2));
+    ( rho0*c/S )  *  0.288*k*3.178e-5*log10((4*S)/(pi*h^2));
 
 h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
     ( rho0*c/S )  *  (0.5*S*k^2)/(2*pi);
@@ -166,6 +166,9 @@ switch ( 3 )
 end
 
 
+
+ONE_SHOT = 0;
+
 % All holes covered.
 % 523 Hz - Length of pipe is 0.235 meters.
 
@@ -173,7 +176,7 @@ duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz
 
 
 % frequency_set = 0:1:2e3;
-frequency_set = 0:1:1e3;
+frequency_set = 0:0.1:1e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -242,17 +245,24 @@ for frequency_index = 1:1:nFreq
 
         case 3  % Hole 3
 
-            % OFFSET = 0.005;  % 882
-            % OFFSET = 0.01;  % 862
-            % OFFSET = 0.02;  % 823
+            if ( ONE_SHOT == 0 )
+                fprintf( 1, '\n\nHole 3 open (all other holes are closed.\n\n' );
+                ONE_SHOT = 1;
+            end
+
+            o = -0.015095;
+            % o = -0.015; % 945.6
+            % o = -0.01;  % 939;
+            % o = -0.02;  % 938
+            % o = -0.03;  % 904
 
             T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
             T2 = [ 1 0;  0 1 ];  % Hole
             T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
             T4 = [ 1 0;  0 1 ];  % Hole
-            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + OFFSET, pipe_area );  % Duct
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + o, pipe_area );  % Duct
             T6 = T_Hole;
-            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - OFFSET, pipe_area );  % Duct
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - o, pipe_area );  % Duct
 
     end
     
