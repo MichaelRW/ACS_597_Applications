@@ -275,18 +275,40 @@ These modifications change the symmetry of the cascaded system, and allow the re
 \newpage
 \section*{Problem 3 - Bugle Recorder}
 
-Diameters of holes should be smaller than a wavelength.
 
-
-
-
-
-
+\vspace{-0.25cm}
 \subsection*{Problem 3a}
 
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
+
+Table~\ref{table:mouthpieceAndPip} lists the length of the pipe section and the mouthpiece.
+
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | }
+            \hline
+            \textbf{Item}  &  \textbf{Length [mm]}  \\
+            \hline
+                Pipe  &  145  \\
+                \hline
+                \rowcolor{Gray}
+                Mouthpiece  &  90  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Determined length of the pipe and length of the mouthpiece.}
+    \label{table:mouthpieceAndPip}
+\end{table}
+
+
+\vspace{-0.25cm}
 \subsection*{Problem 3b}
 
-Table~\ref{table:holePlacementSummary} summarizes the 
+Table~\ref{table:holePlacementSummary} summarizes the placement of the holes for each note relative to the end of the pipe.
 
 \setlength{\abovecaptionskip}{0pt}
 \vspace{0.1cm}
@@ -298,18 +320,26 @@ Table~\ref{table:holePlacementSummary} summarizes the
             \hline
             \textbf{Note}  &  \textbf{Frequency [Hz]}  &  \textbf{Distance from End of Pipe [mm]}  \\
             \hline
-                C5  &  523      &  0  \\
+                C5  &  523      &  n/a  \\
                 \rowcolor{Gray}
-                F5  &  698      &  0  \\
+                F5  &  698      &  87.8  \\
                 A5  &  880      &  0  \\
                 \rowcolor{Gray}
                 C6  &  1,046    &  0  \\
             \hline
         \end{tabular}
     \end{center}
-    \caption{Measured $L_{Slow,A}$ sound pressure levels.  Distance between the SLM and sound source was approximately 0.3 meters.  The sound level of the quiet room was approximately 30.0 dB SPL A.}
+    \caption{Hole placement distances.}
     \label{table:holePlacementSummary}
 \end{table}
+
+
+\vspace{-0.25cm}
+\subsection*{Problem 3 - Comments}
+
+Diameters of holes should be smaller than a wavelength.
+
+Issue with impedance.
 
 
 

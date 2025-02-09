@@ -42,8 +42,19 @@ rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
 
 
-h_R_A = @( rho0, c , S, k, delta_mu, D, w, gamma, h, epsilon, M ) ...
-    ( rho0*c/S )  * ( ( (k*delta_mu*D*w) / (2*S) )*( 1 + (gamma - 1)*sqrt(5/(3*gamma)) )  +  0.288*k*delta_mu*log10((4*S)/(pi*h^2))  +  (epsilon*S*k^2)/(2*pi)  +  0.7*M );
+h_R_A = @( rho0, c , S, k, delta_mu, D, w, h ) ...
+    ( rho0*c/S )  *  (  ( (k*delta_mu*D*w) / (2*S) )*1.4364   +   0.288*k*delta_mu*log10((4*S)/(pi*h^2))   +   (0.5*S*k^2)/(2*pi)  );
+
+% h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k*delta_mu*D*w) / (2*S) *1.4364 );
+h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k * sqrt( (2*3.178e-5) / (rho0*w) ) * D * 0.004 ) / (2*S) *1.4364 );
+
+h_RA_term_2 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
+    ( rho0*c/S )  *  0.288*k*delta_mu*log10((4*S)/(pi*h^2));
+
+h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
+    ( rho0*c/S )  *  (0.5*S*k^2)/(2*pi);
+
+
 %
 % See Equation 8.34 on page 479 of Bies et al (2024).
 
@@ -161,11 +172,13 @@ end
 duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz
 
 
-frequency_set = 0:1:2e3;
+% frequency_set = 0:1:2e3;
+frequency_set = 0:1:1e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
     ZA_real = zeros( nFreq, 1 );  ZA_imaginary = zeros( nFreq, 1 );
+    term_1_v = zeros( nFreq, 1 );  term_2_v = zeros( nFreq, 1 );  term_3_v = zeros( nFreq, 1 );
 
 for frequency_index = 1:1:nFreq
 
@@ -177,45 +190,70 @@ for frequency_index = 1:1:nFreq
     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
         ZA_imaginary( frequency_index ) = Z_A;
     %
-    R_A = h_R_A( rho0, c, pi/4*(0.006)^2, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 1.4, 0.3, epsilon, 0 );
+    % R_A = h_R_A( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+    
+     term_1 = h_RA_term_1( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f );
+        term_1_v( frequency_index ) = term_1;
+
+
+     term_2 = h_RA_term_2( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+        term_2_v( frequency_index ) = term_2;
+     term_3 = h_RA_term_3( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+        term_3_v( frequency_index ) = term_3;
+    %
+    R_A = term_1 + term_2 + term_3;
+
+    % R_A =  R_A * 1e-5;
         ZA_real( frequency_index ) = R_A;
     %
     Z_A = Z_A + R_A;
-    % Z_A = R_A;
-        Z_A = Z_A * 1e-7;
-            T_Hole = [ 1  0;  1/Z_A  1 ];
+        T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
 
-    if ( 0 )  % Hole 1 - 1 open and 0 closed.
-        T2 = T_Hole;
-            OFFSET = 0.0430;  % 696
-        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) + OFFSET, pipe_area );  % Duct - Outlet
-        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(3) - OFFSET, pipe_area );  % Duct
-    else
-        T2 = [ 1 0;  0 1 ];  % Hole
-        T1 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4), pipe_area );  % Duct - Outlet
-        T3 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(3), pipe_area );  % Duct
-    end    
+    switch ( 3 )
+        
+        case 0  % All holes covered.
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
+            T2 = [ 1 0;  0 1 ];  % Hole
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
+            T4 = [ 1 0;  0 1 ];  % Hole
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
+            T6 = [ 1 0;  0 1 ];  % Hole
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
+        case 1  % Hole 1
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + 0.0290, pipe_area );  % Duct - Outlet
+            T2 = T_Hole;
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - 0.0290, pipe_area );  % Duct
+            T4 = [ 1 0;  0 1 ];  % Hole
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
+            T6 = [ 1 0;  0 1 ];  % Hole
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
-    if ( 0 )  % Hole 2 - 1 open and 0 closed.
-        T4 = T_Hole;
-            OFFSET = 0.0576;  % 880
-        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct
-    else
-        T4 = [ 1 0;  0 1 ];  % Hole
-        T5 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(2), pipe_area );  % Duct
-    end
+        case 2  % Hole 2
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
+            T2 = [ 1 0;  0 1 ];  % Hole
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + 0.0230, pipe_area );  % Duct
+            T4 = T_Hole;
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - 0.0230, pipe_area );  % Duct
+            T6 = [ 1 0;  0 1 ];  % Hole
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
+        case 3  % Hole 3
 
-    if ( 0 )  % Hole 3 - 1 open and 0 closed.
-        T6 = T_Hole;
-            OFFSET = 0.00100;  % 
-        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(4) - OFFSET, pipe_area );  % Duct
-    else
-        T6 = [ 1 0;  0 1 ];  % Hole
-        T7 = duct_segment_transfer_matrix( f, rho0, c, duct_lengths(1), pipe_area );  % Duct
+            % OFFSET = 0.005;  % 882
+            % OFFSET = 0.01;  % 862
+            % OFFSET = 0.02;  % 823
+
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
+            T2 = [ 1 0;  0 1 ];  % Hole
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
+            T4 = [ 1 0;  0 1 ];  % Hole
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + OFFSET, pipe_area );  % Duct
+            T6 = T_Hole;
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - OFFSET, pipe_area );  % Duct
+
     end
     
 
@@ -240,11 +278,45 @@ figure( ); ...
     title( 'Amplification Versus Recorder Length' );
 
 
+% ind_term_2 = ~ismissing( term_2_v );
+% ind_term_3 = ~ismissing( term_3_v );
+% 
 % figure( ); ...
-%     semilogy( frequency_set, ZA_real  );  hold on;
-%     semilogy( frequency_set, imag( ZA_imaginary )  );  grid on;
-%         legend( 'Real Part', 'Imaginary Par' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+%     subplot( 2, 3, 1 ); ...
+%         plot( frequency_set, ZA_real  );  title( 'Real-part of ZA' );
+%     subplot( 2, 3, 2 ); ...
+%         plot( frequency_set, term_1_v, 'LineStyle', '--' );  title( 'Term 1' );
+%     subplot( 2, 3, 3 ); ...
+%         plot( frequency_set( ind_term_2 ), term_2_v( ind_term_2 ), 'LineStyle', ':' );  title( 'Term 2' );
+%     subplot( 2, 3, 4 ); ...
+%         plot( frequency_set( ind_term_3 ), term_3_v( ind_term_3 ) );  title( 'Term 3' );
+%     subplot( 2, 3, 5 ); ...
+%         plot( frequency_set, imag( ZA_imaginary )  );  grid on;
+%
+    % legend( 'Real Part', 'Term 1', 'Term 2', 'Term 3', 'Imaginary Par' );
+    % xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    % set( gca, 'YScale', 'Log' );
+
+return
+
+%% Plot Note Set
+
+load( 'A_C5_Data.mat' );  % Variable(s):  A_C5
+
+
+figure( ); ...
+    plot( frequency_set, A_C5 );  hold on;
+        text( 523, 25, 'C5' );
+    plot( frequency_set, A_C5 );
+        text( 523, 25, 'C5' );
+    plot( frequency_set, A_C5 );
+        text( 523, 25, 'C5' );
+    plot( frequency_set, A_C5 );  grid on;
+        text( 523, 25, 'C5' );
+        %
+        legend( 'C5', 'F5', 'A5', 'C6', 'Location', 'West' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+    title( 'Amplification Versus Recorder Length' );
 
 
 
