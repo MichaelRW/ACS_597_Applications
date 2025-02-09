@@ -19,7 +19,7 @@ function [ T ] = duct_segment_transfer_matrix_flow( f, rho0, c, L, S, mach_numbe
 
 k = 2*pi*f/c;  % The wave number for the respective frequency.
 
-k_c = k / ( 1 - mach_number );
+k_c = k / ( 1 - mach_number^2 );
 
 
 phase_change = exp( -1j*mach_number*k_c*L );

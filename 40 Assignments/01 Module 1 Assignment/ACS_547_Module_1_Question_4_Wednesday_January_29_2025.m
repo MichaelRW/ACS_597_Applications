@@ -9,7 +9,7 @@
 
 %% Environment
 
-% close all; clear; clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -18,7 +18,7 @@ addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -68,7 +68,7 @@ duct_2.Mach = -1.0 * flow_rate_cubic_meters_per_second / ( (pi * duct_2.diameter
 
 %% Part b - No Flow in Intake System
 
-outlet_flanged = true;  % Flanged end.
+% The flange is not considered because transmission loss is calculated.
 
 
 frequency_set = 0:1:2.5e3;
@@ -87,8 +87,6 @@ for frequency_index = 1:1:nFreq
 
     T_net = T3 * T2 * T1 * T_total;
 
-    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
-
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
 
@@ -98,21 +96,13 @@ end
 TL_part_b = TL;
 
 
-figure( ); ...
-    plot( frequency_set, TL_part_b );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Transmission Loss Profile for Instake System with No Flow' );
 
-return
+%% Part c - Flow in Intake System
 
-%% Part c
-
-% Flow present (use Mach numbers).
-
-outlet_flanged = true;  % Flanged end.
+% The flange is not considered because transmission loss is calculated.
 
 
-frequency_set = 0:0.1:2.5e3;
+frequency_set = 0:1:2.5e3;
     nFreq = length( frequency_set );
         TL = zeros( nFreq, 1 );
 
@@ -121,29 +111,32 @@ for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
 
-
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
+    T1 = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
+    T2 = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );    
+    T3 = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
 
-    T_expansion = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );
-    
-    T_inlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
-
-    T_net = T_inlet * T_expansion * T_outlet * T_total;
-    
-    
-    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
+    T_net = T3 * T2 * T1 * T_total;
     
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
  
+end
 
-end  % End:  for f = frequency_set
 
 TL_part_c = TL;
 
-% return
+
+figure( ); ...
+    plot( frequency_set, TL_part_c );  hold on;
+    plot( frequency_set, TL_part_b );  grid on;
+        legend( 'With Flow', 'No Flow', 'Location', 'SouthEast' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Transmission Loss Profile for Intake System with Flow' );
+    ylim( [ -45 45 ] );
+
+return
 
 %% Part d
 
