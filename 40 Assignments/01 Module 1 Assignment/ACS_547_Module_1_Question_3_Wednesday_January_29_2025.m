@@ -7,13 +7,6 @@
 
 
 
-%% Note(s)
-
-% For the lowest frequency, use 1 duct sgement with an open-ended
-% impedance (see the example of the horn in class).
-
-
-
 %% Environment
 
 close all; clear; clc;
@@ -41,35 +34,11 @@ PRINT_FIGURES = 0;
 rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
 
-
-h_R_A = @( rho0, c , S, k, delta_mu, D, w, h ) ...
-    ( rho0*c/S )  *  (  ( (k*delta_mu*D*w) / (2*S) )*1.4364   +   0.288*k*delta_mu*log10((4*S)/(pi*h^2))   +   (0.5*S*k^2)/(2*pi)  );
-
-% h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k*delta_mu*D*w) / (2*S) *1.4364 );
 h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k * sqrt( (2*3.178e-5) / (rho0*w) ) * D * 0.004 ) / (2*S) *1.4364 );
-
-h_RA_term_2 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
-    ( rho0*c/S )  *  0.288*k*3.178e-5*log10((4*S)/(pi*h^2));
-
-h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h ) ...
-    ( rho0*c/S )  *  (0.5*S*k^2)/(2*pi);
-
-
+h_RA_term_2 = @( rho0, c , S, k, delta_mu, D, w, h )  ( rho0*c/S )  *  0.288*k*3.178e-5*log10((4*S)/(pi*h^2));
+h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h )  ( rho0*c/S )  *  (0.5*S*k^2)/(2*pi);
 %
 % See Equation 8.34 on page 479 of Bies et al (2024).
-
-
-
-%% Define Shape
-
-L_mouth_piece = 0.09;  % Meters
-
-pipe.inner_diameter = 0.009;  % Meters
-pipe.thickness = 0.004;  % Meters
-
-% The recorder is unflanged.
-
-hole_diameter = 0.006;  % Meters
 
 
 
@@ -77,9 +46,7 @@ hole_diameter = 0.006;  % Meters
 
 % The estimated total length of the recorder is 0.325 meters.
 
-% The estimated length of the pipe extension is 0.235 meters.
-
-% Estimation was done by trial-and-error.
+% Estimation of hole location was done by trial-and-error.
 
 pipe_net_length = 0.325;
 pipe_area = pi*0.009^2/4;
@@ -166,22 +133,13 @@ switch ( 3 )
 end
 
 
+duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz, all holes covered.
 
-ONE_SHOT = 0;
-
-% All holes covered.
-% 523 Hz - Length of pipe is 0.235 meters.
-
-duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz
-
-aConstant = 3.178e-5;
 
 frequency_set = 0:1:2e3;
 
 nFreq = length( frequency_set );
-    TL = zeros( nFreq, 1 );
-    ZA_real = zeros( nFreq, 1 );  ZA_imaginary = zeros( nFreq, 1 );
-    term_1_v = zeros( nFreq, 1 );  term_2_v = zeros( nFreq, 1 );  term_3_v = zeros( nFreq, 1 );
+    A = zeros( nFreq, 1 );
 
 for frequency_index = 1:1:nFreq
 
@@ -191,29 +149,18 @@ for frequency_index = 1:1:nFreq
 
 
     Z_A = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.006^2/4 );
-        ZA_imaginary( frequency_index ) = Z_A;
     %
-    % R_A = h_R_A( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
-    
-     term_1 = h_RA_term_1( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f );
-        term_1_v( frequency_index ) = term_1;
-
-     term_2 = h_RA_term_2( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
-        term_2_v( frequency_index ) = term_2;
-     term_3 = h_RA_term_3( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
-        term_3_v( frequency_index ) = term_3;
-    %
-    R_A = term_1 + term_2 + term_3;
-
-    % R_A =  R_A * 1e-5;
-        ZA_real( frequency_index ) = R_A;
+    term_1 = h_RA_term_1( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f );
+    term_2 = h_RA_term_2( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+    term_3 = h_RA_term_3( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+        R_A = term_1 + term_2 + term_3;
     %
     Z_A = Z_A + R_A;
         T_Hole = [ 1  0;  1/Z_A  1 ];
 
 
 
-    switch ( 3 )
+    switch ( 0 )
 
         case 0  % All holes covered.  523 Hz
             T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
@@ -281,6 +228,11 @@ for frequency_index = 1:1:nFreq
 end
 
 
+% figure( ); ...
+%     plot( frequency_set, A );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
+
+
 
 %% Plot Note Set
 
@@ -290,19 +242,19 @@ load( 'A_A5_Data.mat' );  % Variable(s):  A_A5
 load( 'A_C6_Data.mat' );  % Variable(s):  A_C6
 
 
-figure( ); ...
+h_figure_1 = figure( ); ...
     plot( frequency_set, A_C5 );  hold on;
         text( 523, 25, 'C5' );
     plot( frequency_set, A_F5 );
-        text( 523, 25, 'C5' );
+        text( 698, -1, 'F5' );
     plot( frequency_set, A_A5 );
-        text( 523, 25, 'C5' );
+        text( 880, -14, 'A5' );
     plot( frequency_set, A_C6 );  grid on;
-        text( 523, 25, 'C5' );
+        text( 1042, -23, 'C6' );
         %
-        legend( 'C5', 'F5', 'A5', 'C6', 'Location', 'West' );
+        legend( 'C5, 523 Hz', 'F5, 698 Hz', 'A5, 880 Hz', 'C6, 1046 Hz', 'Location', 'NorthWest' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Amplification Versus Recorder Length' );
+    title( 'Notes Spectrums for a Bugle Recorder' );
 
 
 
@@ -317,6 +269,9 @@ if ( ~isempty( findobj( 'Type', 'figure' ) ) )
         end
 end
 
+if ( PRINT_FIGURES == 1 )
+        exportgraphics( h_figure_1, 'Assignment 1 - Question 3 Bugle Recorder Note Spectrums.pdf', 'Append', true );
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
