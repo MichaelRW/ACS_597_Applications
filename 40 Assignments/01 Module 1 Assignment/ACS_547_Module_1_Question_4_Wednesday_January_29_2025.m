@@ -128,47 +128,35 @@ end
 TL_part_c = TL;
 
 
-figure( ); ...
-    plot( frequency_set, TL_part_c );  hold on;
-    plot( frequency_set, TL_part_b );  grid on;
-        legend( 'With Flow', 'No Flow', 'Location', 'SouthEast' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Transmission Loss Profile for Intake System with Flow' );
-    ylim( [ -45 45 ] );
 
-return
+%% Part d - Add a Lossy Helmholtz Resonator
 
-%% Part d
-
-% Flow present (use Mach numbers).
-% Helmholtz resonator in place (between lefthand duct and expansion).
-
-outlet_flanged = true;  % Flanged end.
+% Use volume to tune resonator.
 
 
-% Resonance
-w_o = 2*pi*136.6;  % Estimated from plot.
+w_o = 2*pi*129;  % Target resonate frequency;  estimated from plot.
+
+d_cavity = 5*0.0254;  % meters
+d_neck = 0.0254;  % meters
+L_neck = 5*0.0254;  % meters
+
+S = d_neck^2*pi / 4;
 
 
-% helmholtz_diameter_cavity = 
-% helmholtz_diameter_neck = 1e-3;
-%     helmholtz_L01 = 0.82 * ( 1 - 1.33*(helmholtz_diameter_neck/helmholtz_diameter_cavity ) );
-%     %
-%     epsilon = helmholtz_diameter_cavity / duct_1.length_meters;
-%     % helmholtz_L02 = 
-% 
-% helmholtz_volume = 1e-3;
-% 
-% % keyboard
-% 
-% helmholtz_L_neck = 1e-3;
-% Q = 2;
-% 
-% R_A = rho0*c / Q * sqrt( L_e / ( pi*helmholtz_diameter_neck^2/4 * helmholtz_volume ) );
+Lo1 = 0.82 * ( 1 - 1.33*( d_neck / d_cavity ) );
+Lo2 = 0.1;
+    Le = L_neck + Lo1 + Lo2;
+
+V = S / ( (w_o/c)^2 * Le );
+
+
+R_A = rho0*c / 10 * sqrt( Le / ( S * V ) );
+
+h_Z_A = @( f, Le, S, V, R_A )  1j*rho0*2*pi*f*Le/S  -  1j*rho0*c^2/(V*2*pi*f)  +  R_A;
 
 
 
-frequency_set = 0:0.1:2.5e3;
+frequency_set = 0:1:2.5e3;
     nFreq = length( frequency_set );
         TL = zeros( nFreq, 1 );
 
@@ -177,36 +165,38 @@ for frequency_index = 1:1:nFreq
 
     f = frequency_set( frequency_index );
 
+    Z_A = h_Z_A( f, Le, S, V, R_A );
 
     T_total = [ 1 0; 0 1 ];
 
-    T_outlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
-
-    T_expansion = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );
-
-
-    % Z_A = 1j*rho0*2*pi*f(frequency_index) * L_e / ( pi*helmholtz_neck_diameter^2/4 )  -  1j*rho0*c^2/(helmholtz_volume*2*pi*f(frequency_index))  +  R_A;
-        % T_Helmholtz = [ 1  0;  1/Z_A  1 ];
-    
-
-    T_inlet = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
+    T1 = duct_segment_transfer_matrix_flow( f, rho0, c, duct_2.length_meters, duct_2.area, duct_2.Mach );
+    T2 = duct_expansion_connection_transfer_matrix( rho0, c, duct_2.area, duct_1.area, duct_1.Mach );
+    T3 = [ 1  0;  1/Z_A  1 ];
+    T4 = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
 
 
-    % T_net = T_inlet * T_Helmholtz * T_expansion * T_outlet * T_total;
-    T_net = T_inlet * T_expansion * T_outlet * T_total;
-    
-
-    Z = open_end_impedance( f, rho0, c, duct_2.length_meters, duct_2.area, outlet_flanged );
+    T_net = T4 * T3 * T2 * T1 * T_total;    
     
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
  
 
-end  % End:  for f = frequency_set
+end
+
 
 TL_part_d = TL;
 
-% return
+
+figure( ); ...
+    plot( frequency_set, TL_part_b );  hold on;
+    plot( frequency_set, TL_part_c );
+    plot( frequency_set, TL_part_d, 'Color', 'k', 'LineStyle', '--' );  grid on;
+        legend( 'No Flow', 'Flow', 'With Resonator', 'Location', 'SouthEast' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Transmission Loss Profile for Intake System with Flow' );
+    ylim( [ -45 45 ] );
+
+return
 
 %% Plot
 
