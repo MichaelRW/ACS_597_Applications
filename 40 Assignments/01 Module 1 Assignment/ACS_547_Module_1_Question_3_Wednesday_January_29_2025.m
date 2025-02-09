@@ -24,7 +24,7 @@ addpath( genpath( '../00 Support' ), '-begin' );
 
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -174,9 +174,9 @@ ONE_SHOT = 0;
 
 duct_lengths = 0.235/4 * ones( 4, 1 );  % 523 Hz
 
+aConstant = 3.178e-5;
 
-% frequency_set = 0:1:2e3;
-frequency_set = 0:0.1:1e3;
+frequency_set = 0:1:2e3;
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -195,13 +195,12 @@ for frequency_index = 1:1:nFreq
     %
     % R_A = h_R_A( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
     
-     term_1 = h_RA_term_1( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f );
+     term_1 = h_RA_term_1( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f );
         term_1_v( frequency_index ) = term_1;
 
-
-     term_2 = h_RA_term_2( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+     term_2 = h_RA_term_2( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
         term_2_v( frequency_index ) = term_2;
-     term_3 = h_RA_term_3( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * 1.83e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
+     term_3 = h_RA_term_3( rho0, c, pi*(0.006)^2/4, 2*pi*f/c, sqrt( (2 * aConstant ) / ( 2*pi*f * rho0 ) ), pi * 0.006, 2*pi*f, 0.3 );
         term_3_v( frequency_index ) = term_3;
     %
     R_A = term_1 + term_2 + term_3;
@@ -215,8 +214,8 @@ for frequency_index = 1:1:nFreq
 
 
     switch ( 3 )
-        
-        case 0  % All holes covered.
+
+        case 0  % All holes covered.  523 Hz
             T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
             T2 = [ 1 0;  0 1 ];  % Hole
             T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
@@ -225,103 +224,80 @@ for frequency_index = 1:1:nFreq
             T6 = [ 1 0;  0 1 ];  % Hole
             T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
-        case 1  % Hole 1
-            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + 0.0290, pipe_area );  % Duct - Outlet
+            % Check
+            % 4 * 0.05875 = 0.235;
+
+        case 1  % Hole 1 uncovered.  698 Hz
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.08775, pipe_area );  % Duct - Outlet
             T2 = T_Hole;
-            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - 0.0290, pipe_area );  % Duct
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.02975, pipe_area );  % Duct
             T4 = [ 1 0;  0 1 ];  % Hole
             T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
             T6 = [ 1 0;  0 1 ];  % Hole
             T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
-        case 2  % Hole 2
-            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
-            T2 = [ 1 0;  0 1 ];  % Hole
-            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + 0.0230, pipe_area );  % Duct
+            % Check
+            % 0.08775 + 0.02975 + 2*0.05875 = 0.235;
+
+        case 2  % Hole 2 uncovered.  880 Hz
+
+            offset = 0.00625;  % 874
+
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.08775, pipe_area );  % Duct - Outlet
+            T2 = T_Hole;
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.0505, pipe_area );  % Duct
             T4 = T_Hole;
-            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - 0.0230, pipe_area );  % Duct
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.038, pipe_area );  % Duct
             T6 = [ 1 0;  0 1 ];  % Hole
             T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
 
-        case 3  % Hole 3
+            % Check
+            % 0.08775 + 0.0505 + 0.038 + 0.05875 = 0.235
 
-            if ( ONE_SHOT == 0 )
-                fprintf( 1, '\n\nHole 3 open (all other holes are closed.\n\n' );
-                ONE_SHOT = 1;
-            end
+        case 3  % Hole 3 uncovered.  1,046 Hz
 
-            o = -0.015095;
-            % o = -0.015; % 945.6
-            % o = -0.01;  % 939;
-            % o = -0.02;  % 938
-            % o = -0.03;  % 904
-
-            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct - Outlet
-            T2 = [ 1 0;  0 1 ];  % Hole
-            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.05875, pipe_area );  % Duct
-            T4 = [ 1 0;  0 1 ];  % Hole
-            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 + o, pipe_area );  % Duct
+            T1 = duct_segment_transfer_matrix( f, rho0, c, 0.08775, pipe_area );  % Duct - Outlet
+            T2 = T_Hole;
+            T3 = duct_segment_transfer_matrix( f, rho0, c, 0.0505, pipe_area );  % Duct
+            T4 = T_Hole;
+            T5 = duct_segment_transfer_matrix( f, rho0, c, 0.02975, pipe_area );  % Duct
             T6 = T_Hole;
-            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.05875 - o, pipe_area );  % Duct
+            T7 = duct_segment_transfer_matrix( f, rho0, c, 0.067, pipe_area );  % Duct
+
+            % Check
+            % 0.08775 + 0.0505 + 0.02975 + 0.067 = 0.235 m
 
     end
-    
 
-    T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
-    
-    T_total =  T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
+        T8 = duct_segment_transfer_matrix( f, rho0, c, 0.09, pipe_area );  % Duct - Inlet
 
-    Z = open_end_impedance( f, rho0, c, 0, pipe_area, flanged );
-    
-    T11 = T_total(1, 1);  T12 = T_total(1, 2);
-        A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
+        T_total =  T8 * T7 * T6 * T5 * T4 * T3 * T2 * T1 * T_total;
+
+        Z = open_end_impedance( f, rho0, c, 0, pipe_area, flanged );
+
+        T11 = T_total(1, 1);  T12 = T_total(1, 2);
+            A( frequency_index ) = -10*log10( abs( T11 + T12 / Z )^2 );
             
 end
 
 
-[ max_value, max_index ] = max( A );
-    frequency_set( max_index )
-
-figure( ); ...
-    plot( frequency_set, A );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Amplification Versus Recorder Length' );
-
-
-% ind_term_2 = ~ismissing( term_2_v );
-% ind_term_3 = ~ismissing( term_3_v );
-% 
-% figure( ); ...
-%     subplot( 2, 3, 1 ); ...
-%         plot( frequency_set, ZA_real  );  title( 'Real-part of ZA' );
-%     subplot( 2, 3, 2 ); ...
-%         plot( frequency_set, term_1_v, 'LineStyle', '--' );  title( 'Term 1' );
-%     subplot( 2, 3, 3 ); ...
-%         plot( frequency_set( ind_term_2 ), term_2_v( ind_term_2 ), 'LineStyle', ':' );  title( 'Term 2' );
-%     subplot( 2, 3, 4 ); ...
-%         plot( frequency_set( ind_term_3 ), term_3_v( ind_term_3 ) );  title( 'Term 3' );
-%     subplot( 2, 3, 5 ); ...
-%         plot( frequency_set, imag( ZA_imaginary )  );  grid on;
-%
-    % legend( 'Real Part', 'Term 1', 'Term 2', 'Term 3', 'Imaginary Par' );
-    % xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    % set( gca, 'YScale', 'Log' );
-
-return
 
 %% Plot Note Set
 
 load( 'A_C5_Data.mat' );  % Variable(s):  A_C5
+load( 'A_F5_Data.mat' );  % Variable(s):  A_F5
+load( 'A_A5_Data.mat' );  % Variable(s):  A_A5
+load( 'A_C6_Data.mat' );  % Variable(s):  A_C6
 
 
 figure( ); ...
     plot( frequency_set, A_C5 );  hold on;
         text( 523, 25, 'C5' );
-    plot( frequency_set, A_C5 );
+    plot( frequency_set, A_F5 );
         text( 523, 25, 'C5' );
-    plot( frequency_set, A_C5 );
+    plot( frequency_set, A_A5 );
         text( 523, 25, 'C5' );
-    plot( frequency_set, A_C5 );  grid on;
+    plot( frequency_set, A_C6 );  grid on;
         text( 523, 25, 'C5' );
         %
         legend( 'C5', 'F5', 'A5', 'C6', 'Location', 'West' );
@@ -332,14 +308,14 @@ figure( ); ...
 
 %% Clean-up
 
-% if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-%     monitors = get( 0, 'MonitorPositions' );
-%         if ( size( monitors, 1 ) == 1 )
-%             autoArrangeFigures( 2, 2, 1 );
-%         elseif ( 1 < size( monitors, 1 ) )
-%             autoArrangeFigures( 2, 2, 1 );
-%         end
-% end
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 2, 2, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 1 );
+        end
+end
 
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
