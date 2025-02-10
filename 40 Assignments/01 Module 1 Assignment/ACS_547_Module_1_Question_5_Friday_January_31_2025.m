@@ -40,17 +40,17 @@ liner_thickness = 0.0381;  % meters
 
 m = 1 + liner_thickness/h;  % 2.7
 
-% As noted in the discussion, there are two cases to be considered here.
-%
-% Figure 8.37 considers the combined effect of the expansion and the liner.
-% In Problem 4, the effect of the expansion was calculated, so including it
-% here would include its effect twice.  Therefore, with an m of 1, there is
-% not additional attenuation with the linear.
-%
-% The second case is to consider the m value of 2.7, which provides
+% As noted in the discussion, there are two cases to consider here.
+
+% The first case is to consider the m value of 2.7, which provides
 % additional attenuation.  From Figure 8.37, the total attenuation of 
 % the lining is 10 dB.
 attenuation_rate = 10 / 0.127;  % 78.4  dB per meter
+
+% The second card is that Figure 8.37 considers the combined effect of the
+% expansion and the liner.  In Problem 4, the effect of the expansion was 
+% calculated, so including it here would include its effect twice.  Therefore, 
+% with an m of 1, there is no additional attenuation with the linear.
 
 
 
@@ -77,7 +77,13 @@ liner_thickness / h;  % 3.3852 unitless
 
 %% Problem 5d
 
-% The approximate resistivity parameter is 4.
+% With a liner thickness ratio of 3.385, curve 5 is selected from the attenuation 
+% rate curve figure set.  The horizontal axis value is 0.06169.  The target attenuation 
+% rate for the attenuation rate curves is 39.2 dB/m (half of the value from Problem 5a)
+% multiplied by h = 0.0113, which gives 0.44.
+
+% From this information, the resistivity parameter plot selected is the bottom right plot 
+% with a value of 16.
 
 
 

@@ -116,6 +116,7 @@ The lowest cut-on frequency for this circular duct with water flow can be calcul
     f_{cut-on} = 0.568 \cdot \frac{ 1,500~\frac{m}{s} }{ 0.17~m } = \boldsymbol{4,873.9~Hz}
 \end{equation*}
 
+\vspace{0.25cm}
 The lowest cut-on frequency for water is considerable larger than it is for air flow.
 
 
@@ -165,9 +166,11 @@ The square-root relationship between temperature and the speed of sound in air i
 
  \textbf{Question:  Are cut-on frequencies higher for a circular or rectangular duct for a given cross-sectional area?}
 
+\vspace{0.25cm}
  The lowest cut-on frequency is higher for a circular duct than for a
  rectangular duct for a given cross-sectional area.
 
+\vspace{0.25cm}
  For the dimensions given in class, the rectangular duct is not square.
  This produces a larger dimension and thus a smaller, lowest cut-on
  frequency.  If the rectangular duct is square dimensions on the order
@@ -179,6 +182,7 @@ The square-root relationship between temperature and the speed of sound in air i
 \vspace{0.25cm}
 \textbf{Question:  What about in air versus water?}
 
+\vspace{0.25cm}
  The lowest cut-on frequency is larger for water than for air.  The cut-on
  frequency is proportional to the speed of sound and the speed of sound in
  water is greater than the speed of sound in air.
@@ -188,7 +192,8 @@ The square-root relationship between temperature and the speed of sound in air i
 \vspace{0.25cm}
 \textbf{Question:  What about cold versus hot air?}
 
- The lowest cut-on frequency is higher for warm air than it is for cold air.
+\vspace{0.25cm}
+The lowest cut-on frequency is higher for warm air than it is for cold air.
 
 
 
@@ -203,6 +208,7 @@ The square-root relationship between temperature and the speed of sound in air i
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
+\vspace{0.25cm}
 For these muffler comparisons, the following assumptions were made:
 
 \begin{itemize}
@@ -215,13 +221,16 @@ For these muffler comparisons, the following assumptions were made:
 \vspace{-0.25cm}
 \subsection*{Problems 2a, 2b, and 2c}
 
-\vspace{-0.25cm}
+\vspace{0.25cm}
 Figure~\ref{figure:problem2figure1} shows the transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.
 
+\vspace{0.25cm}
 The peaks for the simple expansion chamber (red, dashed line) are approximately 22 dB and occur at frequencies with a wavelength that is a quarter of the length of the expansion chamber.  Minimal loss occurs at half wavelength multiples.
 
+\vspace{0.25cm}
 The addition of the extension tube inside the muffler produces a quarter wavelength resonator.  The side branch of Ji (2005;  Slide 11, Lecture 3 notes) was used to calculate $L_o$.  For the cascaded double-tuned expansion chamber, the extension tubes produce a secondary quarter wavelength resonator.
 
+\vspace{0.25cm}
 As noted in office hours, there is no damping which produces artificially high resonances.
 
 
@@ -241,10 +250,10 @@ As noted in office hours, there is no damping which produces artificially high r
 
 Figure~\ref{figure:problem2figure2} shows the transmission loss profiles for a cascaded double-tuned expansion chamber and a modified version of this muffler.
 
-\newpage
+\vspace{0.25cm}
 Two modifications were made to the original muffler:
 
-\begin{enumerate}
+\begin{enumerate}[itemsep=0.3cm]
   \item The left 3" extension tube in the left chamber was shortened to 2" inches, making the respective muffler section 1" longer.
   \item The left 3" extension tube in the right chamber was lengthened to 4", making the respective muffler section 1" shorter.
 \end{enumerate}
@@ -283,6 +292,7 @@ These modifications change the symmetry of the cascaded system, and allow the re
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
+\vspace{0.25cm}
 Table~\ref{table:mouthpieceAndPip} lists the length of the pipe section and the mouthpiece.
 
 \setlength{\abovecaptionskip}{0pt}
@@ -406,6 +416,7 @@ Figure~\ref{figure:intakeSystem} shows the transmission loss profiles.
 \vspace{0.25cm}
 The addition of flow to the intake system introduces a slight phase delay, a lower overall level of loss (approximately 22 dB), and greater loss at the dips.  The phase delay is easier to see at respective dips in the loss profile.
 
+\vspace{0.25cm}
 The phase delay is introduced by each of the pipe segments by the complex-exponential term in the respective transfer function.  The attenuation is introduced by the expansion transfer function.
 
 
@@ -464,25 +475,22 @@ The addition of the Helmholtz resonator offset the attenuation of the dip to app
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 
-My respective dip occurs at approximately 1,060 Hz, which has a loss of -25 dB.  \textbf{For this problem I used the 940 Hz dip noted in the assignment discussion, requiring a 14 dB correction.}
+\vspace{0.25cm}
+The addition of the Helmholtz resonator did not create a notch at 940 Hz in the transmission loss profile, but it did offset the notch at 129 Hz as intended.  The notch present in the given range was at 1,060 Hz (as noted in the discussion) and had a loss of -25 dB.
+
+\vspace{0.25cm}
+\textbf{For this problem I used the 940 Hz dip requiring a 14 dB correction.}
+
 
 \subsection*{Problem 5a}
 
 As noted in the discussion, there are two cases to be considered here.
 
-First, with a liner thickness of 0.0381 meters and a half-liner width (circular duct) of 0.0113 meters, the expansion ratio, $m$, is 2.7.  From Figure 8.37, a 14 dB overall loss has a total liner attenuation of 10 dB.  The attenuation rate is about 78.4 $\frac{dB}{m}$.
+\vspace{0.25cm}
+First, with a liner thickness of 0.0381 meters and a half-liner width (circular duct) of 0.0113 meters, the expansion ratio, $m$, is 2.7.  From Figure 8.37, a 14 dB overall loss has a total liner attenuation of 10 dB.  The attenuation rate across the 0.127 $m$ long outlet is about 78.4 $\frac{dB}{m}$.
 
-Second,
-
-% Figure 8.37 considers the combined effect of the expansion and the liner.
-% In Problem 4, the effect of the expansion was calculated, so including it
-% here would include its effect twice.  Therefore, with an m of 1, there is
-% not additional attenuation with the linear.
-%
-% The second case is to consider the m value of 2.7, which provides
-% additional attenuation.  From Figure 8.37, the total attenuation of
-% the lining is 10 dB.
-%attenuation_rate = 10 / 0.127;  % 78.4  dB per meter
+\vspace{0.25cm}
+Secondly, Figure 8.37 considers the combined effect of the expansion and the liner.  In Problem 4, the effect of the expansion was calculated, so including it here would include its effect twice.  Therefore, with an m of 1, there is no additional attenuation with the linear.
 
 
 
@@ -498,16 +506,14 @@ The liner thickness ratio is 3.385 [unitless].  The normalized frequency is 0.06
 
 \subsection*{Problem 5d}
 
-With a liner thickness ratio of 3.385, the left-side, middle attenuation rate curve is applicable.
+With a liner thickness ratio of 3.385, curve 5 is selected from the attenuation rate curve figure set. The $\frac{2 \cdot h}{\lambda}$ value is 0.06169.  The target attenuation rate for the attenuation rate curves is 39.2 $\frac{dB}{m}$ (half of the value from Problem 5a) multiplied by $h = 0.0113$ which gives 0.44.
 
-With $\frac{l}{h}$ of 4, curve 5 is used
-
-
+From this information, the resistivity parameter plot selected is the bottom right plot with a value of 16.
 
 
 \subsection*{Problem 5e}
 
-The flow resistivity, $R_1$, is about 1.74e5 $\frac{kg}{m^2 \cdot s}$ or rayl.
+Using a resistivity parameter of 16, the respective flow resistivity, $R_1$, is about 1.74e5 $\frac{kg}{m^2 \cdot s}$ or rayl.
 
 
 
