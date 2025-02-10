@@ -18,7 +18,7 @@ addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;

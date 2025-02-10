@@ -18,7 +18,7 @@ addpath( genpath( '../00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -29,16 +29,13 @@ PRINT_FIGURES = 0;
 
 
 
-%% Constants
+%% Define Constants and Anonymous Functions
 
 rho0 = 1.21;  % Air density (kg per m^3).
 c = 343;  % Speed of sound in air (meters per second).
 
 frequency_set = 0:1:5e3;  % Hertz
 
-
-
-%% Dimensions
 
 convert.inches_to_meters = 0.0254;
 convert.foot_to_meters = 0.3048;
@@ -75,7 +72,7 @@ segment_lengths = [ ...
 
 
 
-%% Part a - Simple Expansion Chamber
+%% Problem 2a
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );
@@ -111,7 +108,7 @@ max( TL_parta );  % 22 dB
 
 
 
-%% Part b - Double-tuned Expansion Chamber
+%% Problem 2b
 
 annulus_area_squared_meters = pi/4 * ( 0.254^2 - 0.0508^2 );
 
@@ -162,7 +159,7 @@ TL_partb = TL;
 
 
 
-%% Part c - Cascaded, Double-tuned Expansion Chamber
+%% Problem 2c
 
 annulus_area_squared_meters = pi/4 * ( 0.254^2 - 0.0508^2 );
 
@@ -201,7 +198,7 @@ TL_partc = TL;
 
 
 
-%% Part d - Cascaded, Double-tuned Expansion Chamber
+%% Problem 2d
 
 nFreq = length( frequency_set );
     TL = zeros( nFreq, 1 );

@@ -29,16 +29,13 @@ PRINT_FIGURES = 0;
 
 
 
-%% Constants
+%% Define Constants and Anonymous Functions
 
 rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
 
 h_area = @( diameter)  pi * diameter^2 / 4;
 
-
-
-%% Define Shape
 
 % Source
 duct_1.diameter_meters = 0.0254;  % meters
@@ -57,7 +54,7 @@ flow_rate_cubic_meters_per_second = 1.04772 / 60;  % or 37 cubic-feet per minute
 
 
 
-%% Part a - Mach Numbers
+%% Problem 4a
 
 % Calculate the Mach number of the flow in both pip sections.
 
@@ -66,7 +63,7 @@ duct_2.Mach = -1.0 * flow_rate_cubic_meters_per_second / ( (pi * duct_2.diameter
 
 
 
-%% Part b - No Flow in Intake System
+%% Problem 4b
 
 % The flange is not considered because transmission loss is calculated.
 
@@ -97,7 +94,7 @@ TL_part_b = TL;
 
 
 
-%% Part c - Flow in Intake System
+%% Problem 4c
 
 % The flange is not considered because transmission loss is calculated.
 
@@ -129,7 +126,7 @@ TL_part_c = TL;
 
 
 
-%% Part d - Add a Lossy Helmholtz Resonator
+%% Problem 4d
 
 % Use volume to tune resonator.
 
@@ -184,7 +181,7 @@ TL_part_d = TL;
 
 
 
-%% Plot
+%% Plot Transmission Loss Profiles
 
 figure( ); ...
     plot( frequency_set, TL_part_b );  hold on;

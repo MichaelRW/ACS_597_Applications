@@ -1,5 +1,6 @@
 
 
+
 %% Synopsis
 
 % Question 5 - Intake Duct Silencer
@@ -17,16 +18,18 @@ addpath( genpath( '../40 Assignments/00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
 
 pause( 1 );
 
+PRINT_FIGURES = 0;
 
 
-%% Part a
+
+%% Problem 5a
 
 % The considered dip frequency 940 Hz.
 
@@ -51,7 +54,7 @@ attenuation_rate = 10 / 0.127;  % 78.4  dB per meter
 
 
 
-%% Part b
+%% Problem 5b
 
 % For a circular duct.
 
@@ -62,7 +65,7 @@ h = sqrt(pi) * half_diameter_of_open_orifice / 2;  % 0.0113 meters
 
 
 
-%% Part c
+%% Problem 5c
 
 % The liner thickness ratio is,
 liner_thickness / h;  % 3.3852 unitless
@@ -72,13 +75,13 @@ liner_thickness / h;  % 3.3852 unitless
 
 
 
-%% Part d
+%% Problem 5d
 
 % The approximate resistivity parameter is 4.
 
 
 
-%% Part e
+%% Problem 5e
 
 % Calculate the flow resistivity.
 
@@ -105,32 +108,5 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

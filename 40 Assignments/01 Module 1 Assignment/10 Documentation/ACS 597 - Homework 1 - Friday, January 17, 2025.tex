@@ -28,7 +28,7 @@
 \memodate{\today~(Submitted)}
 %\memoto{Dr. Dan Russell - College of Engineering, Penn State University}
 %\memofrom{Michael R. Wirtzfeld - Sound Discovery LLC\\}
-\memosubject{Noise Control Applications - Module 1 Assignement\\}
+\memosubject{ACS 547, Noise Control Applications - Module 1 Assignment\\}
 
 %\memologo{\includegraphics[width=1.0\textwidth]{SOUND_DISCOVERY_Business_Card.jpg}}
 
@@ -208,8 +208,7 @@ For these muffler comparisons, the following assumptions were made:
 \begin{itemize}
   \item There is no flow.
   \item There are no resistive terms.
-  \item The load impedance was not included because the transmission loss does not require them.
-  \item For Parts b, c, and d, the side branch length offset, $L_o$, was set to zero.
+  \item The load impedance was not included because the transmission loss does not require it.
 \end{itemize}
 
 
@@ -223,7 +222,7 @@ The peaks for the simple expansion chamber (red, dashed line) are approximately 
 
 The addition of the extension tube inside the muffler produces a quarter wavelength resonator.  The side branch of Ji (2005;  Slide 11, Lecture 3 notes) was used to calculate $L_o$.  For the cascaded double-tuned expansion chamber, the extension tubes produce a secondary quarter wavelength resonator.
 
-As noted in the office hours session, there is no damping which produces artificially high resonances.
+As noted in office hours, there is no damping which produces artificially high resonances.
 
 
 \begin{figure}[!htb]
@@ -231,7 +230,7 @@ As noted in the office hours session, there is no damping which produces artific
     \center
         \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
 
-    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber mufflers.}
+    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.}
     \label{figure:problem2figure1}
 
 \end{figure}
@@ -240,9 +239,10 @@ As noted in the office hours session, there is no damping which produces artific
 
 \subsection*{Problem 2d}
 
-Figure~\ref{figure:problem2figure2} shows the transmission loss profiles for a cascaded double-tuned expansion chamber, and a modified cascaded double-tuned expansion chamber muffler.
+Figure~\ref{figure:problem2figure2} shows the transmission loss profiles for a cascaded double-tuned expansion chamber and a modified version of this muffler.
 
-Two modifications were made to the original system:
+\newpage
+Two modifications were made to the original muffler:
 
 \begin{enumerate}
   \item The left 3" extension tube in the left chamber was shortened to 2" inches, making the respective muffler section 1" longer.
@@ -261,7 +261,7 @@ Two modifications were made to the original system:
 \end{figure}
 
 \vspace{0.25cm}
-These modifications change the symmetry of the cascaded system, and allow the resonate frequencies to be independently changed.
+These modifications change the symmetry of the cascaded system, and allow the resonate frequencies to be changed independently.
 
 
 
@@ -406,12 +406,11 @@ Figure~\ref{figure:intakeSystem} shows the transmission loss profiles.
 \vspace{0.25cm}
 The addition of flow to the intake system introduces a slight phase delay, a lower overall level of loss (approximately 22 dB), and greater loss at the dips.  The phase delay is easier to see at respective dips in the loss profile.
 
-A phase delay is introduced by each of the pipe segments by the complex-exponential term in the transfer function.  The attenuation is introduced by the expansion transfer function.
+The phase delay is introduced by each of the pipe segments by the complex-exponential term in the respective transfer function.  The attenuation is introduced by the expansion transfer function.
+
 
 \newpage
-The target dip frequency is 129 Hz.
-
-Table~\ref{table:helmholzResonator} lists the dimensions of the lossy Helmholtz resonator.
+Table~\ref{table:helmholzResonator} lists the dimensions of the lossy Helmholtz resonator for the 129 Hz notch.
 
 \setlength{\abovecaptionskip}{0pt}
 \vspace{0.1cm}
@@ -473,7 +472,7 @@ As noted in the discussion, there are two cases to be considered here.
 
 First, with a liner thickness of 0.0381 meters and a half-liner width (circular duct) of 0.0113 meters, the expansion ratio, $m$, is 2.7.  From Figure 8.37, a 14 dB overall loss has a total liner attenuation of 10 dB.  The attenuation rate is about 78.4 $\frac{dB}{m}$.
 
-Second, 
+Second,
 
 % Figure 8.37 considers the combined effect of the expansion and the liner.
 % In Problem 4, the effect of the expansion was calculated, so including it

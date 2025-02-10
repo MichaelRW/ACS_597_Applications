@@ -29,7 +29,7 @@ PRINT_FIGURES = 0;
 
 
 
-%% Constants and Anonymous Functions
+%% Define Constants and Anonymous Functions
 
 rho0 = 1.21;  % Density of air (kg per cubic-meter).
 c = 343;  % Speed of sound in air (meters per second).
@@ -42,7 +42,7 @@ h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h )  ( rho0*c/S )  *  (0.5*S*k^
 
 
 
-%% Part a
+%% Problem 3a
 
 % The estimated total length of the recorder is 0.325 meters.
 
@@ -85,7 +85,7 @@ A_parta = A;  clear A;
 
 % return
 
-%% Part b
+%% Problem 3b
 
 epsilon = 0.006 / 0.004;  % Diameter of the hold divided by diameter of pipe section (1.5).
 
