@@ -136,7 +136,7 @@ TL_part_c = TL;
 
 w_o = 2*pi*129;  % Target resonate frequency;  estimated from plot.
 
-d_cavity = 5*0.0254;  % meters
+d_cavity = 10*0.0254;  % meters
 d_neck = 0.0254;  % meters
 L_neck = 5*0.0254;  % meters
 
@@ -144,7 +144,7 @@ S = d_neck^2*pi / 4;
 
 
 Lo1 = 0.82 * ( 1 - 1.33*( d_neck / d_cavity ) );
-Lo2 = 0.1;
+Lo2 = 0.3;
     Le = L_neck + Lo1 + Lo2;
 
 V = S / ( (w_o/c)^2 * Le );
@@ -155,11 +155,9 @@ R_A = rho0*c / 10 * sqrt( Le / ( S * V ) );
 h_Z_A = @( f, Le, S, V, R_A )  1j*rho0*2*pi*f*Le/S  -  1j*rho0*c^2/(V*2*pi*f)  +  R_A;
 
 
-
 frequency_set = 0:1:2.5e3;
     nFreq = length( frequency_set );
         TL = zeros( nFreq, 1 );
-
 
 for frequency_index = 1:1:nFreq
 
@@ -174,66 +172,34 @@ for frequency_index = 1:1:nFreq
     T3 = [ 1  0;  1/Z_A  1 ];
     T4 = duct_segment_transfer_matrix_flow( f, rho0, c, duct_1.length_meters, duct_1.area, duct_1.Mach );
 
-
     T_net = T4 * T3 * T2 * T1 * T_total;    
     
     T11 = T_net(1, 1);  T12 = T_net(1, 2);  T21 = T_net(2, 1);  T22 = T_net(2, 2);
         TL( frequency_index ) = 10 * log10( abs( ( T11  +  duct_1.area*T12/(rho0*c)  +  (rho0*c)*T21/duct_2.area  +  T22 ) / 2 )^2 );
  
-
 end
 
 
 TL_part_d = TL;
 
 
+
+%% Plot
+
 figure( ); ...
     plot( frequency_set, TL_part_b );  hold on;
     plot( frequency_set, TL_part_c );
     plot( frequency_set, TL_part_d, 'Color', 'k', 'LineStyle', '--' );  grid on;
-        legend( 'No Flow', 'Flow', 'With Resonator', 'Location', 'SouthEast' );
+        legend( 'No Flow', 'Flow', 'With Helmholtz Resonator', 'Location', 'SouthEast' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Transmission Loss Profile for Intake System with Flow' );
+    title( 'Transmission Loss Profiles for Intake System' );
     ylim( [ -45 45 ] );
-
-return
-
-%% Plot
-
-Y_LIMITS = [ 0  50 ];
-
-figure( ); ...
-    plot( frequency_set, TL_part_b );  hold on;
-    plot( frequency_set, TL_part_c, '-' );
-    plot( frequency_set, TL_part_d, '-.' );  grid on;
-    legend( ...
-        'No Flow - Part b', ...
-        'Flow - Part c', ...
-        'Flow and Resonator - Part d', ...
-        'Location', 'SouthOutside' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Amplitude [dB]' );
-    title( 'Transmission Loss Profiles' );
     %
     Ax = gca;
         Ax.XAxis.TickLabelInterpreter = 'latex';
         Ax.YAxis.TickLabelInterpreter = 'latex';
-    %
-    % axis( [ -50  5e3+50  Y_LIMITS ] );
-    %
-    if ( PRINT_FIGURES == 1 )
-        exportgraphics( gcf, 'Figure TL All Profiles.pdf', 'Append', true );
-    end
-
-return
-
-%% Part c
-
-return
 
 
-%% Part d
-
-return
 
 %% Clean-up
 
@@ -246,38 +212,14 @@ if ( ~isempty( findobj( 'Type', 'figure' ) ) )
         end
 end
 
+if ( PRINT_FIGURES == 1 )
+        exportgraphics( gcf, 'Intake System.pdf', 'Append', true );
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 
 %% Reference(s)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

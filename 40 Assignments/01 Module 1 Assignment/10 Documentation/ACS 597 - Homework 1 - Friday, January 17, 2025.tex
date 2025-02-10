@@ -5,6 +5,8 @@
 
 \usepackage{amsmath}
 \usepackage{color, soul}
+\usepackage{dcolumn}
+    \newcolumntype{d}[1]{D{.}{.}{#1}}
 \usepackage[colorlinks=true, citecolor=blue]{hyperref}
 \usepackage{enumitem}
 \usepackage{graphicx, lipsum}
@@ -339,13 +341,10 @@ Figure~\ref{figure:bugleRecorderNoteSpectrums} shows the respective spectrum for
 
 \vspace{0.25cm}
 \begin{figure}[!htb]
-
     \center
         \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 3 Bugle Recorder Note Spectrums.pdf}
-        
     \caption{Spectrum for the C5, F5, A5, and C6 bugle recorder notes.}
     \label{figure:bugleRecorderNoteSpectrums}
-
 \end{figure}
 
 
@@ -366,7 +365,7 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 \subsection*{Problem 4a}
 
-Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.
+Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.  The flow rate is 0.017462 $\frac{m^3}{s}$.
 
 \setlength{\abovecaptionskip}{0pt}
 \vspace{0.1cm}
@@ -374,14 +373,14 @@ Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.
 \begin{table}[h!]
     \begin{center}
         \small
-        \begin{tabular}{ | c | c | }
+        \begin{tabular}{ | c | c | c | }
             \hline
-            \textbf{Pipe}  &  \textbf{Mach Number [unitless]}  \\
+            \textbf{Pipe}  &  \textbf{Area [}{$\mathbf m^2$}\textbf{]}  &  \textbf{Mach Number [unitless]}  \\
             \hline
-                Inlet  &  -0.10047  \\
+                Inlet  &  0.000507  &  -0.10047  \\
                 \hline
                 \rowcolor{Gray}
-                Outlet  &  -0.0062795  \\
+                Outlet  &  0.00811  &  -0.0062795  \\
             \hline
         \end{tabular}
     \end{center}
@@ -389,11 +388,68 @@ Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.
     \label{table:machNumbers}
 \end{table}
 
-\subsection*{Problem 4b}
 
-\subsection*{Problem 4c}
 
-\subsection*{Problem 4d}
+\subsection*{Problems 4b, 4c, and 4d}
+
+\vspace{0.25cm}
+Figure~\ref{figure:intakeSystem} shows the transmission loss profiles.
+
+\vspace{0.25cm}
+\begin{figure}[!htb]
+    \center
+        \includegraphics[ scale = 0.6, keepaspectratio ]{Intake System.pdf}
+    \caption{Transmission loss profiles for no flow, flow, and flow with a lossy Helmholtz resonator.}
+    \label{figure:intakeSystem}
+\end{figure}
+
+\vspace{0.25cm}
+The addition of flow to the intake system introduces a slight phase delay, a lower overall level of loss (approximately 22 dB), and greater loss at the dips.  The phase delay is easier to see at respective dips in the loss profile.
+
+A phase delay is introduced by each of the pipe segments by the complex-exponential term in the transfer function.  The attenuation is introduced by the expansion transfer function.
+
+\newpage
+The target dip frequency is 129 Hz.
+
+Table~\ref{table:helmholzResonator} lists the dimensions of the lossy Helmholtz resonator.
+
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | l | c | }
+            \hline
+            \textbf{Item}  &  \textbf{Measure]}  \\
+            \hline
+                Cavity Diameter                 &  0.254 m  \\
+                \hline
+                \rowcolor{Gray}
+                Neck Diameter                   &  0.0254 m  \\
+                \hline
+                Neck Length                     &  0.127 m  \\
+                \hline
+                \rowcolor{Gray}
+                Neck Area                       &  0.5e-3 $m^2$  \\
+                \hline
+                Length Correction 1, $L_{o1}$   &  0.711 m  \\
+                \hline
+                \rowcolor{Gray}
+                Length Correction 2, $L_{o2}$   &  0.3 m  \\
+                \hline
+                Cavity Volume                   &  8.0e-5 $m^3$  \\
+                \hline
+                \rowcolor{Gray}
+                Q Factor   &  10  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Dimensions of the lossy Helmholtz resonator (see slide 15 of Lecture 3 notes).}
+    \label{table:helmholzResonator}
+\end{table}
+
+The addition of the Helmholtz resonator offset the attenuation of the dip to approximately 0 dB.
 
 
 
@@ -407,15 +463,52 @@ Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.
 \newpage
 \section*{Problem 5 - Intake Duct Silencer}
 
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
+
+My respective dip occurs at approximately 1,060 Hz, which has a loss of -25 dB.  \textbf{For this problem I used the 940 Hz dip noted in the assignment discussion, requiring a 14 dB correction.}
+
 \subsection*{Problem 5a}
+
+As noted in the discussion, there are two cases to be considered here.
+
+First, with a liner thickness of 0.0381 meters and a half-liner width (circular duct) of 0.0113 meters, the expansion ratio, $m$, is 2.7.  From Figure 8.37, a 14 dB overall loss has a total liner attenuation of 10 dB.  The attenuation rate is about 78.4 $\frac{dB}{m}$.
+
+Second, 
+
+% Figure 8.37 considers the combined effect of the expansion and the liner.
+% In Problem 4, the effect of the expansion was calculated, so including it
+% here would include its effect twice.  Therefore, with an m of 1, there is
+% not additional attenuation with the linear.
+%
+% The second case is to consider the m value of 2.7, which provides
+% additional attenuation.  From Figure 8.37, the total attenuation of
+% the lining is 10 dB.
+%attenuation_rate = 10 / 0.127;  % 78.4  dB per meter
+
+
 
 \subsection*{Problem 5b}
 
+$l$, the liner thickness, is 0.0381 $m$.  $h$, the liner half width, is 0.0113 $m$.
+
+
 \subsection*{Problem 5c}
+
+The liner thickness ratio is 3.385 [unitless].  The normalized frequency is 0.0617 [unitless] for 940 Hz.
+
 
 \subsection*{Problem 5d}
 
+With a liner thickness ratio of 3.385, the left-side, middle attenuation rate curve is applicable.
+
+With $\frac{l}{h}$ of 4, curve 5 is used
+
+
+
+
 \subsection*{Problem 5e}
+
+The flow resistivity, $R_1$, is about 1.74e5 $\frac{kg}{m^2 \cdot s}$ or rayl.
 
 
 
