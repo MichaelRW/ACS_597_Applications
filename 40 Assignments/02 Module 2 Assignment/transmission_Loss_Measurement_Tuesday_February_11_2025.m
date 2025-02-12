@@ -3,7 +3,7 @@
 
 %% Synopsis
 
-% Question 5 - Intake Duct Silencer
+% Slide 8 - Noise Reduction and Transmission Loss
 
 
 
@@ -29,72 +29,75 @@ PRINT_FIGURES = 0;
 
 
 
-%% Problem 5a
+%% Define Room
 
-% The considered dip frequency 940 Hz.
-
-% The additional attentuatio required is 14 dB.
-
-liner_thickness = 0.0381;  % meters
-    h = sqrt( ( pi*( 0.1016 - 2*liner_thickness  )^2 ) / 4 );  % 0.0113 meters
-
-m = 1 + liner_thickness/h;  % 2.7
-
-% As noted in the discussion, there are two cases to consider here.
-
-% The first case is to consider the m value of 2.7, which provides
-% additional attenuation.  From Figure 8.37, the total attenuation of 
-% the lining is 10 dB.
-attenuation_rate = 10 / 0.127;  % 78.4  dB per meter
-
-% The second card is that Figure 8.37 considers the combined effect of the
-% expansion and the liner.  In Problem 4, the effect of the expansion was 
-% calculated, so including it here would include its effect twice.  Therefore, 
-% with an m of 1, there is no additional attenuation with the linear.
+room.length = 20;  % meters
+room.width = 10;  % meters
+room.height = 4;  % meters
+    room.volume = room.length * room.width * room.height;  % m^2
+    room.area = 2*(room.length * room.width) + 2*(room.length * room.height) + 2*(room.width * room.height);  % m^2
 
 
 
-%% Problem 5b
+%% Source
 
-% For a circular duct.
+D = 1;  % Unitless
 
-liner_thickness = 0.0381;  % meters
-half_diameter_of_open_orifice = 0.0127;  % meters
+T60 = 2;  % seconds
 
-h = sqrt(pi) * half_diameter_of_open_orifice / 2;  % 0.0113 meters
-
-
-
-%% Problem 5c
-
-% The liner thickness ratio is,
-liner_thickness / h;  % 3.3852 unitless
-
-% The normalized frequency is,
-( 2 * h ) / ( 343 / 940 );  % 0.06169 unitless
+SPL_reverberant_field = 80;  % dB
 
 
 
-%% Problem 5d
+%% Average Room Absorption and Room Constant
 
-% With a liner thickness ratio of 3.385, curve 5 is selected from the attenuation 
-% rate curve figure set.  The horizontal axis value is 0.06169.  The target attenuation 
-% rate for the attenuation rate curves is 39.2 dB/m (half of the value from Problem 5a)
-% multiplied by h = 0.0113, which gives 0.44.
+alpha_average = (55.25 * room.volume) / (room.area * 343 * T60 );  % 0.1 Sabines
 
-% From this information, the resistivity parameter plot selected is the bottom right plot 
-% with a value of 16.
+R = (room.area * alpha_average) / (1 - alpha_average);  % 71.6 m^2
 
 
 
-%% Problem 5e
+%% Solve for the Sound Power Level of the Source
 
-% Calculate the flow resistivity.
+% Lp = Lw + 10*log10( 4 / R );
 
-rho0 = 1.21;  % Density of air (kg per cubic-meter).
-c = 343;  % Speed of sound in air (meters per second).
+Lw = 80 - 10*log10( 4 / R );  % 92.5 dB re: 1e-12 Watts
+%
+% Note(s):
+%
+%   1.)  Using the reverberant field level of 80 dB (r is large, so its associate term is zero).
+%   2.)  The correction term define on slide 3 is not included here.
 
-R1 = 16 * rho0*c / liner_thickness;  % 1.74e5 kg / m^3*s
+
+
+%% Partition
+
+% Placed at the 20 meter mark of on the room length.
+
+TL = 20;  % dB
+
+transmission_coefficient = 10^( TL / -10 );  % 0.01 unitless
+
+
+
+%% Sound Pressures in Each Half of the Room
+
+% Room 1 (with the source)
+alpha_new = ...
+    ( ( room.area / 2) * 0.1  +  (room.width * room.height * transmission_coefficient ) ) / ...
+    (room.area/2 + room.width * room.height);  % 0.09 Sabines
+
+R_new = (room.area/2 * alpha_new) / ( 1 - alpha_new );  % 31.6 m^2
+
+Lp1 = 92.5 + 10*log10( 4 / R_new );  % 83.5 dB
+
+
+% Room 2
+Lp2 = Lp1 - TL + 10*log10( room.width*room.height / 31.6 );  % 64.5 dB
+
+
+delta_L = Lp1 - Lp2;  % 19 dB
+
 
 
 %% Clean-up
