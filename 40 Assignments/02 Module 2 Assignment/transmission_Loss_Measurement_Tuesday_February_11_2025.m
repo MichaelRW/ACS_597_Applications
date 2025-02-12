@@ -29,15 +29,40 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Room
+%% Define Room and Panel
 
-room.length = 20;  % meters
-room.width = 10;  % meters
+room.length = 4;  % meters
+room.width = 4;  % meters
 room.height = 4;  % meters
     room.volume = room.length * room.width * room.height;  % m^2
     room.area = 2*(room.length * room.width) + 2*(room.length * room.height) + 2*(room.width * room.height);  % m^2
 
+panel.width = 0.8;  % meters
+panel.height = 0.8;  % meters
 
+
+
+%% Data
+
+octave_band_frequencies = [ 125  250  500  1000  2000  4000 ].';  % Hz
+T60 = [ 2.0  2.1  1.8  1.5  1.2  0.9 ].';  % seconds
+spl.source_room = [ 90  95  103  105  100  93 ].';  % dB re: 20e-6 Pascals
+spl.receiver_room = [ 50  50  46  50  50  38 ].';  % dB re: 20e-6 Pascals
+
+
+
+%% Pressure Difference
+
+spl.delta = spl.source_room - spl.receiver_room;
+
+figure( ); ...
+    stem( octave_band_frequencies, spl.delta, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Pressure Difference Versus Octave Band Center Frequency' );
+    %
+    axis( [ 0 5e3  0 65 ] );
+
+return
 
 %% Source
 
