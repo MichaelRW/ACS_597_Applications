@@ -59,9 +59,7 @@ TL = [ 9  14  21  27  32  37  43  42 ].';  % dB
 
 
 
-%% Problem 4a - Infinite, Rigid Panel Model
-
-% Only normal incidence sound.
+%% Problem 4a - Infinite, Rigid Panel Model with Normal Incidence
 
 D = ( panel.E * panel.thickness.^3 ) / ( 12 * ( 1 - panel.v^2 ) );  % 31.4
 
@@ -79,15 +77,33 @@ ms = panel.density * panel.length^2 * panel.thickness;
 
 h_tau_infinite_rigid_panel = @( f, fo, ms, s, rho0, c, eta)  4 ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (2*pi.*fo*ms*eta) ./ (rho0*c) + 2 ).^2 );
 
+
+
+%% Problem 4b - Infinite, Flexible Panel Model with Random Incidence
+
+h_tau_term1 = @( rho0, c, phi )  ( 2*rho0*c*secd(phi) ).^2;
+h_tau_term2 = @( rho0, c, phi, D, eta, f )  ( 2*rho0*c*secd(phi) + D*eta*(2*pi*f/c).^4/(2*pi*f) * sind(phi).^4 ).^2;
+h_tau_term3 = @( f, ms, D, phi )  ( 2*pi*f*ms  -  D*(2*pi*f/c).^4/(2*pi*f) * sind(phi).^4).^2;
+
+% h_tau_infinite_flexible_panel = @( f, rho0, c, phi, D, eta )  (2*rho0*c*secd(phi)).^2 ./ ( (2*rho0*c*secd(phi) + D*eta*(2*pi*f/c).^4/(2*pi*f)*sind(phi)^4).^2  +  ...
+%     (2*pi*f*ms - D*(2*pi*f/c).^4/(2*pi*f)*sind(phi)^4).^2 );
+
 % return
 
 %% Plot Data and Model
 
 f = 0:1:1:20e3;
 
+phi = 75;
+eta = panel.eta;
+
 figure( ); ...
     stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
     plot( f, -10*log10( h_tau_infinite_rigid_panel( f, lowest_resonance_frequency, ms, s, rho0, c, panel.eta ) ) );  grid on;
+
+    plot( f, -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
+    % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, 75, D, panel.eta ) ) );  grid on;
+
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Measured Panel Transmission Losses' );
     set( gca, 'XScale', 'log' );
