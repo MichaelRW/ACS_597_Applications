@@ -29,99 +29,69 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Room and Panel
+%% Parameters
 
-room.length = 4;  % meters
-room.width = 4;  % meters
-room.height = 4;  % meters
-    room.volume = room.length * room.width * room.height;  % m^2
-    room.area = 2*(room.length * room.width) + 2*(room.length * room.height) + 2*(room.width * room.height);  % m^2
+c = 343;  % m/s
+rho0 = 1.21;  % kg
 
-panel.width = 0.8;  % meters
-panel.height = 0.8;  % meters
-
-
-
-%% Data
-
-octave_band_frequencies = [ 125  250  500  1000  2000  4000 ].';  % Hz
-T60 = [ 2.0  2.1  1.8  1.5  1.2  0.9 ].';  % seconds
-spl.source_room = [ 90  95  103  105  100  93 ].';  % dB re: 20e-6 Pascals
-spl.receiver_room = [ 50  50  46  50  50  38 ].';  % dB re: 20e-6 Pascals
+panel.length = 80e-2;  % meters
+%
+panel.E = 200e9;  % Pascals
+panel.density = 7800;  % kg / m^3
+panel.v = 0.29;  % Poisson's Ratio (unitless)
+panel.thickness = 1.2e-3;  % m
+panel.eta = 0.001;  % Loss factor (unitless)
 
 
 
-%% Pressure Difference
+%% Panel Data
 
-spl.delta = spl.source_room - spl.receiver_room;
+octave_band_frequencies = [ 63  125  250  500  1000  2000  4000  8000 ].';  % Hz
+TL = [ 9  14  21  27  32  37  43  42 ].';  % dB
+
+
+% figure( ); ...
+%     stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  grid on;
+%     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Measured Panel Transmission Losses' );
+%     set( gca, 'XScale', 'log' );
+%     axis( [ 40 12e3 -5 45] );
+
+
+
+%% Problem 4a - Infinite, Rigid Panel Model
+
+% Only normal incidence sound.
+
+D = ( panel.E * panel.thickness.^3 ) / ( 12 * ( 1 - panel.v^2 ) );  % 31.4
+
+% From lecture 9 on Wednesday, February 12, 2025, the equivalent bending
+% moment of the panel is a half-wavelength.
+%
+wavelength = 2 * panel.length;  % 1.6 meters
+
+lowest_resonance_frequency = 343 / wavelength;  % 214.4 Hz
+
+s = D / ( lowest_resonance_frequency * 2 * panel.length / pi )^2;  % 0.00264 UNITS?
+
+ms = panel.density * panel.length^2 * panel.thickness;
+
+
+h_tau_infinite_rigid_panel = @( f, fo, ms, s, rho0, c, eta)  4 ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (2*pi.*fo*ms*eta) ./ (rho0*c) + 2 ).^2 );
+
+% return
+
+%% Plot Data and Model
+
+f = 0:1:1:20e3;
 
 figure( ); ...
-    stem( octave_band_frequencies, spl.delta, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Pressure Difference Versus Octave Band Center Frequency' );
-    %
-    axis( [ 0 5e3  0 65 ] );
-
-return
-
-%% Source
-
-D = 1;  % Unitless
-
-T60 = 2;  % seconds
-
-SPL_reverberant_field = 80;  % dB
-
-
-
-%% Average Room Absorption and Room Constant
-
-alpha_average = (55.25 * room.volume) / (room.area * 343 * T60 );  % 0.1 Sabines
-
-R = (room.area * alpha_average) / (1 - alpha_average);  % 71.6 m^2
-
-
-
-%% Solve for the Sound Power Level of the Source
-
-% Lp = Lw + 10*log10( 4 / R );
-
-Lw = 80 - 10*log10( 4 / R );  % 92.5 dB re: 1e-12 Watts
-%
-% Note(s):
-%
-%   1.)  Using the reverberant field level of 80 dB (r is large, so its associate term is zero).
-%   2.)  The correction term define on slide 3 is not included here.
-
-
-
-%% Partition
-
-% Placed at the 20 meter mark of on the room length.
-
-TL = 20;  % dB
-
-transmission_coefficient = 10^( TL / -10 );  % 0.01 unitless
-
-
-
-%% Sound Pressures in Each Half of the Room
-
-% Room 1 (with the source)
-alpha_new = ...
-    ( ( room.area / 2) * 0.1  +  (room.width * room.height * transmission_coefficient ) ) / ...
-    (room.area/2 + room.width * room.height);  % 0.09 Sabines
-
-R_new = (room.area/2 * alpha_new) / ( 1 - alpha_new );  % 31.6 m^2
-
-Lp1 = 92.5 + 10*log10( 4 / R_new );  % 83.5 dB
-
-
-% Room 2
-Lp2 = Lp1 - TL + 10*log10( room.width*room.height / 31.6 );  % 64.5 dB
-
-
-delta_L = Lp1 - Lp2;  % 19 dB
+    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, lowest_resonance_frequency, ms, s, rho0, c, panel.eta ) ) );  grid on;
+    xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Measured Panel Transmission Losses' );
+    set( gca, 'XScale', 'log' );
+    % axis( [ 40 12e3 -5 45] );
 
 
 
