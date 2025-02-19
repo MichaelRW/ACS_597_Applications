@@ -112,9 +112,9 @@ receiver_room.room_constant = room_constant( receiver_room.average_absorption, r
 
 transmission_coefficient = @( receiver_room_pressure, source_room_pressure, panel_area, receiver_room_constant )  ( ( receiver_room_pressure ./ source_room_pressure ) .* receiver_room_constant ) ./ panel_area;
 
-tau = transmission_coefficient( spl.receiver_room, spl.source_room, panel.area, receiver_room.room_constant );
+tau = transmission_coefficient( 10.^(spl.receiver_room./20)*20e-6, 10.^(spl.source_room/20)*20e-6, panel.area, receiver_room.room_constant );
 
-TL = -10*log10( tau );
+TL = -10*log10( tau )
 
 figure( ); ...
     stem( octave_band_frequencies, TL, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
