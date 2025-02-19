@@ -98,9 +98,38 @@ receiver_room.average_absorption = average_absorption( room.volume, room.area, c
 %     set( gca, 'XScale', 'log' );
 %     xlim( [ 80 6e3 ] );  ylim( [ 0 0.14 ] );
 
-return
+
+
+%% Determine Receiver Room Constant
+
+room_constant = @( average_absorption, area )  ( average_absorption * area ) ./ ( 1 - average_absorption );  % Unitless
+
+receiver_room.room_constant = room_constant( receiver_room.average_absorption, room.area )
+
+% return
 
 %% Determine the Transmission Loss in Each Octave Band
+
+transmission_coefficient = @( receiver_room_pressure, source_room_pressure, panel_area, receiver_room_constant )  ( ( receiver_room_pressure ./ source_room_pressure ) .* receiver_room_constant ) ./ panel_area;
+
+tau = transmission_coefficient( spl.receiver_room, spl.source_room, panel.area, receiver_room.room_constant );
+
+TL = -10*log10( tau );
+
+figure( ); ...
+    stem( octave_band_frequencies, TL, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Octave Band Transmission Loss' );
+    %
+    xticks( octave_band_frequencies );  xticklabels( num2cell( octave_band_frequencies ) );
+    set( gca, 'XScale', 'log' );
+    xlim( [ 80 6e3 ] );  ylim( [ -10 0 ] );
+
+% return
+
+%% Validation
+
+TL_verify = spl.source_room - spl.receiver_room + 10*log10( panel.area ./ receiver_room.room_constant )
 
 return
 
