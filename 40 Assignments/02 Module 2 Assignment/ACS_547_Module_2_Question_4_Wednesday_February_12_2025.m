@@ -9,7 +9,7 @@
 
 %% Environment
 
-close all; clear; clc;
+% close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -75,41 +75,189 @@ wo = pi^2 / panel.length * sqrt( D / ms );
 
 h_tau_infinite_rigid_panel = @( f, wo, ms, s, rho0, c, eta)  4 ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (wo*ms*eta) ./ (rho0*c) + 2 ).^2 );
 
+h_tau_infinite_rigid_panel_side_materials = @( f, wo, ms, s, rho0, c, eta, n )  (4*n) ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (wo*ms*eta) ./ (rho0*c) + n + 1 ).^2 );
+
 
 
 %% Problem 4b - Infinite, Flexible Panel Model with Random Incidence
 
+% Panel has bending waves.
+
+
 h_tau_term1 = @( rho0, c, phi )  ( 2*rho0*c*secd(phi) ).^2;  % Checked
+h_tau_term2 = @( rho0, c, phi, D, eta, f )  ( 2*rho0*c*secd(phi) + (D*eta*(2*pi.*f./c).^4)./(2*pi.*f) .* sind(phi).^4 ).^2;  % Checked
+h_tau_term3 = @( f, ms, D, phi )  ( 2*pi.*f*ms  -  D*(2*pi.*f./c).^4./(2*pi.*f) .* sind(phi).^4 ).^2;  % Checked
 
-h_tau_term2 = @( rho0, c, phi, D, eta, f )  ( 2*rho0*c*secd(phi) + D*eta*(2*pi*f/c).^4/(2*pi*f) * sind(phi).^4 ).^2;
 
-h_tau_term3 = @( f, ms, D, phi )  ( 2*pi*f*ms  -  D*(2*pi*f/c).^4/(2*pi*f) * sind(phi).^4).^2;
-
-% h_tau_infinite_flexible_panel = @( f, rho0, c, phi, D, eta )  (2*rho0*c*secd(phi)).^2 ./ ( (2*rho0*c*secd(phi) + D*eta*(2*pi*f/c).^4/(2*pi*f)*sind(phi)^4).^2  +  ...
-%     (2*pi*f*ms - D*(2*pi*f/c).^4/(2*pi*f)*sind(phi)^4).^2 );
+h_tau_infinite_flexible_panel = @( f, rho0, c, phi, D, eta )  ( 2*rho0.*c*secd(phi)).^2 ./ ( (2*rho0.*c*secd(phi) + D*eta*(2*pi.*f./c).^4./(2*pi.*f)*sind(phi)^4).^2  +  ...
+    (2*pi.*f*ms - D*(2*pi.*f./c).^4./(2*pi.*f)*sind(phi)^4).^2 );
 
 % return
  
-%% Plot Data and Model
+%% Plot Data and Model - Air on Both Sides
 
-f = 1e-2:1e-2:20e3;
+% 75 degrees from normal to panel.
 
-phi = 15;
+h_c_bending_wave = @( D, f, ms )  ( (D*(2*pi.*f).^2) ./ ms ).^0.25;
+%
+%   Proportional to the square-root of frequency.
+%
+%       Small wavelenths (high frequencies;  arrive first) travel faster than long wavelength (low frequencies;  arrive later).
+
+phi = 75;
+    h_coincidence_frequency =  @( ms, D, c, phi )  1./(2*pi) * sqrt( ms / D ) .* ( c ./ sind( phi )).^2;  % 10,949 Hz
+
+    h_coincidence_frequency( ms, D, c, phi );  % 10,949 Hz
+
+    [ (0:15:90).'  h_coincidence_frequency( ms, D, c, [ 0:15:90 ] ).' ];
+
+
+    critical_frequency =  1./(2*pi) .* sqrt( ms / D ) .* ( c / sind( 90 )).^2  % 10,216 Hz
+        critical_frequency_verify_1 = c^2 / (2*pi) * sqrt( ms / D );  % lowest coincidence frequency
+        critical_frequency_verify_2 = c^2 / ( 1.8 * panel.thickness * sqrt( panel.E / ( panel.density * ( 1 - panel.v^2) ) ) );
+
+
+
+
+% f = 1e-2:1e-2:40e3;
+f = 1e-2:1:100e3;
+
+
 eta = panel.eta;
 
+phi_set = 0:10:90;
 
+[ phi_set.'  h_coincidence_frequency( ms, D, c, phi_set ).' ]
+
+t_set = [ ];
+
+
+h1 = figure( ); ...
+
+    hold on;
+    % stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'c' );
+    %
+    % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+    %
+
+    for phi = phi_set    
+        % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1( rho0, c, phi ) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi ) ) ), 'Color', 'r', 'LineStyle', '-', 'Marker', 'none' );
+        % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '--', 'Marker', 'none' );
+        plot( f, -10*log10( h_tau_term1( rho0, c, phi ) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi ) ) ), 'Color', 'r', 'LineStyle', '-', 'Marker', 'none' );
+        % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '--', 'Marker', 'none' );
+
+        t_set = [ t_set;  h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ];
+
+    end
+
+    grid on;
+            
+    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Measured Panel Transmission Losses' );
+    set( gca, 'XScale', 'log' );
+    axis( [ 2e-3 100e3 -5 70 ] );
+
+    close( h1 );
+
+
+N_phi = size( t_set, 1 );
+
+temp1 = t_set;
+temp2 = sind( 2*phi_set ).';
+% temp2 = sind( phi_set ).';
+
+temp3 = t_set .* repmat( temp2, 1, size( temp1, 2 ) );
+
+tau_d = 1/N_phi .* nansum( temp3, 1 );
+
+tau_d_verify = nanmean( t_set .* temp2, 1 );
+
+
+
+h2 = figure( ); ...
+
+    hold on;
+
+    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+    
+    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'b', 'LineWidth', 1.5 );
+
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+
+    for phi = phi_set    
+        plot( f, -10*log10( h_tau_term1( rho0, c, phi ) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi ) ) ), 'Color', 'r', 'LineStyle', '-', 'Marker', 'none' );
+        % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '--', 'Marker', 'none' );
+    end
+
+    plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'm', 'LineWidth', 1.2 );
+    plot( f, -10*log10( tau_d_verify ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
+    
+
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./ panel.eta * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
+
+    grid on;
+            
+    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Measured Panel Transmission Losses' );
+    set( gca, 'XScale', 'log' );
+    axis( [ 2e-3 200e3 -5 90 ] );    
+
+    close( h2 );
+
+% return
+
+%% Final Plot
+
+figure( ); ...
+
+    hold on;
+
+    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+
+    plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'm', 'LineWidth', 1.2 );
+    % plot( f, -10*log10( tau_d_verify ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
+
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./ panel.eta * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
+    
+    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'b', 'LineWidth', 1.5 );
+
+    grid on;
+
+    legend( ...
+        'Target Transmission Loss', ...
+        'Infinite Rigid Panel', ...
+        'Infinite Flexible Panel with Diffuse Incidence', ...
+        'Finite Flexible Panel Model' );
+            
+    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Measured Panel Transmission Losses' );
+    set( gca, 'XScale', 'log' );
+    axis( [ 2e-3 200e3 -5 90 ] );
+
+
+
+%% Plot Data and Model - Different Side Materials
+
+% f = 1e-2:1e-2:20e3;
+% 
+% phi = 15;
+% eta = panel.eta;
+% 
+% 
 % figure( ); ...
-%     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-%     %
-%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-%     %
-%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
-%     % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, 75, D, panel.eta ) ) );  grid on;
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel_side_materials( f, wo, ms, s, rho0, c, panel.eta, 1 ) ), 'LineStyle', '-' );  hold on;
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel_side_materials( f, wo, ms, s, rho0, c, panel.eta, 1/3600 ) ), 'LineStyle', '-' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel_side_materials( f, wo, ms, s, rho0, c, panel.eta, 3600 ) ), 'LineStyle', '-' );  grid on;
 %         %
 %         legend( ...
-%             'Target TL Values', ...
-%             'Infinite Rigid Panel with Normal Incidence Sound', ...
-%             'Infinite Flexible Panel with Random Incidence Sound', ...
+%             'Same Fluid', ...
+%             'Water to Air', ...
+%             'Air to Water', ...
 %             'Location', 'North' );
 %     %
 %     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
@@ -167,28 +315,30 @@ eta = panel.eta;
 
 %% Change in Loss Factor
 
-figure( ); ...
-    stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    %
-    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e2 ) ), 'LineStyle', ':' );
-    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e-2 ) ), 'LineStyle', ':' );
-        %
-        legend( ...
-            'Target TL Values', ...
-            'Infinite Rigid Panel with Normal Incidence Sound', ...
-            'Infinite Rigid Panel with Normal Incidence Sound (eta * 100)', ...
-            'Infinite Rigid Panel with Normal Incidence Sound (eta / 100)', ...
-            'Location', 'North' );
-    %
-    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Measured Panel Transmission Losses - Change in Loss Factor' );
-    set( gca, 'XScale', 'log', 'YScale', 'log' );
-    % axis( [ 40 12e3 -5 45] );
+% figure( ); ...
+%     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+%     %
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e2 ) ), 'LineStyle', ':' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e-2 ) ), 'LineStyle', ':' );
+%         %
+%         legend( ...
+%             'Target TL Values', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (eta * 100)', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (eta / 100)', ...
+%             'Location', 'North' );
+%     %
+%     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Measured Panel Transmission Losses - Change in Loss Factor' );
+%     set( gca, 'XScale', 'log', 'YScale', 'log' );
+%     % axis( [ 40 12e3 -5 45] );
 
 
 
 %% Clean-up
+
+% return
 
 if ( ~isempty( findobj( 'Type', 'figure' ) ) )
     monitors = get( 0, 'MonitorPositions' );
