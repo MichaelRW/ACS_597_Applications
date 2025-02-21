@@ -97,16 +97,93 @@ f = 1e-2:1e-2:20e3;
 phi = 15;
 eta = panel.eta;
 
+
+% figure( ); ...
+%     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+%     %
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%     %
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
+%     % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, 75, D, panel.eta ) ) );  grid on;
+%         %
+%         legend( ...
+%             'Target TL Values', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound', ...
+%             'Infinite Flexible Panel with Random Incidence Sound', ...
+%             'Location', 'North' );
+%     %
+%     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Measured Panel Transmission Losses' );
+%     set( gca, 'XScale', 'log' );
+%     % axis( [ 40 12e3 -5 45] );
+
+
+
+%% Change is Stiffness
+
+% figure( ); ...
+%     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+%     %
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s*100, rho0, c, panel.eta ) ), 'LineStyle', '--' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s*1e-2, rho0, c, panel.eta ) ), 'LineStyle', '--' );
+%         %
+%         legend( ...
+%             'Target TL Values', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (s * 100)', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (s / 100)', ...
+%             'Location', 'North' );
+%     %
+%     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Measured Panel Transmission Losses - Change in Stiffness' );
+%     set( gca, 'XScale', 'log' );
+%     % axis( [ 40 12e3 -5 45] );
+
+
+
+%% Change in Mass
+
+% figure( ); ...
+%     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+%     %
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms*100, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%     plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms*1e-2, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+%         %
+%         legend( ...
+%             'Target TL Values', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (s * 100)', ...
+%             'Infinite Rigid Panel with Normal Incidence Sound (s / 100)', ...
+%             'Location', 'North' );
+%     %
+%     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+%     title( 'Measured Panel Transmission Losses - Change in Mass' );
+%     set( gca, 'XScale', 'log' );
+%     % axis( [ 40 12e3 -5 45] );
+
+
+
+%% Change in Loss Factor
+
 figure( ); ...
     stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ) );  grid on;
-
-    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
-    % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, 75, D, panel.eta ) ) );  grid on;
-        legend( 'Target TL Values', 'Infinite Rigid Panel with Normal Incidence Sound', 'Infinite Flexible Panel with Random Incidence Sound', 'Location', 'North' );
-    xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Measured Panel Transmission Losses' );
-    set( gca, 'XScale', 'log' );
+    %
+    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
+    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e2 ) ), 'LineStyle', ':' );
+    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta*1e-2 ) ), 'LineStyle', ':' );
+        %
+        legend( ...
+            'Target TL Values', ...
+            'Infinite Rigid Panel with Normal Incidence Sound', ...
+            'Infinite Rigid Panel with Normal Incidence Sound (eta * 100)', ...
+            'Infinite Rigid Panel with Normal Incidence Sound (eta / 100)', ...
+            'Location', 'North' );
+    %
+    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
+    title( 'Measured Panel Transmission Losses - Change in Loss Factor' );
+    set( gca, 'XScale', 'log', 'YScale', 'log' );
     % axis( [ 40 12e3 -5 45] );
 
 
