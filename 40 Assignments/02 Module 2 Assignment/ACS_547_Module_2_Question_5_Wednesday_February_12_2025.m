@@ -5,6 +5,8 @@
 
 % Slide 8 - Noise Reduction and Transmission Loss
 
+% Volume of the enclosure is much bigger than the machine.  Diffuse sound field in the enclosure.
+
 
 
 %% Environment
@@ -29,99 +31,75 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Room and Panel
+%% Define Machine
 
-room.length = 4;  % meters
-room.width = 4;  % meters
-room.height = 4;  % meters
-    room.volume = room.length * room.width * room.height;  % m^2
-    room.area = 2*(room.length * room.width) + 2*(room.length * room.height) + 2*(room.width * room.height);  % m^2
+machine.area = 3;  % m^2
+machine.absorption = 0.07;  % Sabine
+machine.D = 2;  % Unitless
 
-panel.width = 0.8;  % meters
-panel.height = 0.8;  % meters
+machine.distance = 10;  % m
 
 
 
 %% Data
 
-octave_band_frequencies = [ 125  250  500  1000  2000  4000 ].';  % Hz
-T60 = [ 2.0  2.1  1.8  1.5  1.2  0.9 ].';  % seconds
-spl.source_room = [ 90  95  103  105  100  93 ].';  % dB re: 20e-6 Pascals
-spl.receiver_room = [ 50  50  46  50  50  38 ].';  % dB re: 20e-6 Pascals
+octave_band_frequencies = [ 250  500  1000  2000  4000 ].';  % Hz
+Lw = [ 105  115  106  108  119 ].';  % dB re: 1 pW
+    % [ octave_band_frequencies  Lw ]
+
+% figure( ); ...
+%     h1 = stem( octave_band_frequencies, Lw, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  hold on;
+%     h2 = line( [ 2e2 5e3 ], [ 30 30 ] );  grid on;
+%         legend( [ h1 h2 ], 'Current Sound Pressure Levels', 'Target Sound Pressure Level', 'Location', 'North' );
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Sound Pressure Level [dB re: 20e-6 Pa]' );
+%     title( 'Sound Power Level Versus Octave Band Center Frequency' );
+%     %
+%     axis( [ 150 6e3  0 140 ] );
+%     set( gca, 'XScale', 'log' );
 
 
 
-%% Pressure Difference
+%% Per Octave Band Insertion Loss
 
-spl.delta = spl.source_room - spl.receiver_room;
-
-figure( ); ...
-    stem( octave_band_frequencies, spl.delta, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Pressure Difference Versus Octave Band Center Frequency' );
-    %
-    axis( [ 0 5e3  0 65 ] );
-
-return
-
-%% Source
-
-D = 1;  % Unitless
-
-T60 = 2;  % seconds
-
-SPL_reverberant_field = 80;  % dB
-
-
-
-%% Average Room Absorption and Room Constant
-
-alpha_average = (55.25 * room.volume) / (room.area * 343 * T60 );  % 0.1 Sabines
-
-R = (room.area * alpha_average) / (1 - alpha_average);  % 71.6 m^2
-
-
-
-%% Solve for the Sound Power Level of the Source
-
-% Lp = Lw + 10*log10( 4 / R );
-
-Lw = 80 - 10*log10( 4 / R );  % 92.5 dB re: 1e-12 Watts
+Lp_10_meters = Lw  +  10*log10( machine.D /( 4 * pi * machine.distance ) );  % dB re: 20e-6 Pa
+    % [ octave_band_frequencies  Lp_10_meters ]
 %
-% Note(s):
+%  The value of R is infinite.  The machine is outside in open air.
+
+octave_band_IL = Lp_10_meters - 30;
+    % [ octave_band_frequencies  octave_band_IL ]
+
+
+
+%% Anonymous Function for Insertion Loss
+
+h_IL_large = @( Sw, alpha_w, Si, alpha_i, TL )  10*log10(  1  +  (Sw*alpha_w  +  Si*alpha_i)./(Sw + Si)*10^(TL/10)  );
+
+
+
+%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground Reflecting
+
+% Assumption(s):
 %
-%   1.)  Using the reverberant field level of 80 dB (r is large, so its associate term is zero).
-%   2.)  The correction term define on slide 3 is not included here.
+%   1.)  The ground is a hard reflecting survice
+%   2.)  The enclosure is a cube.
+%   3.)  There is no noise transmission through the ground.
+
+enclosure.length = 2;  % m
+enclosure.width = 2;  % m
+enclosure.height = 2;  % m
+    enclosure
+
+IL_estimates = h_IL_large( )
 
 
 
-%% Partition
+%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground with Cover
 
-% Placed at the 20 meter mark of on the room length.
-
-TL = 20;  % dB
-
-transmission_coefficient = 10^( TL / -10 );  % 0.01 unitless
-
-
-
-%% Sound Pressures in Each Half of the Room
-
-% Room 1 (with the source)
-alpha_new = ...
-    ( ( room.area / 2) * 0.1  +  (room.width * room.height * transmission_coefficient ) ) / ...
-    (room.area/2 + room.width * room.height);  % 0.09 Sabines
-
-R_new = (room.area/2 * alpha_new) / ( 1 - alpha_new );  % 31.6 m^2
-
-Lp1 = 92.5 + 10*log10( 4 / R_new );  % 83.5 dB
-
-
-% Room 2
-Lp2 = Lp1 - TL + 10*log10( room.width*room.height / 31.6 );  % 64.5 dB
-
-
-delta_L = Lp1 - Lp2;  % 19 dB
+% Assumption(s):
+%
+%   1.)  The ground is covered with the absorption material.
+%   2.)  The enclosure is a cube.
 
 
 
