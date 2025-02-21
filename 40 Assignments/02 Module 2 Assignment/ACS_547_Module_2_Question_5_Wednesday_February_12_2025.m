@@ -11,7 +11,7 @@
 
 %% Environment
 
-close all; clear; clc;
+% close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -35,7 +35,7 @@ PRINT_FIGURES = 0;
 
 machine.area = 3;  % m^2
 machine.absorption = 0.07;  % Sabine
-machine.D = 2;  % Unitless
+machine.D = 1;  % Unitless - In air.
 
 machine.distance = 10;  % m
 
@@ -61,7 +61,7 @@ Lw = [ 105  115  106  108  119 ].';  % dB re: 1 pW
 
 %% Per Octave Band Insertion Loss
 
-Lp_10_meters = Lw  +  10*log10( machine.D /( 4 * pi * machine.distance ) );  % dB re: 20e-6 Pa
+Lp_10_meters = Lw  +  10*log10( machine.D /( 4 * pi * machine.distance^2 ) );  % dB re: 20e-6 Pa
     % [ octave_band_frequencies  Lp_10_meters ]
 %
 %  The value of R is infinite.  The machine is outside in open air.
@@ -85,12 +85,117 @@ h_IL_large = @( Sw, alpha_w, Si, alpha_i, TL )  10*log10(  1  +  (Sw*alpha_w  + 
 %   2.)  The enclosure is a cube.
 %   3.)  There is no noise transmission through the ground.
 
-enclosure.length = 2;  % m
-enclosure.width = 2;  % m
-enclosure.height = 2;  % m
-    enclosure
+enclosure.dimension = 2;  % m
+    enclosure.area = 6 * enclosure.dimension^2;  % 20 m^2
 
-IL_estimates = h_IL_large( )
+
+% https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
+% https://www.cecoenviro.com/wp-content/uploads/2023/12/Acoustic-Enclosures-8pp-A4-web.pdf
+% https://www.controlnoise.com/product/acoustic-enclosures/
+
+
+switch ( 3 )
+
+    case 1
+
+        % 250 Hz - QBV-2
+        alpha_w = 0.27;  % From specification sheet.
+        TL = 20;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 29;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 40;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 50;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 55;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+
+    case 2
+
+        % Note:  Abosrption values are carried over from QBV-2.
+
+        % 250 Hz - QBV-3
+        alpha_w = 0.27;  % From specification sheet.
+        TL = 25;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 33;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 46;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 53;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 58;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+
+    case 3
+
+        % Note:  Abosrption values are carried over from QBV-2.
+
+        % 250 Hz - QBV-3
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 39;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 59;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 68;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 67;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.91;  % From specification sheet.
+        TL = 72;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+end
+
+
+[ octave_band_IL    IL_estimates.'    (octave_band_IL - IL_estimates.') ]
+
+
+% What is the most restrictive case?
 
 
 
