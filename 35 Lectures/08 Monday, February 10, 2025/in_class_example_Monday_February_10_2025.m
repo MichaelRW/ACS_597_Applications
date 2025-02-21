@@ -41,7 +41,7 @@ room.height = 4;  % meters
 
 %% Source
 
-D = 1;  % Unitless
+source_directivity_index = 1;  % Unitless
 
 T60 = 2;  % seconds
 
@@ -82,21 +82,28 @@ transmission_coefficient = 10^( TL / -10 );  % 0.01 unitless
 
 %% Sound Pressures in Each Half of the Room
 
-% Room 1 (with the source)
+% Room 1 (the source side)
 alpha_new = ...
     ( ( room.area / 2) * 0.1  +  (room.width * room.height * transmission_coefficient ) ) / ...
-    (room.area/2 + room.width * room.height);  % 0.09 Sabines
+    (room.area/2 + room.width * room.height);  % 0.09 Sabine
 
 R_new = (room.area/2 * alpha_new) / ( 1 - alpha_new );  % 31.6 m^2
 
 Lp1 = 92.5 + 10*log10( 4 / R_new );  % 83.5 dB
 
 
-% Room 2
+% Room 2 (the receiver side)
 Lp2 = Lp1 - TL + 10*log10( room.width*room.height / 31.6 );  % 64.5 dB
 
 
 delta_L = Lp1 - Lp2;  % 19 dB
+%
+% Note(s):
+%
+%   The source and receiver rooms are the same in size and absorption
+%   properties.  The amount of energy absorbed is proportional the power
+%   level of the source.  Therefore, you get slightly more than double the 
+%   energy in the source room and less in the receiver room.  37:01
 
 
 

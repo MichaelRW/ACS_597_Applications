@@ -13,7 +13,13 @@
 
 % Assumptions:
 %
-%   1.)  
+%   1.)  Lp1 depends on the transmission loss.
+%
+%       If the transmission loss is low then more energy goes to room 2 (i.e., the receiver room).
+%
+%       The noise reduction from the source room to the receiver.
+%
+%       Adding the barrier will change the level in the source room.  Typically making the sound level higher in the source room.
 
 
 
@@ -112,6 +118,9 @@ receiver_room.room_constant = room_constant( receiver_room.average_absorption, r
 
 
 %% Determine the Transmission Loss in Each Octave Band
+
+% The calibration plate isolate the receiver room and the area of the
+% receiver room does not consider the calibration plate.
 
 transmission_coefficient = @( receiver_room_pressure, source_room_pressure, panel_area, receiver_room_constant )  ( ( receiver_room_pressure ./ source_room_pressure ) .* receiver_room_constant ) ./ panel_area;
 

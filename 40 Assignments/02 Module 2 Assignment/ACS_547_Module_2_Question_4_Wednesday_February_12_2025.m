@@ -9,7 +9,7 @@
 
 %% Environment
 
-% close all; clear; clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -68,14 +68,12 @@ D = ( panel.E * panel.thickness.^3 ) / ( 12 * ( 1 - panel.v^2 ) );  % 31.4
 %
 wavelength = 2 * panel.length;  % 1.6 meters
 
-lowest_resonance_frequency = 343 / wavelength;  % 214.4 Hz
-    % lowest_resonance_frequency = lowest_resonance_frequency / 4;
+ms = panel.density * panel.thickness;
 
-s = D / ( lowest_resonance_frequency * 2 * panel.length / pi )^2;  % 0.00264 UNITS?
+wo = pi^2 / panel.length * sqrt( D / ms );
+    s = wo^2 * ms;
 
-ms = panel.density * panel.length^2 * panel.thickness;
-
-h_tau_infinite_rigid_panel = @( f, fo, ms, s, rho0, c, eta)  4 ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (2*pi.*fo*ms*eta) ./ (rho0*c) + 2 ).^2 );
+h_tau_infinite_rigid_panel = @( f, wo, ms, s, rho0, c, eta)  4 ./ ( ( (2*pi.*f*ms - s./(2*pi.*f)) ./ (rho0 * c) ).^2  +  ( (wo*ms*eta) ./ (rho0*c) + 2 ).^2 );
 
 
 
@@ -91,21 +89,21 @@ h_tau_term3 = @( f, ms, D, phi )  ( 2*pi*f*ms  -  D*(2*pi*f/c).^4/(2*pi*f) * sin
 %     (2*pi*f*ms - D*(2*pi*f/c).^4/(2*pi*f)*sind(phi)^4).^2 );
 
 % return
-
+ 
 %% Plot Data and Model
 
-f = 0:1:1:20e3;
+f = 1e-2:1e-2:20e3;
 
 phi = 15;
 eta = panel.eta;
 
 figure( ); ...
-    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, lowest_resonance_frequency, ms, s, rho0, c, panel.eta ) ) );  grid on;
+    stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
+    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ) );  grid on;
 
-    plot( f, -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
+    plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1(rho0, c, phi) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi) ) ) );  grid on;
     % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, 75, D, panel.eta ) ) );  grid on;
-
+        legend( 'Target TL Values', 'Infinite Rigid Panel with Normal Incidence Sound', 'Infinite Flexible Panel with Random Incidence Sound', 'Location', 'North' );
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Measured Panel Transmission Losses' );
     set( gca, 'XScale', 'log' );
