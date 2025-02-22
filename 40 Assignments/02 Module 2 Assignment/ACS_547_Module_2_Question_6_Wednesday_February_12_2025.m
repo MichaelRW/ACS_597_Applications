@@ -77,7 +77,7 @@ enclosure.height = 3;  % m
 enclosure.E = 3.6e12;  % Pascals
 enclosure.thickness = 3.81e-2;  % m
 enclosure.density = 800;  % kg/m^3
-enclossure.poisson_ratio = 0.25;  % Unitless
+enclosure.poisson_ratio = 0.25;  % Unitless
 
 % Clamped boundary conditions.
 
@@ -89,171 +89,76 @@ air_intake_radius = 10e-2;  % m
 
 
 
+%% Calculate Diffuse Sound Pressure Level
+
+% Assume distance is beyond the critical distance, so the distance value is
+% large and its associated term is not relevant.
+
+sound_pressure_level = 105  +  10*log10( 4/R );  % 95 dB SPL
+
+
+
+%% Calculate the Required Insertion Loss
+
+target_insertion_loss = sound_pressure_level - 82;  % 13 dB
+
+
+
 %% Insertion Loss
 
 % For the insertion loss to be high, we need:
 %
 %   1.)  Compliance of the air to be high;  volume of enclosure must be large.
-%   2.)  Compliance of each enclosure wall to be low.
+%   2.)  Compliance of each enclosure wall to be low;  low area, high stiffness, edges clamped).
+%           AREA IS THE DOMINATE FACTOR OVER VOLUME.
 
 
 % The correction factor for clamped walls.  See Figure 12.4 on slide 9 of the Lecture 11 notes.
 aspect_ratio = enclosure.height / enclosure.width;  % 1.7
     correction_factor = 2;  % Approximate value read from the Figure 12.4.
 
- h_wall_compliance = @( wall_area, correction_factor, bending_stiffness )
+bending_stiffness = ( enclosure.E * enclosure.thickness^3 ) / ( 12*( 1 - enclosure.poisson_ratio^2 ) );  % 1.78e7
+    h_wall_compliance = @( wall_area, correction_factor )  ( 0.001 * wall_area^3 * correction_factor ) / bending_stiffness;
 
-
-Ca = enclosure.volume / ( rho0 * c^2 )
-
-return
-
-%%
-
-Lp_10_meters = Lw  +  10*log10( machine.D /( 4 * pi * machine.distance^2 ) );  % dB re: 20e-6 Pa
-    % [ octave_band_frequencies  Lp_10_meters ]
-%
-%  The value of R is infinite.  The machine is outside in open air.
-
-octave_band_IL = Lp_10_meters - 30;
-    % [ octave_band_frequencies  octave_band_IL ]
+Ca = enclosure.volume / ( rho0 * c^2 );
 
 
 
-%% Anonymous Function for Insertion Loss
 
-h_IL_large = @( Sw, alpha_w, Si, alpha_i, TL )  10*log10(  1  +  (Sw*alpha_w  +  Si*alpha_i)./(Sw + Si)*10^(TL/10)  );
-
-
-
-%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground Reflecting
-
-% Assumption(s):
-%
-%   1.)  The ground is a hard reflecting survice
-%   2.)  The enclosure is a cube.
-%   3.)  There is no noise transmission through the ground.
-
-enclosure.dimension = 2;  % m
-    enclosure.area = 6 * enclosure.dimension^2;  % 20 m^2
+% Top
+top.area = enclosure.width * enclosure.depth;
+top.aspect_ratio = max( enclosure.width, enclosure.depth ) / min( enclosure.width, enclosure.depth );
+top.correction_factor = 3.8;
+    top.compliance = h_wall_compliance( top.area, top.correction_factor );
 
 
-% https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
-% https://www.cecoenviro.com/wp-content/uploads/2023/12/Acoustic-Enclosures-8pp-A4-web.pdf
-% https://www.controlnoise.com/product/acoustic-enclosures/
+% Side 1
+side_1.area = enclosure.depth * enclosure.height;
+side_1.aspect_ratio = max( enclosure.width, enclosure.height ) / min( enclosure.width, enclosure.height );
+side_1.correction_factor = 2;
+    side_1.compliance = h_wall_compliance( side_1.area, side_1.correction_factor );
+
+% Side 2
+side_2.compliance = side_1.compliance;
 
 
-switch ( 3 )
+% Side 3
+side_3.area = enclosure.width * enclosure.height;
+side_3.aspect_ratio = max( enclosure.width, enclosure.height ) / min( enclosure.width, enclosure.height );
+side_3.correction_factor = 2; 
+    side_3.compliance = h_wall_compliance( side_3.area, side_3.correction_factor );
 
-    case 1
-
-        % 250 Hz - QBV-2
-        alpha_w = 0.27;  % From specification sheet.
-        TL = 20;  % From specification sheet.
-            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 500 Hz - QBV-2
-        alpha_w = 0.96;  % From specification sheet.
-        TL = 29;  % From specification sheet.
-            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 1 kHz - QBV-2
-        % alpha_w = 1.13;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 40;  % From specification sheet.
-            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 2 kHz - QBV-2
-        % alpha_w = 1.08;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 50;  % From specification sheet.
-            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 4 kHz - QBV-2
-        alpha_w = 0.99;  % From specification sheet.
-        TL = 55;  % From specification sheet.
-            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+% Side 4
+side_4.compliance = side_3.compliance;
 
 
-    case 2
-
-        % Note:  Abosrption values are carried over from QBV-2.
-
-        % 250 Hz - QBV-3
-        alpha_w = 0.27;  % From specification sheet.
-        TL = 25;  % From specification sheet.
-            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 500 Hz - QBV-2
-        alpha_w = 0.96;  % From specification sheet.
-        TL = 33;  % From specification sheet.
-            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 1 kHz - QBV-2
-        % alpha_w = 1.13;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 46;  % From specification sheet.
-            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 2 kHz - QBV-2
-        % alpha_w = 1.08;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 53;  % From specification sheet.
-            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 4 kHz - QBV-2
-        alpha_w = 0.99;  % From specification sheet.
-        TL = 58;  % From specification sheet.
-            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-
-
-    case 3
-
-        % Note:  Abosrption values are carried over from QBV-2.
-
-        % 250 Hz - QBV-3
-        alpha_w = 0.99;  % From specification sheet.
-        TL = 39;  % From specification sheet.
-            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 500 Hz - QBV-2
-        alpha_w = 0.96;  % From specification sheet.
-        TL = 59;  % From specification sheet.
-            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 1 kHz - QBV-2
-        % alpha_w = 1.13;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 68;  % From specification sheet.
-            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 2 kHz - QBV-2
-        % alpha_w = 1.08;  % From specification sheet.
-        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
-        TL = 67;  % From specification sheet.
-            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 4 kHz - QBV-2
-        alpha_w = 0.91;  % From specification sheet.
-        TL = 72;  % From specification sheet.
-            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-
-end
-
-
-[ octave_band_IL    IL_estimates.'    (octave_band_IL - IL_estimates.') ]
-
-
-% What is the most restrictive case?
+estimated_insertion_loss = 20*log10( 1 + Ca / ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) );  % 59.2 dB
 
 
 
-%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground with Cover
+%% Compliance of the Air Intake
 
-% Assumption(s):
-%
-%   1.)  The ground is covered with the absorption material.
-%   2.)  The enclosure is a cube.
+
 
 
 
