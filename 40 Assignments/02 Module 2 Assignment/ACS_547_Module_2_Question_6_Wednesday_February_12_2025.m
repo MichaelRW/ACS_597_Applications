@@ -3,7 +3,9 @@
 
 %% Synopsis
 
-% Slide 8 - Noise Reduction and Transmission Loss
+% Lecture 11, Wednesday, February 19, 2025
+
+% The compressor elevated above the ground.
 
 
 
@@ -29,99 +31,229 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Room and Panel
+%% Define Compressor
 
-room.length = 4;  % meters
-room.width = 4;  % meters
-room.height = 4;  % meters
-    room.volume = room.length * room.width * room.height;  % m^2
-    room.area = 2*(room.length * room.width) + 2*(room.length * room.height) + 2*(room.width * room.height);  % m^2
+compressor.width = 1;  % m
+compressor.depth = 1;  % m
+compressor.height = 2;  % m
+    compressor.area = 2*(compressor.width * compressor.depth) + 2*(compressor.width * compressor.height) + 2*(compressor.depth * compressor.height);  % 3 m^2
+    compressor.volume = compressor.width * compressor.depth * compressor.height;  % m^3
 
-panel.width = 0.8;  % meters
-panel.height = 0.8;  % meters
+compressor.power_level = 105;  % dB re: 1e-12 Watts
+compressor.frequency = 50;  % Hz
 
+c = 343;  % m/s
 
-
-%% Data
-
-octave_band_frequencies = [ 125  250  500  1000  2000  4000 ].';  % Hz
-T60 = [ 2.0  2.1  1.8  1.5  1.2  0.9 ].';  % seconds
-spl.source_room = [ 90  95  103  105  100  93 ].';  % dB re: 20e-6 Pascals
-spl.receiver_room = [ 50  50  46  50  50  38 ].';  % dB re: 20e-6 Pascals
+rho0 = 1.2;  % kg/m^3  CHECK
 
 
 
-%% Pressure Difference
+%% Sound Level Target
 
-spl.delta = spl.source_room - spl.receiver_room;
+sound_level_target = 82;  % dB re: 20e-6 Pascals
 
-figure( ); ...
-    stem( octave_band_frequencies, spl.delta, 'Marker', '.', 'MarkerSize', 12, 'Color', 'r' );  grid on;
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Pressure Difference Versus Octave Band Center Frequency' );
-    %
-    axis( [ 0 5e3  0 65 ] );
+
+
+%% Define Workshop
+
+R = 40;  % m^2 or Sabins
+
+
+
+%% Define Close-fitting Enclosure
+
+helmholtz_factor = (2 * pi * compressor.frequency) / c;  % 0.92 m
+%
+%  For a small enclosure, k*d << 1.  Therefore d << 1.1.
+d = 0.75;
+    % helmholtz_factor * d;  % 0.69
+
+enclosure.width = compressor.width + d;  % m
+enclosure.depth = compressor.depth + d;  % m
+enclosure.height = 3;  % m
+    enclosure.area = 2*(enclosure.width * enclosure.depth) + 2*(enclosure.width * enclosure.height) + 2*(enclosure.depth * enclosure.height);
+    enclosure.volume = enclosure.width * enclosure.depth * enclosure.height;
+
+enclosure.E = 3.6e12;  % Pascals
+enclosure.thickness = 3.81e-2;  % m
+enclosure.density = 800;  % kg/m^3
+enclossure.poisson_ratio = 0.25;  % Unitless
+
+% Clamped boundary conditions.
+
+
+
+%% Define Air Intage
+
+air_intake_radius = 10e-2;  % m
+
+
+
+%% Insertion Loss
+
+% For the insertion loss to be high, we need:
+%
+%   1.)  Compliance of the air to be high;  volume of enclosure must be large.
+%   2.)  Compliance of each enclosure wall to be low.
+
+
+% The correction factor for clamped walls.  See Figure 12.4 on slide 9 of the Lecture 11 notes.
+aspect_ratio = enclosure.height / enclosure.width;  % 1.7
+    correction_factor = 2;  % Approximate value read from the Figure 12.4.
+
+ h_wall_compliance = @( wall_area, correction_factor, bending_stiffness )
+
+
+Ca = enclosure.volume / ( rho0 * c^2 )
 
 return
 
-%% Source
+%%
 
-D = 1;  % Unitless
-
-T60 = 2;  % seconds
-
-SPL_reverberant_field = 80;  % dB
-
-
-
-%% Average Room Absorption and Room Constant
-
-alpha_average = (55.25 * room.volume) / (room.area * 343 * T60 );  % 0.1 Sabines
-
-R = (room.area * alpha_average) / (1 - alpha_average);  % 71.6 m^2
-
-
-
-%% Solve for the Sound Power Level of the Source
-
-% Lp = Lw + 10*log10( 4 / R );
-
-Lw = 80 - 10*log10( 4 / R );  % 92.5 dB re: 1e-12 Watts
+Lp_10_meters = Lw  +  10*log10( machine.D /( 4 * pi * machine.distance^2 ) );  % dB re: 20e-6 Pa
+    % [ octave_band_frequencies  Lp_10_meters ]
 %
-% Note(s):
+%  The value of R is infinite.  The machine is outside in open air.
+
+octave_band_IL = Lp_10_meters - 30;
+    % [ octave_band_frequencies  octave_band_IL ]
+
+
+
+%% Anonymous Function for Insertion Loss
+
+h_IL_large = @( Sw, alpha_w, Si, alpha_i, TL )  10*log10(  1  +  (Sw*alpha_w  +  Si*alpha_i)./(Sw + Si)*10^(TL/10)  );
+
+
+
+%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground Reflecting
+
+% Assumption(s):
 %
-%   1.)  Using the reverberant field level of 80 dB (r is large, so its associate term is zero).
-%   2.)  The correction term define on slide 3 is not included here.
+%   1.)  The ground is a hard reflecting survice
+%   2.)  The enclosure is a cube.
+%   3.)  There is no noise transmission through the ground.
+
+enclosure.dimension = 2;  % m
+    enclosure.area = 6 * enclosure.dimension^2;  % 20 m^2
+
+
+% https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
+% https://www.cecoenviro.com/wp-content/uploads/2023/12/Acoustic-Enclosures-8pp-A4-web.pdf
+% https://www.controlnoise.com/product/acoustic-enclosures/
+
+
+switch ( 3 )
+
+    case 1
+
+        % 250 Hz - QBV-2
+        alpha_w = 0.27;  % From specification sheet.
+        TL = 20;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 29;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 40;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 50;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 55;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+
+    case 2
+
+        % Note:  Abosrption values are carried over from QBV-2.
+
+        % 250 Hz - QBV-3
+        alpha_w = 0.27;  % From specification sheet.
+        TL = 25;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 33;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 46;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 53;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 58;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+
+    case 3
+
+        % Note:  Abosrption values are carried over from QBV-2.
+
+        % 250 Hz - QBV-3
+        alpha_w = 0.99;  % From specification sheet.
+        TL = 39;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz - QBV-2
+        alpha_w = 0.96;  % From specification sheet.
+        TL = 59;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz - QBV-2
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 68;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz - QBV-2
+        % alpha_w = 1.08;  % From specification sheet.
+        alpha_w = 0.99;  % From specification sheet.  See comment on slide 28 of Lecture 10.
+        TL = 67;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz - QBV-2
+        alpha_w = 0.91;  % From specification sheet.
+        TL = 72;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+end
+
+
+[ octave_band_IL    IL_estimates.'    (octave_band_IL - IL_estimates.') ]
+
+
+% What is the most restrictive case?
 
 
 
-%% Partition
+%% Find Values of TL and Aborption that will Meet the Target Insertion Loss - Ground with Cover
 
-% Placed at the 20 meter mark of on the room length.
-
-TL = 20;  % dB
-
-transmission_coefficient = 10^( TL / -10 );  % 0.01 unitless
-
-
-
-%% Sound Pressures in Each Half of the Room
-
-% Room 1 (with the source)
-alpha_new = ...
-    ( ( room.area / 2) * 0.1  +  (room.width * room.height * transmission_coefficient ) ) / ...
-    (room.area/2 + room.width * room.height);  % 0.09 Sabines
-
-R_new = (room.area/2 * alpha_new) / ( 1 - alpha_new );  % 31.6 m^2
-
-Lp1 = 92.5 + 10*log10( 4 / R_new );  % 83.5 dB
-
-
-% Room 2
-Lp2 = Lp1 - TL + 10*log10( room.width*room.height / 31.6 );  % 64.5 dB
-
-
-delta_L = Lp1 - Lp2;  % 19 dB
+% Assumption(s):
+%
+%   1.)  The ground is covered with the absorption material.
+%   2.)  The enclosure is a cube.
 
 
 
