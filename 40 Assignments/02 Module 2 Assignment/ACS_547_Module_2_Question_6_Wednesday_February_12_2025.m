@@ -31,6 +31,14 @@ PRINT_FIGURES = 0;
 
 
 
+%% Define Anonymous Functions
+
+h_RA_term_1 = @( rho0, c , S, k, delta_mu, D, w )  ( rho0*c/S )  *  ( (k * sqrt( (2*3.178e-5) / (rho0*w) ) * D * 0.004 ) / (2*S) *1.4364 );
+h_RA_term_2 = @( rho0, c , S, k, delta_mu, D, w, h )  ( rho0*c/S )  *  0.288*k*3.178e-5*log10((4*S)/(pi*h^2));
+h_RA_term_3 = @( rho0, c , S, k, delta_mu, D, w, h )  ( rho0*c/S )  *  (0.5*S*k^2)/(2*pi);
+
+
+
 %% Define Compressor
 
 compressor.width = 1;  % m
@@ -80,12 +88,6 @@ enclosure.density = 800;  % kg/m^3
 enclosure.poisson_ratio = 0.25;  % Unitless
 
 % Clamped boundary conditions.
-
-
-
-%% Define Air Intage
-
-air_intake_radius = 10e-2;  % m
 
 
 
@@ -158,6 +160,41 @@ estimated_insertion_loss = 20*log10( 1 + Ca / ( top.compliance + 2*side_1.compli
 
 %% Compliance of the Air Intake
 
+air_intake_radius = 10e-2;  % m
+air_intake_thickness = enclosure.thickness;  % m
+air_intake_frequency = 50;  % Hz
+    air_intake_angular_frequency = 2*pi*air_intake_frequency;  % radians/s
+
+viscosity = 1.5e-5;  % m^2/s
+
+h = 0.3;  % CHECK
+
+f = 50; 
+    term_1 = h_RA_term_1( rho0, c, pi*(air_intake_radius*2)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.1, 2*pi*f );
+    term_2 = h_RA_term_2( rho0, c, pi*(air_intake_radius*2)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.1, 2*pi*f, 0.3 );
+    term_3 = h_RA_term_3( rho0, c, pi*(0.1)^2/4, 2*pi*f/c, sqrt( (2 * 3.178e-5 ) / ( 2*pi*f * rho0 ) ), pi * 0.1, 2*pi*f, 0.3 );
+        impedance.real = term_1 + term_2 + term_3;
+
+
+% Deng (1998)
+epsilon = 1;
+    L_o = air_intake_radius * ( 1.27 / (1 + 1.92*epsilon) - 0.086 );
+
+L_e =  enclosure.thickness + 2*L_o;
+    impedance.imaginary = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.1^2/4 );
+
+
+impedance.net = impedance.real + impedance.imaginary
+
+
+% Calculate the compliance of the hole (complex number).
+
+
+% Take magnitude of complex-valued compliance for the hole
+
+
+% Substitute in this equation,
+% estimated_insertion_loss_with_hole = 20*log10( (0 + Ca)  / ( Cl * ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) ) )  % 59.2 dB
 
 
 
