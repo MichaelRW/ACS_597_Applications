@@ -82,7 +82,8 @@ enclosure.height = 3;  % m
     enclosure.area = 2*(enclosure.width * enclosure.depth) + 2*(enclosure.width * enclosure.height) + 2*(enclosure.depth * enclosure.height);
     enclosure.volume = enclosure.width * enclosure.depth * enclosure.height;
 
-enclosure.E = 3.6e12;  % Pascals
+% enclosure.E = 3.6e12;  % Pascals
+enclosure.E = 3.6e9;  % Pascals
 enclosure.thickness = 3.81e-2;  % m
 enclosure.density = 800;  % kg/m^3
 enclosure.poisson_ratio = 0.25;  % Unitless
@@ -189,7 +190,7 @@ impedance.net = impedance.real + impedance.imaginary;
         Cl = abs( compliance_of_hole );
             Cl = Cl;
 
-estimated_insertion_loss
+estimated_insertion_loss;
 estimated_insertion_loss_with_hole = 20*log10( (Cl + Ca)  / ( Cl + ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) ) )
 
 
