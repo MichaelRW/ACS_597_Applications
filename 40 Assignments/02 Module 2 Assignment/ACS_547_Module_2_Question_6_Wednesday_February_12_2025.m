@@ -184,17 +184,25 @@ L_e =  enclosure.thickness + 2*L_o;
     impedance.imaginary = 1j * rho0 * (2 * pi * f) * L_e / ( pi*0.1^2/4 );
 
 
-impedance.net = impedance.real + impedance.imaginary
+impedance.net = impedance.real + impedance.imaginary;
+    compliance_of_hole = 1 / impedance.net;
+        Cl = abs( compliance_of_hole );
+            Cl = Cl;
+
+estimated_insertion_loss
+estimated_insertion_loss_with_hole = 20*log10( (Cl + Ca)  / ( Cl + ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) ) )
 
 
-% Calculate the compliance of the hole (complex number).
+13 - estimated_insertion_loss_with_hole
 
 
-% Take magnitude of complex-valued compliance for the hole
 
+critical_frequency = c^2/(2*pi)*sqrt( enclosure.density * enclosure.thickness / bending_stiffness );
+%
+% The critical frequency is 25 Hz.
+%
+% The frequency of the compressor is 50 Hz.
 
-% Substitute in this equation,
-% estimated_insertion_loss_with_hole = 20*log10( (0 + Ca)  / ( Cl * ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) ) )  % 59.2 dB
 
 
 
