@@ -1,7 +1,7 @@
 
 
 %\documentclass{book}\begin{document}<content\end{document}
-\documentclass[letter, 11pt, margins=0.25in]{texMemo}  % The texMemo package by Rob Oakes.
+\documentclass[letter, 11pt, margins=0.3in]{texMemo}  % The texMemo package by Rob Oakes.
 
 \usepackage{amsmath}
 \usepackage{color, soul}
@@ -17,17 +17,7 @@
 \usepackage[LGRgreek]{mathastext}
 
 \usepackage{listings}
-\usepackage[mlscaleinline=true]{matlab-prettifier}
-%\usepackage{matlab-prettifier}
-%
-%\lstMakeShortInline[style=Matlab-editor]@
-%\lstnewenvironment{matlab}{\lstset{
-%    style=Matlab-editor,
-%    basicstyle=\color{black}\ttfamily\tiny
-%}}{}
-
-\graphicspath{ {../} }
-
+\usepackage[]{matlab-prettifier}
 
 \usepackage{multirow}
 
@@ -38,6 +28,9 @@
 \definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
 \definecolor{LightCyan}{rgb}{0.88,1,1}
 \definecolor{Gray}{gray}{0.85}
+
+
+\graphicspath{ {../} }
 
 
 \memodate{\today~(Submitted)}
@@ -55,7 +48,7 @@
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 
-\vspace{-0.25cm}
+\vspace{0.25cm}
 \subsection*{Problem 1a}
 
 Table~\ref{table:resonanceFrequencies} lists the ten lowest resonance mode orders for the room and the respective frequency.
@@ -79,9 +72,13 @@ Table~\ref{table:resonanceFrequencies} lists the ten lowest resonance mode order
                 4  &  1, 1, 0  &  37.6  \\
                 \rowcolor{Gray}
                 5  &  2, 1, 0  &  48.0  \\
+                \rowcolor{pink}
+                \hline
                 6  &  3, 0, 0  &  51.5  \\
-                \rowcolor{Gray}
+                \rowcolor{pink}
+                \hline
                 7  &  0, 2, 0  &  55.6  \\
+                \hline
                 8  &  1, 2, 0  &  58.2  \\
                 \rowcolor{Gray}
                 9  &  3, 1, 0  &  61.4  \\
@@ -96,7 +93,7 @@ Table~\ref{table:resonanceFrequencies} lists the ten lowest resonance mode order
 
 
 
-\vspace{-0.25cm}
+\vspace{0.25cm}
 \subsection*{Problem 1b}
 
 The two closest modes are (3, 0, 0) and (0, 2, 0) with frequencies of 51.5 Hz and 55.6 Hz, respectively.
@@ -104,41 +101,36 @@ The two closest modes are (3, 0, 0) and (0, 2, 0) with frequencies of 51.5 Hz an
 
 
 
-\vspace{-0.25cm}
+\vspace{0.25cm}
 \subsection*{Problem 1c}
 
+Figure~\ref{fig:modeVisualization} illustrates the (3, 0, 0) and (0, 2, 0) modes.  The white lines in each figure show the modal lines for that mode.  \textbf{The machine can be placed where the modal lines for each mode overlap}.
+
+The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the machine could be placed.  These points coincide with the three modal planes shown in Figure~\ref{fig:sub1}.  Theoretically, there are an infinite number of places where the machine could be placed.  However, placement would take into account practical considerations such as accessibility, etc.
 
 
-\begin{figure}[hbt!]
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.6\linewidth]{Mode Profile 51_5 Hz.png}
-  \caption{A subfigure}
-  \label{fig:sub1}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.6\linewidth]{Mode Profile 55_8 Hz.png}
-  \caption{A subfigure}
-  \label{fig:sub2}
-\end{subfigure}
-\caption{A figure with two subfigures}
-\label{fig:test}
+\begin{figure}[htbp]
+
+    \centering
+    
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{Mode Profile 51_5 Hz.png}
+            \caption{Mode (3, 0, 0)}
+            \label{fig:sub1}
+    \end{subfigure}
+      
+    \vspace{0.25cm}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{Mode Profile 55_8 Hz.png}
+            \caption{Mode (0, 2, 0)}
+            \label{fig:sub2}
+    \end{subfigure}
+    
+        \vspace{0.5cm}
+    \caption{Visualization of modes.  (a.) Mode (3, 0, 0).  (b.) Model (0, 2, 0).  The pink circles in~\ref{fig:sub2} illustrate a few modal line intersections where the machine could be placed.}
+    \label{fig:modeVisualization}
+      
 \end{figure}
-
-%\begin{figure}[!htb]
-%
-%    \center
-%        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
-%
-%    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.}
-%    \label{figure:problem2figure1}
-%
-%\end{figure}
-
-
-
 
 
 
@@ -498,48 +490,42 @@ ph
 \section{Appendix - Matlab Code for Problem 1}
 \label{appendix:problem1}
 
-\lstinputlisting[style=Matlab-editor, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_1_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_1_Wednesday_February_12_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 2}
 \label{appendix:problem2}
 
-\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_2_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_2_Wednesday_February_12_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 3}
 \label{appendix:problem3}
 
-\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_3_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_3_Wednesday_February_12_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 4}
 \label{appendix:problem4}
 
-\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_4_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_4_Wednesday_February_12_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 5}
 \label{appendix:problem5}
 
-\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_5_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_5_Wednesday_February_12_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 6}
 \label{appendix:problem5}
 
-\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_6_Wednesday_February_12_2025.m}
-
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_6_Wednesday_February_12_2025.m}
 
 
 
@@ -547,10 +533,6 @@ ph
 
 
 \end{document}
-
-
-
-
 
 
 % Reference(s):

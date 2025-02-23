@@ -25,8 +25,6 @@ format ShortG;
 
 pause( 1 );
 
-PRINT_FIGURES = 0;
-
 
 
 %% Define Cylindrical Room
@@ -91,12 +89,10 @@ smallestValues = sortedValues( 1:NUMBER_OF_LOWEST_FREQUENCIES );
     % 10         61.4
     % 11         65.3
 
-
 smallestIndices = sortedIndices( 1:NUMBER_OF_LOWEST_FREQUENCIES );
 
 [ x, y, z ] = ind2sub( size(natural_frequencies), smallestIndices );
     [ x y z ] - 1;
-
 
 % Verify the calculated mode indices.
 h_natural_frequencies( 343, 0, 0, 0, 10, 3, false );  % 0 Hz
@@ -117,23 +113,16 @@ h_natural_frequencies( 343, 2, 2, 0 , 10, 3, false );  % 65.3 Hz
 
 [ (1:11).'  abs( smallestValues - 53 ) ]
 
-temp = [ x y z ] - 1;
-    temp( 7:8, :, : )
+temp = [ x y z ] - 1;  temp( 7:8, :, : )
 
-% Modes:
-%   ( 3, 0, 0 ) and ( 0, 2, 0 )
-
-h_natural_frequencies( 343, 3, 0, 0, 10, 3, true );  % 51.5 Hz
-
-h_natural_frequencies( 343, 0, 2, 0, 10, 3, true );  % 55.6 Hz
+h_natural_frequencies( 343, 3, 0, 0, 10, 3, false );  % 51.5 Hz, (3, 0, 0)
+h_natural_frequencies( 343, 0, 2, 0, 10, 3, false );  % 55.6 Hz, (0, 2, 0)
 
 
 
 %% Part c
 
-% For mode ( 3, 0, 0 ), place the source in the center of the cylinder at 5 meters.
-
-% For mode ( 0, 2, 0 ), place the source in the center of the cylinder.
+% See the report.
 
 
 
@@ -154,8 +143,6 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-% See slide 32 on "Lecture 06 - Room Modes - Filled.pptx".
 
 % https://www.mathworks.com/matlabcentral/answers/1883747-how-to-find-the-5-minimum-values-in-a-multidimensional-matrix-and-the-indices-to-which-these-entries
 
