@@ -176,80 +176,36 @@ Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total so
 \newpage
 \section*{Problem 3 - Transmission Loss Measurement}
 
-
-\vspace{-0.25cm}
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
-\vspace{0.25cm}
-Table~\ref{table:mouthpieceAndPip} lists the length of the pipe section and the mouthpiece.
 
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | }
-            \hline
-            \textbf{Item}  &  \textbf{Length [mm]}  \\
-            \hline
-                Pipe  &  145  \\
-                \hline
-                \rowcolor{Gray}
-                Mouthpiece  &  90  \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Calculated length of the pipe and length of the mouthpiece.}
-    \label{table:mouthpieceAndPip}
-\end{table}
+Figure~\ref{figure:q3AverageAbsorption} shows the average absorption per octave band based on the T60 data.  The calibration plate isolates the receiver room and the absorption calculation does not consider the calibration plate.
 
 
-%\vspace{-0.25cm}
-%\subsection*{Problem 3b}
-%
-%Table~\ref{table:holePlacementSummary} summarizes the placement of the holes for each note relative to the end of the pipe.
-%
-%\setlength{\abovecaptionskip}{0pt}
-%\vspace{0.1cm}
-%{\renewcommand{\arraystretch}{1.5}
-%\begin{table}[h!]
-%    \begin{center}
-%        \small
-%        \begin{tabular}{ | c | c | c | }
-%            \hline
-%            \textbf{Note}  &  \textbf{Frequency [Hz]}  &  \textbf{Length from End of Pipe [mm]}  \\
-%            \hline
-%                C5  &  523      &  n/a  \\
-%                \rowcolor{Gray}
-%                F5  &  698      &  87.75  \\
-%                A5  &  880      &  138.25  \\
-%                \rowcolor{Gray}
-%                C6  &  1,046    &  0.168  \\
-%            \hline
-%        \end{tabular}
-%    \end{center}
-%    \caption{Hole placement distances.}
-%    \label{table:holePlacementSummary}
-%\end{table}
+\begin{figure}[htb!]
+
+    \center
+        \includegraphics[ scale = 0.6, keepaspectratio ]{Q3 Average Absorption.png}
+
+    \caption{Average absorption per octave band.}
+    \label{figure:q3AverageAbsorption}
+
+\end{figure}
 
 
-%\vspace{0.25cm}
-%Figure~\ref{figure:bugleRecorderNoteSpectrums} shows the respective spectrum for each of the bugle recorder notes.
-%
-%\vspace{0.25cm}
-%\begin{figure}[!htb]
-%    \center
-%        \includegraphics[ scale = 0.6, keepaspectratio ]{Assignment 1 - Question 3 Bugle Recorder Note Spectrums.pdf}
-%    \caption{Spectrum for the C5, F5, A5, and C6 bugle recorder notes.}
-%    \label{figure:bugleRecorderNoteSpectrums}
-%\end{figure}
+\vspace{0.2cm}
+Figure~\ref{figure:q3TransmissionLoss} shows the transmission loss per octave band.  
 
 
+\begin{figure}[htb!]
 
+    \center
+        \includegraphics[ scale = 0.6, keepaspectratio ]{Q3 Transmission Loss.png}
 
+    \caption{Transmission loss per octave band.}
+    \label{figure:q3TransmissionLoss}
 
-
+\end{figure}
 
 
 

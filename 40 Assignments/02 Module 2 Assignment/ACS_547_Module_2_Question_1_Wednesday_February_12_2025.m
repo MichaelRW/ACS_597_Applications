@@ -70,7 +70,7 @@ end
 %% Part a - Find 10 Lowest Resonance Frequencies
 
 NUMBER_OF_LOWEST_FREQUENCIES = 11;
-    mode_indices =  [ 1:1:NUMBER_OF_LOWEST_FREQUENCIES ].';
+    mode_indices =  ( 1:1:NUMBER_OF_LOWEST_FREQUENCIES ).';
 
 [ sortedValues, sortedIndices ] = sort( natural_frequencies(:) );  % 21-by-8-by-5 -> 840 elements
 
@@ -92,7 +92,7 @@ smallestValues = sortedValues( 1:NUMBER_OF_LOWEST_FREQUENCIES );
 smallestIndices = sortedIndices( 1:NUMBER_OF_LOWEST_FREQUENCIES );
 
 [ x, y, z ] = ind2sub( size(natural_frequencies), smallestIndices );
-    [ x y z ] - 1;
+    % ( [ x y z ] - 1 )
 
 % Verify the calculated mode indices.
 h_natural_frequencies( 343, 0, 0, 0, 10, 3, false );  % 0 Hz
@@ -111,7 +111,7 @@ h_natural_frequencies( 343, 2, 2, 0 , 10, 3, false );  % 65.3 Hz
 
 %% Part b - Two 
 
-[ (1:11).'  abs( smallestValues - 53 ) ]
+% [ (1:11).'  abs( smallestValues - 53 ) ]
 
 temp = [ x y z ] - 1;  temp( 7:8, :, : )
 
