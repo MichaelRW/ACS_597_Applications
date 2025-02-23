@@ -115,7 +115,7 @@ figure( ); ...
     set( gca, 'XScale', 'log' );
     xlim( [ 80 6e3 ] );  ylim( [ 0 55 ] );
 
-return
+
 
 %% Clean-up
 

@@ -3,13 +3,13 @@
 
 %% Synopsis
 
-% Slide 8 - Noise Reduction and Transmission Loss
+% Problem 4 - Panel Tramission Loss
 
 
 
 %% Environment
 
-% close all; clear; clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -25,37 +25,26 @@ format ShortG;
 
 pause( 1 );
 
-PRINT_FIGURES = 0;
 
 
+%% Define Panel
 
-%% Parameters
-
-c = 343;  % m/s
-rho0 = 1.21;  % kg
-
-panel.length = 80e-2;  % meters
-%
-panel.E = 200e9;  % Pascals
-panel.density = 7800;  % kg / m^3
+panel.length = 80e-2;  % m
+panel.E = 200e9;  % Pa
+panel.density = 7800;  % kg/m^3
 panel.v = 0.29;  % Poisson's Ratio (unitless)
 panel.thickness = 1.2e-3;  % m
 panel.eta = 0.001;  % Loss factor (unitless)
 
+c = 343;  % m/s
+rho0 = 1.21;  % kg/m^3
 
 
-%% Panel Data
+
+%% Measured Panel Data
 
 octave_band_frequencies = [ 63  125  250  500  1000  2000  4000  8000 ].';  % Hz
 TL = [ 9  14  21  27  32  37  43  42 ].';  % dB
-
-
-% figure( ); ...
-%     stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  grid on;
-%     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
-%     title( 'Measured Panel Transmission Losses' );
-%     set( gca, 'XScale', 'log' );
-%     axis( [ 40 12e3 -5 45] );
 
 
 
@@ -119,15 +108,15 @@ phi = 75;
 
 
 
-% f = 1e-2:1e-2:40e3;
-f = 1e-2:1:100e3;
+% f = 0.1:0.05:100e3;
+f = 0.1:1:100e3;
 
 
 eta = panel.eta;
 
-phi_set = 0:10:90;
+phi_set = 0:5:90;
 
-[ phi_set.'  h_coincidence_frequency( ms, D, c, phi_set ).' ]
+[ phi_set.'  h_coincidence_frequency( ms, D, c, phi_set ).' ];
 
 t_set = [ ];
 
@@ -177,67 +166,26 @@ tau_d_verify = nanmean( t_set .* temp2, 1 );
 
 
 
-h2 = figure( ); ...
-
-    hold on;
-
-    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    
-    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'b', 'LineWidth', 1.5 );
-
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-
-    for phi = phi_set    
-        plot( f, -10*log10( h_tau_term1( rho0, c, phi ) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi ) ) ), 'Color', 'r', 'LineStyle', '-', 'Marker', 'none' );
-        % plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '--', 'Marker', 'none' );
-    end
-
-    plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'm', 'LineWidth', 1.2 );
-    plot( f, -10*log10( tau_d_verify ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
-    
-
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./ panel.eta * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
-
-    grid on;
-            
-    xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Measured Panel Transmission Losses' );
-    set( gca, 'XScale', 'log' );
-    axis( [ 2e-3 200e3 -5 90 ] );    
-
-    close( h2 );
-
-% return
-
-%% Final Plot
+%% Combined Transmission Loss Plot
 
 figure( ); ...
-
-    hold on;
-
-    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-
-    plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'm', 'LineWidth', 1.2 );
-    % plot( f, -10*log10( tau_d_verify ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
-
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./(200*panel.eta) * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'k', 'LineWidth', 1.2 );
-    
-    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'b', 'LineWidth', 1.5 );
-
-    grid on;
-
+    stem( octave_band_frequencies, TL, 'LineStyle', 'none', 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'k' );  hold on;
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-', 'Color', 'k' );
+    plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'b' );
+    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./(200*panel.eta) * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '--', 'Marker', 'none', 'Color', 'k' );
+    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'r' );  grid on;  % 16 kHz Demarcation
     legend( ...
         'Target Transmission Loss', ...
         'Infinite Rigid Panel', ...
         'Infinite Flexible Panel with Diffuse Incidence', ...
-        'Finite Flexible Panel Model' );
+        'Finite Flexible Panel Model', ...
+        '16 kHz Demarcation', ...
+        'Location', 'NorthWest' );
             
     xlabel( 'Frequency [$\frac{\omega}{\omega_o}$] ' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Measured Panel Transmission Losses' );
     set( gca, 'XScale', 'log' );
-    axis( [ 2e-3 200e3 -5 90 ] );
+    axis( [ 1 200e3 -5 80 ] );    
 
 
 
@@ -334,11 +282,9 @@ figure( ); ...
 %     set( gca, 'XScale', 'log', 'YScale', 'log' );
 %     % axis( [ 40 12e3 -5 45] );
 
-
+% return
 
 %% Clean-up
-
-% return
 
 if ( ~isempty( findobj( 'Type', 'figure' ) ) )
     monitors = get( 0, 'MonitorPositions' );
