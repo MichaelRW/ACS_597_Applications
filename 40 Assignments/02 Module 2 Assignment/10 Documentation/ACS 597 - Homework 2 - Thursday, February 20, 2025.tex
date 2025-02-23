@@ -11,17 +11,22 @@
 \usepackage{enumitem}
 \usepackage{graphicx, lipsum}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 \usepackage[LGRgreek]{mathastext}
 
 \usepackage{listings}
 \usepackage[mlscaleinline=true]{matlab-prettifier}
 %\usepackage{matlab-prettifier}
 %
-\lstMakeShortInline[style=Matlab-editor]@
-\lstnewenvironment{matlab}{\lstset{
-    style=Matlab-editor,
-    basicstyle=\color{black}\ttfamily\tiny
-}}{}
+%\lstMakeShortInline[style=Matlab-editor]@
+%\lstnewenvironment{matlab}{\lstset{
+%    style=Matlab-editor,
+%    basicstyle=\color{black}\ttfamily\tiny
+%}}{}
+
+\graphicspath{ {../} }
 
 
 \usepackage{multirow}
@@ -53,61 +58,48 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 \vspace{-0.25cm}
 \subsection*{Problem 1a}
 
-The lowest cut-on frequency for a rectangular duct with air flow is given by equation,
+Table~\ref{table:resonanceFrequencies} lists the ten lowest resonance mode orders for the room and the respective frequency.
 
-\vspace{-0.25cm}
-\begin{equation}
-    f_{cut-on} = 0.5 \cdot \frac{c}{L}
-\end{equation}
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | c | }
+            \hline
+            \textbf{Index}  &  \textbf{Mode ($\mathbf n_x$, $\mathbf n_\theta$, $\mathbf n_r$)}  &  \textbf{Frequency [Hz]}  \\
+            \hline
+                0  &  0, 0, 0  &  0  \\
+                \rowcolor{Gray}
+                1  &  1, 0, 0  &  17.2  \\
+                2  &  0, 1, 0  &  33.5  \\
+                \rowcolor{Gray}
+                3  &  2, 0, 0  &  34.3  \\
+                4  &  1, 1, 0  &  37.6  \\
+                \rowcolor{Gray}
+                5  &  2, 1, 0  &  48.0  \\
+                6  &  3, 0, 0  &  51.5  \\
+                \rowcolor{Gray}
+                7  &  0, 2, 0  &  55.6  \\
+                8  &  1, 2, 0  &  58.2  \\
+                \rowcolor{Gray}
+                9  &  3, 1, 0  &  61.4  \\
+                10  &  2, 2, 0  &  65.3  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Resonant modes of the cylindrical room.}
+    \label{table:resonanceFrequencies}
+\end{table}
 
-where $c$ is the speed of sound in air, 343~$\frac{m}{s}$,  and $L$ is the largest side of the rectangular cross-section.
-
-\vspace{0.25cm}
-With cross-sectional dimensions of $L_x = 12~cm$ and $L_y = 20~cm$, the lowest cut-on frequency for this rectangular duct is,
-
-\vspace{-0.25cm}
-\begin{equation*}
-    f_{cut-on} = 0.5 \cdot \frac{ 343~\frac{m}{s} }{ 0.20~m } = \boldsymbol{857.5~Hz}
-\end{equation*}
 
 
 
 \vspace{-0.25cm}
 \subsection*{Problem 1b}
 
-The lowest cut-on frequency for a circular duct with air flow with the same cross-sectional area as the rectangular duct in part (a.) can be calculated using equation,
-
-\vspace{-0.25cm}
-\begin{equation}
-    f_{cut-on} = 0.568 \cdot \frac{c}{d}
-    \label{equation:circularDuct}
-\end{equation}
-
-where $c$ is the speed of sound in air, 343~$\frac{m}{s}$,  and $d$ is diameter of the circular duct.
-
-\vspace{0.25cm}
-The cross-sectional area of the rectangular duct is,
-
-\vspace{-0.25cm}
-\begin{equation*}
-    Area_{~rectangular~duct} = 0.12~m~\cdot0.20~m =  0.024~m
-\end{equation*}
-
-\vspace{0.25cm}
-The corresponding diameter for this area is,
-
-\vspace{-0.25cm}
-\begin{equation*}
-    diameter = \sqrt{ \frac{0.24~m^2}{\pi} } \cdot 2 = 0.17~m
-\end{equation*}
-
-\vspace{0.25cm}
-Using Eq.~\ref{equation:circularDuct}, the lowest cut-on frequency for this circular duct with air flow is,
-
-\vspace{-0.25cm}
-\begin{equation*}
-    f_{cut-on} = 0.568 \cdot \frac{ 1,500~\frac{m}{s} }{ 0.17~m } = \boldsymbol{1,114.5~Hz}
-\end{equation*}
+The two closest modes are (3, 0, 0) and (0, 2, 0) with frequencies of 51.5 Hz and 55.6 Hz, respectively.
 
 
 
@@ -115,15 +107,35 @@ Using Eq.~\ref{equation:circularDuct}, the lowest cut-on frequency for this circ
 \vspace{-0.25cm}
 \subsection*{Problem 1c}
 
-The lowest cut-on frequency for this circular duct with water flow can be calculated using Eq.~\ref{equation:circularDuct},
 
-\vspace{-0.25cm}
-\begin{equation*}
-    f_{cut-on} = 0.568 \cdot \frac{ 1,500~\frac{m}{s} }{ 0.17~m } = \boldsymbol{4,873.9~Hz}
-\end{equation*}
 
-\vspace{0.25cm}
-The lowest cut-on frequency for water is considerable larger than it is for air flow.
+\begin{figure}[hbt!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.6\linewidth]{Mode Profile 51_5 Hz.png}
+  \caption{A subfigure}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.6\linewidth]{Mode Profile 55_8 Hz.png}
+  \caption{A subfigure}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{A figure with two subfigures}
+\label{fig:test}
+\end{figure}
+
+%\begin{figure}[!htb]
+%
+%    \center
+%        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
+%
+%    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.}
+%    \label{figure:problem2figure1}
+%
+%\end{figure}
 
 
 
@@ -494,7 +506,7 @@ ph
 \section{Appendix - Matlab Code for Problem 2}
 \label{appendix:problem2}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_2_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_2_Wednesday_February_12_2025.m}
 
 
 

@@ -75,16 +75,16 @@ helmholtz_factor = (2 * pi * compressor.frequency) / c;  % 0.92 m
 %  For a small enclosure, k*d << 1.  Therefore d << 1.1.
 d = 0.75;
 d = 0.25;
+% d = 1;
     % helmholtz_factor * d;  % 0.69
 
 enclosure.width = compressor.width + d;  % m
 enclosure.depth = compressor.depth + d;  % m
-% enclosure.height = 3;  % m;  compression height is 2 m
-enclosure.height = compressor.height + d;  % m;  compression height is 2 m
+enclosure.height = 3;  % m;  compression height is 2 m
+% enclosure.height = compressor.height + d;
     enclosure.area = 2*(enclosure.width * enclosure.depth) + 2*(enclosure.width * enclosure.height) + 2*(enclosure.depth * enclosure.height);
     enclosure.volume = enclosure.width * enclosure.depth * enclosure.height;
 
-% enclosure.E = 3.6e12;  % Pascals
 enclosure.E = 3.6e9;  % Pascals
 enclosure.thickness = 3.81e-2;  % m
 enclosure.density = 800;  % kg/m^3
@@ -105,7 +105,7 @@ sound_pressure_level = 105  +  10*log10( 4/R );  % 95 dB SPL
 
 %% Calculate the Required Insertion Loss
 
-target_insertion_loss = sound_pressure_level - 82;  % 13 dB
+target_insertion_loss = sound_pressure_level - 82  % 13 dB
 
 
 
@@ -126,8 +126,6 @@ bending_stiffness = ( enclosure.E * enclosure.thickness^3 ) / ( 12*( 1 - enclosu
     h_wall_compliance = @( wall_area, correction_factor )  ( 0.001 * wall_area^3 * correction_factor ) / bending_stiffness;
 
 Ca = enclosure.volume / ( rho0 * c^2 );
-
-
 
 
 % Top
@@ -190,13 +188,12 @@ L_e =  enclosure.thickness + 2*L_o;
 impedance.net = impedance.real + impedance.imaginary;
     compliance_of_hole = 1 / impedance.net;
         Cl = abs( compliance_of_hole );
-            Cl = Cl;
 
-estimated_insertion_loss;
+estimated_insertion_loss
 estimated_insertion_loss_with_hole = 20*log10( (Cl + Ca)  / ( Cl + ( top.compliance + 2*side_1.compliance + 2* side_3.compliance ) ) )
 
 
-13 - estimated_insertion_loss_with_hole
+13 - estimated_insertion_loss_with_hole;
 
 
 
