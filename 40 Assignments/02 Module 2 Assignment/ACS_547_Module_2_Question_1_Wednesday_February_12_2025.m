@@ -27,7 +27,7 @@ pause( 1 );
 
 
 
-%% Define Cylindrical Room
+%% Define Room
 
 room.radius = 3;  % m
 room.length = 10;  % m

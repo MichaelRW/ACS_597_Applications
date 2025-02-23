@@ -104,7 +104,7 @@ The two closest modes are (3, 0, 0) and (0, 2, 0) with frequencies of 51.5 Hz an
 \vspace{0.25cm}
 \subsection*{Problem 1c}
 
-Figure~\ref{fig:modeVisualization} illustrates the (3, 0, 0) and (0, 2, 0) modes.  The white lines in each figure show the modal lines for that mode.  \textbf{The machine can be placed where the modal lines for each mode overlap}.
+Figure~\ref{fig:modeVisualization} illustrates the (3, 0, 0) and (0, 2, 0) modes.  The white lines in each figure show the modal lines for that mode.  \textbf{The machine can be placed where the modal lines for each mode overlap}.  The figures were produced using the Room Eigenmode Simulator Version 1.1 software package.
 
 The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the machine could be placed.  These points coincide with the three modal planes shown in Figure~\ref{fig:sub1}.  Theoretically, there are an infinite number of places where the machine could be placed.  However, placement would take into account practical considerations such as accessibility, etc.
 
@@ -142,75 +142,31 @@ The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the mac
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
+
 \vspace{0.25cm}
-For these muffler comparisons, the following assumptions were made:
-
-\begin{itemize}
-  \item There is no flow.
-  \item There are no resistive terms.
-  \item The load impedance was not included because the transmission loss does not require it.
-\end{itemize}
-
-
-\vspace{-0.25cm}
 \subsection*{Problem 2a}
 
-\vspace{0.25cm}
-Figure~\ref{figure:problem2figure1} shows the transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.
+The reverberant field sound pressure level is approximately 98.3 dB SPL.
 
-\vspace{0.25cm}
-The peaks for the simple expansion chamber (red, dashed line) are approximately 22 dB and occur at frequencies with a wavelength that is a quarter of the length of the expansion chamber.  Minimal loss occurs at half wavelength multiples.
-
-\vspace{0.25cm}
-The addition of the extension tube inside the muffler produces a quarter wavelength resonator.  The side branch of Ji (2005;  Slide 11, Lecture 3 notes) was used to calculate $L_o$.  For the cascaded double-tuned expansion chamber, the extension tubes produce a secondary quarter wavelength resonator.
-
-\vspace{0.25cm}
-As noted in office hours, there is no damping which produces artificially high resonances.
-
-
-%\begin{figure}[!htb]
-%
-%    \center
-%        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure All TL Profiles.pdf}
-%
-%    \caption{Transmission loss profiles for a simple expansion chamber, a double-tuned expansion chamber, and a cascaded double-tuned expansion chamber muffler.}
-%    \label{figure:problem2figure1}
-%
-%\end{figure}
 
 
 
+\vspace{0.25cm}
 \subsection*{Problem 2b}
 
-Figure~\ref{figure:problem2figure2} shows the transmission loss profiles for a cascaded double-tuned expansion chamber and a modified version of this muffler.
+Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total sound pressure levels for a 25 mW, 125 Hz, broadband, omnidirectional source placed centrally in the room (i.e. the directivity factor is 1).
 
-\vspace{0.25cm}
-Two modifications were made to the original muffler:
+\vspace{-4cm}
+\begin{figure}[htb!]
 
-\begin{enumerate}[itemsep=0.3cm]
-  \item The left 3" extension tube in the left chamber was shortened to 2" inches, making the respective muffler section 1" longer.
-  \item The left 3" extension tube in the right chamber was lengthened to 4", making the respective muffler section 1" shorter.
-\end{enumerate}
+    \center
+        \includegraphics[ scale = 0.65, keepaspectratio ]{Sabine Room.pdf}
 
-%\vspace{0.5cm}
-%\begin{figure}[!htb]
-%
-%    \center
-%        \includegraphics[ scale = 0.675, keepaspectratio ]{Assignment 1 - Question 2 Figure Comparison TL Plot For Cascaded Systems.pdf}
-%
-%    \caption{Transmission loss profiles for a cascaded double-tuned expansion chamber muffler and a modified version of this muffler.}
-%    \label{figure:problem2figure2}
-%
-%\end{figure}
+    \vspace{-3.5cm}
+    \caption{Sound levels for the room produced by a 25 mW, 125 Hz omnidirectional, broadband source.}
+    \label{figure:sabineRoomLevels}
 
-\vspace{0.25cm}
-These modifications change the symmetry of the cascaded system, and allow the resonate frequencies to be changed independently.
-
-
-
-
-
-
+\end{figure}
 
 
 
