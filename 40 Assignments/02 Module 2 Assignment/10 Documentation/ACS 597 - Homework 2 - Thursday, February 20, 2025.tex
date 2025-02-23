@@ -110,26 +110,21 @@ The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the mac
 
 
 \begin{figure}[htbp]
-
-    \centering
-    
+    \centering   
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=\textwidth]{Mode Profile 51_5 Hz.png}
             \caption{Mode (3, 0, 0)}
             \label{fig:sub1}
-    \end{subfigure}
-      
+    \end{subfigure}    
     \vspace{0.25cm}
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=\textwidth]{Mode Profile 55_8 Hz.png}
             \caption{Mode (0, 2, 0)}
             \label{fig:sub2}
     \end{subfigure}
-    
-        \vspace{0.5cm}
+    \vspace{0.5cm}
     \caption{Visualization of modes.  (a.) Mode (3, 0, 0).  (b.) Model (0, 2, 0).  The pink circles in~\ref{fig:sub2} illustrate a few modal line intersections where the machine could be placed.}
-    \label{fig:modeVisualization}
-      
+    \label{fig:modeVisualization}     
 \end{figure}
 
 
@@ -158,14 +153,11 @@ Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total so
 
 \vspace{-4cm}
 \begin{figure}[htb!]
-
     \center
         \includegraphics[ scale = 0.65, keepaspectratio ]{Sabine Room.pdf}
-
     \vspace{-3.5cm}
     \caption{Sound levels for the room produced by a 25 mW, 125 Hz omnidirectional, broadband source.}
     \label{figure:sabineRoomLevels}
-
 \end{figure}
 
 
@@ -183,13 +175,10 @@ Figure~\ref{figure:q3AverageAbsorption} shows the average absorption per octave 
 
 
 \begin{figure}[htb!]
-
     \center
         \includegraphics[ scale = 0.6, keepaspectratio ]{Q3 Average Absorption.png}
-
     \caption{Average absorption per octave band.}
     \label{figure:q3AverageAbsorption}
-
 \end{figure}
 
 
@@ -198,13 +187,10 @@ Figure~\ref{figure:q3TransmissionLoss} shows the transmission loss per octave ba
 
 
 \begin{figure}[htb!]
-
     \center
         \includegraphics[ scale = 0.6, keepaspectratio ]{Q3 Transmission Loss.png}
-
     \caption{Transmission loss per octave band.}
     \label{figure:q3TransmissionLoss}
-
 \end{figure}
 
 
@@ -219,53 +205,16 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 \subsection*{Problem 4a}
 
-Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.  The flow rate is 0.017462 $\frac{m^3}{s}$.
-
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | c | }
-            \hline
-            \textbf{Pipe}  &  \textbf{Area [}{$\mathbf m^2$}\textbf{]}  &  \textbf{Mach Number [unitless]}  \\
-            \hline
-                Inlet  &  0.000507  &  -0.10047  \\
-                \hline
-                \rowcolor{Gray}
-                Outlet  &  0.00811  &  -0.0062795  \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Calculated Mach numbers.}
-    \label{table:machNumbers}
-\end{table}
-
+The resonance frequency, $f_o$, of the galvanized steel panel is 4 Hz or 22.6 $\frac{radians}{s}$.
 
 
 \subsection*{Problem 4b}
-
-\vspace{0.25cm}
-Figure~\ref{figure:intakeSystem} shows the transmission loss profiles.
-
-%\vspace{0.25cm}
-%\begin{figure}[!htb]
-%    \center
-%        \includegraphics[ scale = 0.6, keepaspectratio ]{Intake System.pdf}
-%    \caption{Transmission loss profiles for no flow, flow, and flow with a lossy Helmholtz resonator.}
-%    \label{figure:intakeSystem}
-%\end{figure}
-
-\vspace{0.25cm}
-The addition of flow to the intake system introduces a slight phase delay, a lower overall level of loss (approximately 22 dB), and greater loss at the dips.  The phase delay is easier to see at respective dips in the loss profile.
-
 
 
 \vspace{0.25cm}
 \subsubsection*{i - Critical Frequency and Coincidence Frequency at 75$^\circ$}
 
-ph
+The critical frequency is 10,216 $Hz$ and the coincidence frequency at 75$^\circ$ is 10,494 $Hz$.
 
 
 
@@ -273,6 +222,16 @@ ph
 \subsubsection*{ii - Transmission Loss at Angle of Incidence of 75$^\circ$}
 
 ph
+
+\begin{figure}[htb!]
+
+    \center
+        \includegraphics[scale=0.8]{Q4 TL for 75 AOI.png}
+
+    \caption{Transmission loss per octave band.}
+    \label{figure:q3TransmissionLoss}
+
+\end{figure}
 
 
 
@@ -480,6 +439,32 @@ ph
 
 
 
+
+
+
+
+%Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.  The flow rate is 0.017462 $\frac{m^3}{s}$.
+%
+%\setlength{\abovecaptionskip}{0pt}
+%\vspace{0.1cm}
+%{\renewcommand{\arraystretch}{1.5}
+%\begin{table}[h!]
+%    \begin{center}
+%        \small
+%        \begin{tabular}{ | c | c | c | }
+%            \hline
+%            \textbf{Pipe}  &  \textbf{Area [}{$\mathbf m^2$}\textbf{]}  &  \textbf{Mach Number [unitless]}  \\
+%            \hline
+%                Inlet  &  0.000507  &  -0.10047  \\
+%                \hline
+%                \rowcolor{Gray}
+%                Outlet  &  0.00811  &  -0.0062795  \\
+%            \hline
+%        \end{tabular}
+%    \end{center}
+%    \caption{Calculated Mach numbers.}
+%    \label{table:machNumbers}
+%\end{table}
 
 
 
