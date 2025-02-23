@@ -3,9 +3,7 @@
 
 %% Synopsis
 
-% ACS 547, Modal Behaviour of a Cylindrical Room Milestone
-
-% See slide 32 on "Lecture 06 - Room Modes - Filled.pptx".
+% Problem 1 - Modal Behaviour of a Cylindrical Room
 
 
 
@@ -31,9 +29,10 @@ PRINT_FIGURES = 0;
 
 
 
-%% Information
+%% Define Cylindrical Room
 
-room.radius = 3;  room.length = 10;  % meters
+room.radius = 3;  % m
+room.length = 10;  % m
 
 
 
@@ -44,10 +43,16 @@ room.radius = 3;  room.length = 10;  % meters
 
 
 
-%% Natural Frequencies Function
+%% Define Anonymous Function for the Natural Frequencies
 
 h_natural_frequencies = @( c, nx, ntheta, nr, Lx, cylinder_radius, plot_flag )  (c/2) .* sqrt( (nx/Lx).^2  + (circular_mode_shape(nr, ntheta, cylinder_radius, plot_flag )/cylinder_radius).^2 );
 
+
+
+%% Calculate the Natural Frequencies
+
+% The maximum number of radial modes is 5 (indexed from 0 to 4).
+% The maximum number of angular modes is 8 (indexed from 0 to 7).
 
 NX_SIZE = 20;
 NTHETA_SIZE = 7;
@@ -66,30 +71,28 @@ end
 
 %% Part a - Find 10 Lowest Resonance Frequencies
 
-% https://www.mathworks.com/matlabcentral/answers/1883747-how-to-find-the-5-minimum-values-in-a-multidimensional-matrix-and-the-indices-to-which-these-entries
-
-% nr MIGHT ALWAYS be zero.
-
 NUMBER_OF_LOWEST_FREQUENCIES = 11;
+    mode_indices =  [ 1:1:NUMBER_OF_LOWEST_FREQUENCIES ].';
 
 [ sortedValues, sortedIndices ] = sort( natural_frequencies(:) );  % 21-by-8-by-5 -> 840 elements
 
 smallestValues = sortedValues( 1:NUMBER_OF_LOWEST_FREQUENCIES );
-%
-% 0
-% 17.15
-% 33.505
-% 34.3
-% 37.64
-% 47.949
-% 51.45
-% 55.577
-% 58.163
-% 61.398
-% 65.31
+    % [ mode_indices   round( smallestValues, 1 ) ]
+    %
+    % 1            0
+    % 2         17.2
+    % 3         33.5
+    % 4         34.3
+    % 5         37.6
+    % 6         47.9
+    % 7         51.5
+    % 8         55.6
+    % 9         58.2
+    % 10         61.4
+    % 11         65.3
 
-smallestIndices = sortedIndices(1:NUMBER_OF_LOWEST_FREQUENCIES);
 
+smallestIndices = sortedIndices( 1:NUMBER_OF_LOWEST_FREQUENCIES );
 
 [ x, y, z ] = ind2sub( size(natural_frequencies), smallestIndices );
     [ x y z ] - 1;
@@ -151,5 +154,9 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
+
+% See slide 32 on "Lecture 06 - Room Modes - Filled.pptx".
+
+% https://www.mathworks.com/matlabcentral/answers/1883747-how-to-find-the-5-minimum-values-in-a-multidimensional-matrix-and-the-indices-to-which-these-entries
 
 

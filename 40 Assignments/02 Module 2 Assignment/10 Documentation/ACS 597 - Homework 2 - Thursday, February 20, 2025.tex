@@ -13,7 +13,17 @@
 
 \usepackage[LGRgreek]{mathastext}
 
-\usepackage{matlab-prettifier}
+\usepackage{listings}
+\usepackage[mlscaleinline=true]{matlab-prettifier}
+%\usepackage{matlab-prettifier}
+%
+\lstMakeShortInline[style=Matlab-editor]@
+\lstnewenvironment{matlab}{\lstset{
+    style=Matlab-editor,
+    basicstyle=\color{black}\ttfamily\tiny
+}}{}
+
+
 \usepackage{multirow}
 
 \usepackage{natbib}
@@ -476,7 +486,7 @@ ph
 \section{Appendix - Matlab Code for Problem 1}
 \label{appendix:problem1}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_1_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_1_Wednesday_February_12_2025.m}
 
 
 
@@ -492,7 +502,7 @@ ph
 \section{Appendix - Matlab Code for Problem 3}
 \label{appendix:problem3}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_3_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_3_Wednesday_February_12_2025.m}
 
 
 
@@ -500,7 +510,7 @@ ph
 \section{Appendix - Matlab Code for Problem 4}
 \label{appendix:problem4}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_4_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_4_Wednesday_February_12_2025.m}
 
 
 
@@ -508,7 +518,7 @@ ph
 \section{Appendix - Matlab Code for Problem 5}
 \label{appendix:problem5}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_5_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_5_Wednesday_February_12_2025.m}
 
 
 
@@ -516,7 +526,7 @@ ph
 \section{Appendix - Matlab Code for Problem 6}
 \label{appendix:problem5}
 
-\lstinputlisting[style=Matlab-Pyglike, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_6_Wednesday_February_12_2025.m}
+\lstinputlisting[style=Matlab-editor, basicstyle=\fontfamily{pcr}, numbers=left, keepspaces, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_2_Question_6_Wednesday_February_12_2025.m}
 
 
 

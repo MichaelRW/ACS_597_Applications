@@ -74,11 +74,13 @@ helmholtz_factor = (2 * pi * compressor.frequency) / c;  % 0.92 m
 %
 %  For a small enclosure, k*d << 1.  Therefore d << 1.1.
 d = 0.75;
+d = 0.25;
     % helmholtz_factor * d;  % 0.69
 
 enclosure.width = compressor.width + d;  % m
 enclosure.depth = compressor.depth + d;  % m
-enclosure.height = 3;  % m
+% enclosure.height = 3;  % m;  compression height is 2 m
+enclosure.height = compressor.height + d;  % m;  compression height is 2 m
     enclosure.area = 2*(enclosure.width * enclosure.depth) + 2*(enclosure.width * enclosure.height) + 2*(enclosure.depth * enclosure.height);
     enclosure.volume = enclosure.width * enclosure.depth * enclosure.height;
 
