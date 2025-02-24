@@ -74,7 +74,7 @@ enclosure.dimension = 2;  % m
 % Volume of the enclosure is much bigger than the machine  Diffuse sound field in the enclosure.
 
 
-switch ( 4 )
+switch ( 1 )
 
     case 1
 
@@ -215,7 +215,7 @@ end
 
 %% Calculate the Differences
 
-% [ octave_band_IL    IL_estimates.'    (octave_band_IL - IL_estimates.') ]
+[ octave_band_IL    IL_estimates.'    (octave_band_IL - IL_estimates.') ]
 
 data = [ ...
     250      44    28.0    19.7   10.6    5.6; ...
