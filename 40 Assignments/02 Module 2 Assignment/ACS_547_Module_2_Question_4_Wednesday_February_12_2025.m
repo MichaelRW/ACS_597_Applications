@@ -99,13 +99,23 @@ f = 0.1:1:100e3;
 
 figure( ); ...
     plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '-', 'Marker', 'none' );  grid on;
-    text( 11000, 1.6, 'Coincidence Frequency of 10,494 Hz' );
+    text( 12e3, 5, sprintf( 'Coincidence\nFrequency\nof 10,494 Hz' ) );
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Flexible Panel Transmission Loss for a 75$^\circ$ Incidence Angle' );
     set( gca, 'XScale', 'log' );
     axis( [ 1 200e3 -5 80 ] );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+        pos = get( gcf, 'Position' );
+            set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+                print(gcf, 'Q4 TL for 75 AOI', '-dpdf', '-r0' );
 
-% return
+
+
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
+
+return
 
 % Part (iii.)
 f = 0.1:1:100e3;

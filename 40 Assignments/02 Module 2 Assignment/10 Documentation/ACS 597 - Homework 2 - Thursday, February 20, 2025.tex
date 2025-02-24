@@ -24,6 +24,8 @@
 \usepackage{natbib}
 \bibliographystyle{apalike}
 
+\usepackage{printlen}  % \printlength\textwidth - To determine textwidth of document.  Here is it 496 pt.
+
 \usepackage[table]{xcolor}
 \definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
 \definecolor{LightCyan}{rgb}{0.88,1,1}
@@ -221,16 +223,13 @@ The critical frequency is 10,216 $Hz$ and the coincidence frequency at 75$^\circ
 \vspace{0.25cm}
 \subsubsection*{ii - Transmission Loss at Angle of Incidence of 75$^\circ$}
 
-ph
 
-\begin{figure}[htb!]
-
+\begin{figure}[htbp]
     \center
-        \includegraphics[scale=0.8]{Q4 TL for 75 AOI.png}
-
-    \caption{Transmission loss per octave band.}
-    \label{figure:q3TransmissionLoss}
-
+    \includegraphics[scale=1.0]{Q4 TL for 75 AOI.pdf}
+    \vspace{0.25cm}
+    \caption{Flexible Panel Transmission Loss for a 75$^\circ$ Incidence Angle}
+    \label{figure:q4transmissionLossAt75}
 \end{figure}
 
 
