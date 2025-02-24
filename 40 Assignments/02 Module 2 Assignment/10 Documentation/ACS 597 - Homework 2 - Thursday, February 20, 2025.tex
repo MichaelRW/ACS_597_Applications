@@ -391,17 +391,11 @@ Table~\ref{table:Q6enclosureDesign} lists the dimensions of the designed enclosu
 \begin{table}[h!]
     \begin{center}
         \small
-        \begin{tabular}{ | c | c | c | c | c | c |}
+        \begin{tabular}{ | c | c | c | }
             \hline
-            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{QBV 2 [dB]}  &  \textbf{QBV 3 [dB]}  &  \textbf{HTL (100MM) [dB]}  &  \textbf{HTL 4 [dB]}  \\
+            \textbf{Height [m]}  &  \textbf{Width [m]}  &  \textbf{Depth [m]}  \\
             \hline
-            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
-            \rowcolor{Gray}
-            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
-            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
-            \rowcolor{Gray}
-            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
-            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
+            3  &  1.25 &  1.5  \\
             \hline
         \end{tabular}
     \end{center}
@@ -419,17 +413,18 @@ Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the 
 \begin{table}[h!]
     \begin{center}
         \small
-        \begin{tabular}{ | c | c | c | c | c | c |}
+        \begin{tabular}{ | c | c | c | c | c | c | c | }
             \hline
-            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{QBV 2 [dB]}  &  \textbf{QBV 3 [dB]}  &  \textbf{HTL (100MM) [dB]}  &  \textbf{HTL 4 [dB]}  \\
+            \textbf{Wall}  &  \textbf{Width [m]}  &  \textbf{Height [m]}  &  \textbf{Area [$\mathbf m^2$]}  &  \textbf{Aspect Ratio}  &  \textbf{Correction}  &  \textbf{Compliance [$\frac{m^3\cdot s^2}{kg}$]}  \\
             \hline
-            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
+            Top     &  1.25  &  1.5  &  1.875  &  1.2   &  1.8  &  1.42e-6  \\
+            \hline
+            Side 1  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
+            Side 2  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
+            \hline
+            Side 3  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
+            Side 4  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
             \rowcolor{Gray}
-            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
-            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
-            \rowcolor{Gray}
-            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
-            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
             \hline
         \end{tabular}
     \end{center}
@@ -438,10 +433,10 @@ Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the 
 \end{table}
 
 
-The estimated insertion loss without the hole is 14.2 dB, which exceeds the target loss of 13.
+The estimated insertion loss without the hole is 13.5 dB, which exceeds the target loss of 13.
 
 \vspace{0.25cm}
-The estimated insertion loss with the hole is 11.8 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 1.2 dB of insertion loss.
+The estimated insertion loss with the hole is 1.2 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 11.8 dB of insertion loss.
 
 
 

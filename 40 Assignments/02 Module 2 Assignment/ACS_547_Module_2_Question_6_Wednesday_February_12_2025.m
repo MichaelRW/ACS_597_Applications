@@ -118,7 +118,7 @@ top.correction_factor = 3.8;
 % Side 1
 side_1.area = enclosure.depth * enclosure.height;
 side_1.aspect_ratio = max( enclosure.width, enclosure.height ) / min( enclosure.width, enclosure.height );
-side_1.correction_factor = 0.5;
+side_1.correction_factor = 0.6;
     side_1.compliance = h_wall_compliance( side_1.area, side_1.correction_factor );
 %
 % Side 2
