@@ -112,12 +112,12 @@ The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the mac
 
 
 \begin{figure}[htbp]
-    \centering   
+    \centering
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=\textwidth]{Mode Profile 51_5 Hz.png}
             \caption{Mode (3, 0, 0)}
             \label{fig:sub1}
-    \end{subfigure}    
+    \end{subfigure}
     \vspace{0.25cm}
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=\textwidth]{Mode Profile 55_8 Hz.png}
@@ -126,7 +126,7 @@ The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the mac
     \end{subfigure}
     \vspace{0.5cm}
     \caption{Visualization of modes.  (a.) Mode (3, 0, 0).  (b.) Model (0, 2, 0).  The pink circles in~\ref{fig:sub2} illustrate a few modal line intersections where the machine could be placed.}
-    \label{fig:modeVisualization}     
+    \label{fig:modeVisualization}
 \end{figure}
 
 
@@ -185,7 +185,7 @@ Figure~\ref{figure:q3AverageAbsorption} shows the average absorption per octave 
 
 
 \vspace{0.2cm}
-Figure~\ref{figure:q3TransmissionLoss} shows the transmission loss per octave band.  
+Figure~\ref{figure:q3TransmissionLoss} shows the transmission loss per octave band.
 
 
 \begin{figure}[htb!]
@@ -293,15 +293,12 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 ph
 
 
+machine.area = 3;  % m^2
+machine.absorption = 0.07;  % m^2 or Sabin
+machine.D = 1;  % Unitless - In air.
 
+machine.distance = 10;  % m
 
-
-
-
-\newpage
-\section*{Problem 6 - Close-fitting Enclosure Design}
-
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 
 \vspace{0.25cm}
 % Assumption(s):
@@ -311,47 +308,81 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 %   2.)  There is no noise transmission through the ground.
 
 
+% What is the most restrictive case?
+
+
+Table~\ref{table:targetInsertionLosses} lists target insertion losses, the calculated insertion losses per material type, and the difference between target and calculated.  A positive value indicates that the target insertion loss for the given octave band was not meet.
+
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | c | c | c | c |}
+            \hline
+            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{Case 1 [dB]}  &  \textbf{Case 2 [dB]}  &  \textbf{Case 3 [dB]}  &  \textbf{Case 4 [dB]}  \\
+            \hline
+            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
+            \rowcolor{Gray}
+            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
+            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
+            \rowcolor{Gray}            
+            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
+            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Calculated insertion loss differences with the alpha correction to 0.99}
+    \label{table:targetInsertionLosses}
+\end{table}
+
+
+% Case 1 - QBV 2 - https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
+% Case 2 - QBV 3 - https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
+% Case 3 - https://www.acousticsworld.com/machine-acoustic-enclosures/
+% Case 4 - In class table.
+
+
+
+Figure~\ref{figure:q5CNcaseData} shows the transmission loss and absorption coefficients for the material selected from Control Noise.
+
 \begin{figure}[htbp]
     \center
     \includegraphics[scale=0.5]{Q5 NW Data.png}
-    \vspace{-0.5cm}
     \caption{Measured data and the modeled responses.}
-    \label{figure:q5nwData}
+    \label{figure:q5CNcaseData}
 \end{figure}
 
 
-Case 1 - QBV 2 - https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
+Figure~\ref{figure:q5AWcaseData} shows the transmission loss and absorption coefficients for the material selected from Control Noise.
 
-       44.008       15.983       28.025
-       54.008       27.271       26.737
-       45.008       39.396       5.6122
-       47.008       55.395      -8.3873
-       58.008       60.395      -2.3873
-       
-with the alpha correction to 0.99
-
-
-Case 2 - QBV 3 - https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf
-
-       44.008       24.279       19.729
-       54.008       31.843       22.165
-       45.008       43.657       1.3507
-       47.008        49.21      -2.2021
-       58.008       52.314       5.6942
-       
-       
-Case 3 - In class table.
+\begin{figure}[htbp]
+    \center
+    \includegraphics[scale=0.7]{Q5 AW Data.png}
+    \caption{Measured data and the modeled responses.}
+    \label{figure:q5AWcaseData}
+\end{figure}
 
 
-       
+Figure~\ref{figure:q5ilPlot} shows the transmission loss angles of incidence from 0 to 90$^\circ$ in steps of 10$^\circ$.
 
-Case 4 - https://www.acousticsworld.com/machine-acoustic-enclosures/
+\begin{figure}[htbp]
+    \center
+    \includegraphics[scale=0.9]{Q5 IL Plot.pdf}
+    \vspace{-0.5cm}
+    \caption{Measured data and the modeled responses.}
+    \label{figure:q5ilPlot}
+\end{figure}
 
-       44.008       33.397       10.611
-       54.008       47.395       6.6126
-       45.008       60.395      -15.387
-       47.008       65.395      -18.387
-       58.008       69.033      -11.025
+
+
+
+
+\newpage
+\section*{Problem 6 - Close-fitting Enclosure Design}
+
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 
 
 
