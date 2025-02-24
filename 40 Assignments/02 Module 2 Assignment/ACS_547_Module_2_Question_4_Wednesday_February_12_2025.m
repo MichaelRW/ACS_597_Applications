@@ -98,7 +98,7 @@ h_tau_infinite_flexible_panel = @( f, rho0, c, phi, D, eta )  ( 2*rho0.*c*secd(p
 f = 0.1:1:100e3;
 
 figure( ); ...
-    plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '-', 'Marker', 'none' );  grid on;
+    plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', [0.00, 0.45, 0.74] );  grid on;
     text( 12e3, 5, sprintf( 'Coincidence\nFrequency\nof 10,494 Hz' ) );
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
     set( gca, 'XScale', 'log' );
@@ -106,74 +106,45 @@ figure( ); ...
     %
     % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
     %
-    set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
-        pos = get( gcf, 'Position' );
-            set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-                print(gcf, 'Q4 TL for 75 AOI', '-dpdf', '-r0' );
-
-
-
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Q4 TL for 75 AOI', '-dpdf', '-r0' );
+%
 % https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
-return
+
 
 % Part (iii.)
 f = 0.1:1:100e3;
 
+eta = panel.eta;  phi_set = 0:10:90;  t_set = [ ];
 
-eta = panel.eta;
-
-phi_set = 0:5:90;
-
-[ phi_set.'  h_coincidence_frequency( ms, D, c, phi_set ).' ];
-
-t_set = [ ];
-
-
-h1 = figure( ); ...
-
+figure( ); ...
     hold on;
-    % stem( octave_band_frequencies ./ (wo / (2*pi) ), TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    stem( octave_band_frequencies, TL, 'LineWidth', 0.5, 'Marker', 'o', 'MarkerSize', 8, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'r' );  hold on;
-    line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'c' );
-    %
-    % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-    plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-' );
-    %
-
-    for phi = phi_set    
-        % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_term1( rho0, c, phi ) ./ ( h_tau_term2( rho0, c, phi, D, eta, f ) + h_tau_term3( f, ms ,D, phi ) ) ), 'Color', 'r', 'LineStyle', '-', 'Marker', 'none' );
-        % plot( f ./ (wo / (2*pi) ), -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '--', 'Marker', 'none' );
-
-        plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '-', 'Marker', 'none' );
-
-        t_set = [ t_set;  h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ];
-
+    for phi = phi_set
+        plot( f, -10*log10( h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ), 'LineStyle', '-', 'Marker', 'none', 'Color', [0.00, 0.45, 0.74] );
+            t_set = [ t_set;  h_tau_infinite_flexible_panel( f, rho0, c, phi, D, panel.eta ) ];
     end
-
-    grid on;
-            
+    %
+    grid on;  box on;
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
-    title( 'Measured Panel Transmission Losses' );
     set( gca, 'XScale', 'log' );
-    axis( [ 2e-3 100e3 -5 70 ] );
+    axis( [ 1 200e3 -5 80 ] );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Q4iii TL for 75 AOI', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
-    % close( h1 );
+
+tau_d = nanmean( t_set .* sind( 2*phi_set ).', 1 );
 
 
-N_phi = size( t_set, 1 );
-
-temp1 = t_set;
-temp2 = sind( 2*phi_set ).';
-% temp2 = sind( phi_set ).';
-
-temp3 = t_set .* repmat( temp2, 1, size( temp1, 2 ) );
-
-tau_d = 1/N_phi .* nansum( temp3, 1 );
-
-tau_d_verify = nanmean( t_set .* temp2, 1 );
-
-% return
 
 %% Combined Transmission Loss Plot
 
@@ -181,7 +152,7 @@ figure( ); ...
     h1 = stem( octave_band_frequencies, TL, 'LineStyle', 'none', 'Marker', 'o', 'MarkerSize', 8, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'k' );  hold on;
     h2 = plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ), 'LineStyle', '-', 'Color', 'k' );
     h3 = plot( f, -10*log10( h_tau_infinite_rigid_panel( f, wo, ms, s, rho0, c, panel.eta ) ./(200*panel.eta) * ( 4*panel.length / ( panel.length^2 * critical_frequency ) ) ), 'LineStyle', '--', 'Marker', 'none', 'Color', 'k' );
-    h4 = plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', 'b' );
+    h4 = plot( f, -10*log10( tau_d ), 'LineStyle', '-', 'Marker', 'none', 'Color', [0.00, 0.45, 0.74] );
     h5 = line( [ 16e3 16e3 ], [ 0 65 ], 'Color', 'r' );  grid on;  % 16 kHz Demarcation
     legend( ...
         [ h1, h2, h3, h4, h5 ], ...
@@ -190,12 +161,21 @@ figure( ); ...
         'Infinite Flexible Panel with Diffuse Incidence', ...
         'Finite Flexible Panel Model', ...
         '16 kHz Demarcation', ...
-        'Location', 'NorthWest' );
+        'Location', 'SouthOutside' );
             
     xlabel( 'Frequency [Hz] ' );  ylabel( 'Transmission Loss [dB]' );
     title( 'Measured Panel Transmission Losses' );
     set( gca, 'XScale', 'log' );
     axis( [ 1 200e3 -5 80 ] );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.45 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Q4d TL for 75 AOI', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
 
@@ -294,18 +274,18 @@ figure( ); ...
 %     set( gca, 'XScale', 'log', 'YScale', 'log' );
 %     % axis( [ 40 12e3 -5 45] );
 
-% return
+
 
 %% Clean-up
 
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 2, 2, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 1 );
-        end
-end
+% if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+%     monitors = get( 0, 'MonitorPositions' );
+%         if ( size( monitors, 1 ) == 1 )
+%             autoArrangeFigures( 2, 2, 1 );
+%         elseif ( 1 < size( monitors, 1 ) )
+%             autoArrangeFigures( 2, 2, 1 );
+%         end
+% end
 
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
