@@ -108,6 +108,7 @@ The two closest modes are (3, 0, 0) and (0, 2, 0) with frequencies of 51.5 Hz an
 
 Figure~\ref{fig:modeVisualization} illustrates the (3, 0, 0) and (0, 2, 0) modes.  The white lines in each figure show the modal lines for that mode.  \textbf{The machine can be placed where the modal lines for each mode overlap}.  The figures were produced using the Room Eigenmode Simulator Version 1.1 software package.
 
+\vspace{0.25cm}
 The pink rings in Figure~\ref{fig:sub2} indicate 3 possible places where the machine could be placed.  These points coincide with the three modal planes shown in Figure~\ref{fig:sub1}.  Theoretically, there are an infinite number of places where the machine could be placed.  However, placement would take into account practical considerations such as accessibility, etc.
 
 
@@ -172,7 +173,7 @@ Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total so
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
-
+\vspace{0.25cm}
 Figure~\ref{figure:q3AverageAbsorption} shows the average absorption per octave band based on the T60 data.  The calibration plate isolates the receiver room and the absorption calculation does not consider the calibration plate.
 
 
@@ -289,13 +290,16 @@ Figure~\ref{figure:q4dtransmissionLoss} shows the transmission loss angles of in
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
 
+\vspace{0.25cm}
 My enclosure is a 2 $m$ cube that sits on the ground (5 sides of enclosure material) over the machine.  The machine is suspended above the pad (directivity factor of unity).  It is assumed that there is no noise transmission through the ground.
 
+\vspace{0.25cm}
 Table~\ref{table:targetInsertionLosses} lists the target insertion losses, the calculated insertion losses for four materials, and the loss difference between the target and each type of material.  \textit{A positive value indicates that the target insertion loss for the given octave band was not met}.
 
+\vspace{0.25cm}
 Figure~\ref{figure:q5ilPlot} shows calculated insertion loss differences for the data in Table~\ref{table:targetInsertionLosses}.
 
-\vspace{-0.25cm}
+\vspace{0.25cm}
 \setlength{\abovecaptionskip}{0pt}
 \vspace{0.1cm}
 {\renewcommand{\arraystretch}{1.25}
@@ -331,12 +335,15 @@ Figure~\ref{figure:q5ilPlot} shows calculated insertion loss differences for the
 
 The most restrictive case given the 2 cubic-meter, 5-sided enclosure, is the HTL 4 material, Case 4, which was presented in class.  The target insertion loss was reached by all of the octave bands except the 250 Hz band.
 
+\vspace{0.25cm}
 With the same enclosure dimensions and machine orientation, the HTL (100MM) material, Case 3, was found to be the second best material, not meeting the 250 Hz and 500 Hz targets. Figure~\ref{figure:q5AWcaseData} shows the transmission loss and absorption coefficient data for the material selected from \href{https://www.acousticsworld.com/machine-acoustic-enclosures/}{Acoustics World}.
 
+\vspace{0.25cm}
 The QBV-2 and QBV-3 , Case 1 and Case 2, respectively, had the poorest performance.  
 Figure~\ref{figure:q5CNcaseData} shows the transmission loss and absorption coefficient data for these material from 
 \href{https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf}{Control Noise}.
 
+\vspace{0.25cm}
 Using the HTL 4 material from class, a cube with 2 $m$ sides appeared to produce the optimal insertion loss for the 250 Hz octave band.  Making the size of the enclosure larger does not reduce this insertion loss and does not seem to be practical.  A supplementary approach for this octave band should be considered.
 
 \begin{figure}[htbp]
@@ -361,7 +368,81 @@ Using the HTL 4 material from class, a cube with 2 $m$ sides appeared to produce
 \newpage
 \section*{Problem 6 - Close-fitting Enclosure Design}
 
+% For the insertion loss to be high, we need:
+%
+%   1.)  Compliance of the air to be high;  volume of enclosure must be large.
+%   2.)  Compliance of each enclosure wall to be low;  low area, high stiffness, edges clamped).
+%           AREA IS THE DOMINATE FACTOR OVER VOLUME.
+
+
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem6}.
+
+\vspace{0.25cm}
+The required target insertion loss is 13 dB.  This is estimated with the given data and the assumption that the sound measurement distance is beyond the critical distance (i.e., in the diffuse field).
+
+
+\vspace{0.25cm}
+Table~\ref{table:Q6enclosureDesign} lists the dimensions of the designed enclosure.
+
+\vspace{0.25cm}
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.25}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | c | c | c | c |}
+            \hline
+            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{QBV 2 [dB]}  &  \textbf{QBV 3 [dB]}  &  \textbf{HTL (100MM) [dB]}  &  \textbf{HTL 4 [dB]}  \\
+            \hline
+            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
+            \rowcolor{Gray}
+            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
+            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
+            \rowcolor{Gray}
+            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
+            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Dimensions of the designed enclosure.}
+    \label{table:Q6enclosureDesign}
+\end{table}
+
+
+Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the design enclosure.
+
+\vspace{0.25cm}
+\setlength{\abovecaptionskip}{0pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.25}
+\begin{table}[h!]
+    \begin{center}
+        \small
+        \begin{tabular}{ | c | c | c | c | c | c |}
+            \hline
+            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{QBV 2 [dB]}  &  \textbf{QBV 3 [dB]}  &  \textbf{HTL (100MM) [dB]}  &  \textbf{HTL 4 [dB]}  \\
+            \hline
+            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
+            \rowcolor{Gray}
+            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
+            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
+            \rowcolor{Gray}
+            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
+            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Enclosure design summary.}
+    \label{table:DesignParametersEnclosure}
+\end{table}
+
+
+The estimated insertion loss without the hole is 14.2 dB, which exceeds the target loss of 13.
+
+\vspace{0.25cm}
+The estimated insertion loss with the hole is 11.8 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 1.2 dB of insertion loss.
+
 
 
 

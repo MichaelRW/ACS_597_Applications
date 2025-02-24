@@ -128,16 +128,6 @@ h_natural_frequencies( 343, 0, 2, 0, 10, 3, false );  % 55.6 Hz, (0, 2, 0)
 
 %% Clean-up
 
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 2, 2, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 1 );
-        end
-end
-
-
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
