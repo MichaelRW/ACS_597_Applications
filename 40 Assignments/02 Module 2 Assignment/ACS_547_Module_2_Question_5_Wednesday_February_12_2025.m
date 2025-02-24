@@ -68,13 +68,13 @@ h_IL_large = @( Sw, alpha_w, Si, alpha_i, TL )  10*log10(  1  +  (Sw*alpha_w  + 
 %   2.)  The machine sits on the ground.
 %   2.)  There is no noise transmission through the ground.
 
-enclosure.dimension = 2;  % m
+enclosure.dimension = 2.0;  % m
     enclosure.area = 5 * enclosure.dimension^2;  % 20 m^2
 
 % Volume of the enclosure is much bigger than the machine  Diffuse sound field in the enclosure.
 
 
-switch ( 1 )
+switch ( 4 )
 
     case 1
 
@@ -144,40 +144,6 @@ switch ( 1 )
 
     case 3
 
-        % HTL-4 from specification sheet shown in class.
-
-        % 250 Hz
-        % alpha_w = 1.13;  % From specification sheet.
-        alpha_w = 0.99;
-        TL = 39;  % From specification sheet.
-            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 500 Hz
-        % alpha_w = 1.12;  % From specification sheet.
-        alpha_w = 0.99;
-        TL = 59;  % From specification sheet.
-            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 1 kHz
-        % alpha_w = 1.09;  % From specification sheet.
-        alpha_w = 0.99;
-        TL = 68;  % From specification sheet.
-            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 2 kHz
-        % alpha_w = 1.03;  % From specification sheet.
-        alpha_w = 0.99;
-        TL = 67;  % From specification sheet.
-            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-        
-        % 4 kHz
-        alpha_w = 0.91;  % From specification sheet.
-        TL = 72;  % From specification sheet.
-            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
-
-
-    case 4
-
         % https://www.acousticsworld.com/machine-acoustic-enclosures/
 
         % 250 Hz
@@ -207,6 +173,40 @@ switch ( 1 )
         % 4 kHz
         alpha_w = 0.91;  % From specification sheet.
         TL = 70;  % From specification sheet.
+            IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+
+
+    case 4
+
+        % HTL-4 from specification sheet shown in class.
+
+        % 250 Hz
+        % alpha_w = 1.13;  % From specification sheet.
+        alpha_w = 0.99;
+        TL = 39;  % From specification sheet.
+            IL_estimates(1) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 500 Hz
+        % alpha_w = 1.12;  % From specification sheet.
+        alpha_w = 0.99;
+        TL = 59;  % From specification sheet.
+            IL_estimates(2) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 1 kHz
+        % alpha_w = 1.09;  % From specification sheet.
+        alpha_w = 0.99;
+        TL = 68;  % From specification sheet.
+            IL_estimates(3) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 2 kHz
+        % alpha_w = 1.03;  % From specification sheet.
+        alpha_w = 0.99;
+        TL = 67;  % From specification sheet.
+            IL_estimates(4) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
+        
+        % 4 kHz
+        alpha_w = 0.91;  % From specification sheet.
+        TL = 72;  % From specification sheet.
             IL_estimates(5) = h_IL_large( enclosure.area, alpha_w, machine.area, machine.absorption, TL );
 
 end
