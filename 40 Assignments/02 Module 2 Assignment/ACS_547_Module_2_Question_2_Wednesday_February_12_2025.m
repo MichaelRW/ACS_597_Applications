@@ -71,32 +71,32 @@ figure( ); ...
     h1 = plot( r, h_Lp_direct( Lw, D0, r ) );  hold on;
     h2 = plot( r, ones( size(r) ).*h_Lp_reverberant( Lw, room_constant) );
     h3 = plot( r, h_Lp_net( Lw, D0, r, room.volume ));  grid on;
-        legend( [ h1, h2 h3 ], { 'Direct $L_p$', 'Reverberant $L_p$', 'Total $L_p$' }, 'Interpreter', 'Latex' );        
+        legend( [ h1, h2 h3 ], { 'Direct $L_p$', 'Reverberant $L_p$', 'Total $L_p$' }, 'Interpreter', 'Latex', 'Location', 'SouthWest' );        
     %
     text( 0.56, 105, 'Critical Distance $\approx$ 0.55 meters.', 'Interpreter', 'Latex' );
         line( [ 0.545 0.545 ], [ 90 110 ], 'Color', 'k', 'LineWidth', 0.6 );
     %
     xlabel( 'Distance from Source [meters]' );  ylabel( 'Sound Pressure Level [dB re:20e-6 Pa]' );
-    title( 'Direct, Reverberant, and Total Sound Pressure Levels of 125 Hz Point Source' );
+    title( 'Sound Pressure Levels of 125 Hz Point Source' );
     %
     set( gca, 'XScale', 'log' );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Sabine Room', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
 % Estimate the critical distance (see page 84 of "06-Indoors.pdf" notes for ACS 537).
 rc = 0.141 * sqrt( D0 * room_constant );  % 0.5451 meters
 
-return
+
 
 %% Clean-up
-
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 2, 2, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 1 );
-        end
-end
 
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );

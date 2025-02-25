@@ -83,6 +83,15 @@ figure( ); ...
     xticks( octave_band_frequencies );  xticklabels( num2cell( octave_band_frequencies ) );
     set( gca, 'XScale', 'log' );
     xlim( [ 80 6e3 ] );  ylim( [ 0 0.14 ] );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Q3 Average Absorption', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
 
@@ -114,19 +123,19 @@ figure( ); ...
     xticks( octave_band_frequencies );  xticklabels( num2cell( octave_band_frequencies ) );
     set( gca, 'XScale', 'log' );
     xlim( [ 80 6e3 ] );  ylim( [ 0 55 ] );
+    %
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.3 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Q3 Transmission Loss', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
 
 %% Clean-up
-
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 2, 2, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 1 );
-        end
-end
 
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
