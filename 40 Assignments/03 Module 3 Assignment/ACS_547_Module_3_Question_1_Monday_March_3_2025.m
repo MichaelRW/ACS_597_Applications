@@ -27,6 +27,14 @@ pause( 1 );
 
 
 
+%% Placeholder
+
+logspace( log10(0.001), log10(1), 10 )
+
+linspace( 0.001, 1, 10 )
+
+return
+
 %% Define Room
 
 room.radius = 3;  % m
