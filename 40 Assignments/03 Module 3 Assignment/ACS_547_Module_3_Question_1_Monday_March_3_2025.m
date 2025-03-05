@@ -3,7 +3,7 @@
 
 %% Synopsis
 
-% Problem 1 - Modal Behaviour of a Cylindrical Room
+% Problem 1 - Washing Machine Mount Design
 
 
 
@@ -18,7 +18,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -29,108 +29,71 @@ pause( 1 );
 
 %% Placeholder
 
-logspace( log10(0.001), log10(1), 10 )
+% logspace( log10(0.001), log10(1), 10 )
 
-linspace( 0.001, 1, 10 )
+% linspace( 0.001, 1, 10 )
 
-return
-
-%% Define Room
-
-room.radius = 3;  % m
-room.length = 10;  % m
+% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, freq, FRF_type )
 
 
 
-%% Test Circular Mode Function
+%% Define Machine
 
-% psi = circular_mode_shape( 3, 1, 2, false );  % 3.7261 - CHECKED FROM CLASS (PLOT NOT CREATED)
-% psi = circular_mode_shape( 3, 1, 2, true );  % 3.7261 - CHECKED FROM CLASS (PLOT CREATED)
-
-
-
-%% Define Anonymous Function for the Natural Frequencies
-
-h_natural_frequencies = @( c, nx, ntheta, nr, Lx, cylinder_radius, plot_flag )  (c/2) .* sqrt( (nx/Lx).^2  + (circular_mode_shape(nr, ntheta, cylinder_radius, plot_flag )/cylinder_radius).^2 );
+machine.mass = 100;  % kg
+machine.rotation_speed = 31.4;  % radians\s
+machine.load = 10;  % kg
+machine.static_displacement = 1e-2;  % m
 
 
 
-%% Calculate the Natural Frequencies
+%% Define Force
 
-% The maximum number of radial modes is 5 (indexed from 0 to 4).
-% The maximum number of angular modes is 8 (indexed from 0 to 7).
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
 
-NX_SIZE = 20;
-NTHETA_SIZE = 7;
-NR_SIZE = 4;
-    natural_frequencies = nan( NX_SIZE, NTHETA_SIZE, NR_SIZE );
 
-for nx = 0:1:NX_SIZE
-    for ntheta = 0:1:NTHETA_SIZE
-        for nr = 0:1:NR_SIZE
-            natural_frequencies( nx+1, ntheta+1, nr+1 ) = h_natural_frequencies( 343, nx, ntheta, nr, 10, 3, false );
-        end
-    end
-end
+% Maximum force applied to foundation is 100 N.
 
 
 
-%% Part a - Find 10 Lowest Resonance Frequencies
+%% Part 1a
 
-NUMBER_OF_LOWEST_FREQUENCIES = 11;
-    mode_indices =  ( 1:1:NUMBER_OF_LOWEST_FREQUENCIES ).';
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
-[ sortedValues, sortedIndices ] = sort( natural_frequencies(:) );  % 21-by-8-by-5 -> 840 elements
 
-smallestValues = sortedValues( 1:NUMBER_OF_LOWEST_FREQUENCIES );
-    % [ mode_indices   round( smallestValues, 1 ) ]
+rpm = 0:1:350;  % rotations per minute
+    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
+        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
+
+
+h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N
+
+force_frequency = 300 * 0.10472 / ( 2 * pi );  % Hz
+
+
+% figure( ); ...
+%     plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
+%     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
+%     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
+%     text( 305, 494, '494 N' );  grid on;
+%     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Dynamic Force Amplitude [N]' );
+%     %
+%     axis( [ -10 355  -5 705 ] );
     %
-    % 1            0
-    % 2         17.2
-    % 3         33.5
-    % 4         34.3
-    % 5         37.6
-    % 6         47.9
-    % 7         51.5
-    % 8         55.6
-    % 9         58.2
-    % 10         61.4
-    % 11         65.3
-
-smallestIndices = sortedIndices( 1:NUMBER_OF_LOWEST_FREQUENCIES );
-
-[ x, y, z ] = ind2sub( size(natural_frequencies), smallestIndices );
-    % ( [ x y z ] - 1 )
-
-% Verify the calculated mode indices.
-h_natural_frequencies( 343, 0, 0, 0, 10, 3, false );  % 0 Hz
-h_natural_frequencies( 343, 1, 0, 0, 10, 3, false );  % 17.2 Hz
-h_natural_frequencies( 343, 0, 1, 0, 10, 3, false );  % 33.5 Hz
-h_natural_frequencies( 343, 2, 0, 0 , 10, 3, false );  % 34.3 Hz
-h_natural_frequencies( 343, 1, 1, 0 , 10, 3, false );  % 37.6 Hz
-h_natural_frequencies( 343, 2, 1, 0 , 10, 3, false );  % 48.0 Hz
-h_natural_frequencies( 343, 3, 0, 0 , 10, 3, false );  % 51.5 Hz
-h_natural_frequencies( 343, 0, 2, 0 , 10, 3, false );  % 55.6 Hz
-h_natural_frequencies( 343, 1, 2, 0 , 10, 3, false );  % 58.2 Hz
-h_natural_frequencies( 343, 3, 1, 0 , 10, 3, false );  % 61.4 Hz
-h_natural_frequencies( 343, 2, 2, 0 , 10, 3, false );  % 65.3 Hz
+    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             print(gcf, 'Homework_3_Part_1', '-dpdf', '-r0' );
+%
+% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
 
-%% Part b - Two 
-
-% [ (1:11).'  abs( smallestValues - 53 ) ]
-
-temp = [ x y z ] - 1;  temp( 7:8, :, : )
-
-h_natural_frequencies( 343, 3, 0, 0, 10, 3, false );  % 51.5 Hz, (3, 0, 0)
-h_natural_frequencies( 343, 0, 2, 0, 10, 3, false );  % 55.6 Hz, (0, 2, 0)
+%% Part 1b
 
 
-
-%% Part c
-
-% See the report.
 
 
 
@@ -141,7 +104,5 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-% https://www.mathworks.com/matlabcentral/answers/1883747-how-to-find-the-5-minimum-values-in-a-multidimensional-matrix-and-the-indices-to-which-these-entries
 
 
