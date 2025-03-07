@@ -61,11 +61,11 @@ m1 = m_dva;
 k1 = 0;  % Spring above DVA mass;  does not exist;  set to zero.
 
 m2 = m;
-k2 = k;
-    % k2 = k*(1+0.1*1j);
+k2 = k;  % 100e3 N/m
+    k2 = k*(1+0.1*1j);
 
-k3 = k_dva;
-    % k3 = k_dva*(1+0.1*1j);
+k3 = k_dva;  % 1,800 N/m
+    k3 = k_dva*(1+0.1*1j);
 
 
 

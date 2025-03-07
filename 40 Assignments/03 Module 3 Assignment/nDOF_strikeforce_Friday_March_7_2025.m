@@ -9,7 +9,7 @@
 
 %% Environment
 
-close all; clear; clc;
+% close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -31,12 +31,14 @@ pause( 1 );
 
 masses = [ 1  50 ];
 stiffnesses = [ 0  1800 100e3 ];
+
 dampings = [ 0  0  0 ];
+dampings = [ 0  (1 + 0.1*1j)  (1 + 0.1*1j) ];
 
 frequencies = 0:0.01:40;
 
 [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );  % 4001-by-2-by-2
-[ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'impedence' );  % 4001-by-2-by-2
+% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'impedance' );  % 4001-by-2-by-2
 %
     % 'admittance'
     % 'mobility'
@@ -57,8 +59,21 @@ end
 clear temp1 temp2;
 
 
+% figure( ); ...
+%     semilogy( frequencies, admittance );  grid on;
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+
+
 figure( ); ...
-    semilogy( frequencies, admittance );  grid on;
+    semilogy( frequencies, abs( FRF( :, 1, 1 ) ) );  hold on;
+    semilogy( frequencies, abs( FRF( :, 1, 2 ) ) );
+    % semilogy( frequencies, abs( FRF( :, 2, 1 ) ) );
+    semilogy( frequencies, abs( FRF( :, 2, 2 ) ) );
+    %
+    semilogy( frequencies, 1 ./ abs( FRF( :, 1, 1 ) ) );
+    semilogy( frequencies, 1 ./ abs( FRF( :, 1, 2 ) ) );
+    % semilogy( frequencies, 1 ./ abs( FRF( :, 2, 1 ) ) );
+    semilogy( frequencies, 1 ./ abs( FRF( :, 2, 2 ) ) );  grid on;
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
