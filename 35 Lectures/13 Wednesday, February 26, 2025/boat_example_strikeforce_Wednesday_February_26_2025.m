@@ -3,7 +3,7 @@
 
 %% Synopsis
 
-% Problem 1 - Washing Machine Mount Design
+% Boat Seat Suspension
 
 
 
@@ -27,15 +27,69 @@ pause( 1 );
 
 
 
-%% Placeholder
+%% Single Stage Suspension
 
-% logspace( log10(0.001), log10(1), 10 )
+wave_peak = 1/2;  % m
+wave_length = 5;  % m
+wave_speed = 4;  % m/s
 
-% linspace( 0.001, 1, 10 )
+boat_speed = 4.5;  % m/s
 
-% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, freq, FRF_type )
+m = 100;  % kg
+
+% return
+
+%% Suspension System
+
+% Composed of spring and damper (dash-pot).
+
+% Spring, ks.
+% Damper, C.
+
+% Assumption:  boat can be modeled as a wheel that can follow along with the waves.
 
 
+
+%% Force
+
+frequency = ( wave_speed + boat_speed ) / wave_length;  % 1.7 cycles per second or Hz
+
+x_b = 0.5;  % m
+
+
+
+%% Motion of Passenger
+
+x_p = 0.03;  % m
+
+transmissibility = x_p / x_b;  % 0.06 unitless
+
+
+% From the plot of single-stage isolator transmissibilities on page 25 of
+% Lecture 13 - Wednesday, February 26, 2025.
+%
+% With a normalize frequency ratio of 10 (w/wo), just select:
+fo = frequency/10;  % 0.17 Hz
+    wo = 2*pi*fo;  % 1.07 radians per second
+%
+% This is a VERY low frequency, with a very long period of about 5.9
+% seconds.  This is the period over which the chair makes one cycle of
+% upward and downward motion.
+
+
+spring_stiffness = wo^2*m;  % 114.1 N/m
+%
+% With this spring stiffness, the act of sittin on the chair has a
+% displacement of:
+%
+delta_spring = m*9.81/spring_stiffness;  % 8.6 m
+%
+% THIS IS NOT PRACTICAL.  "TOTALLY HOSED GIVEN THIS PROMPT!"
+
+
+% damping_factor = 
+
+return
 
 %% Define Machine
 

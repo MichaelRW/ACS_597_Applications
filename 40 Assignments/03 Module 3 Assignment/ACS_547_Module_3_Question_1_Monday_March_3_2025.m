@@ -6,6 +6,29 @@
 % Problem 1 - Washing Machine Mount Design
 
 
+% Part 1 - Single-stage Isolation
+%
+% The challenge here is that the mass does no go away.
+
+% Part 2 - Two-stage Isolation
+%
+% A 2 degrees-of-freedom (DOF) system is better than a 1 DOF system.
+
+% Part 3 - Dynamic Vibration Absorption (DVA) System
+%
+% At 300 RPM, this system will attenuate\reduce vibration amplitude more
+% than the 2 DOF and 1 DOF systems.
+
+
+% The DVA system acts like a Helmholtz resonator, working as a mechanical
+% notch filter at a particular frequency.
+
+% DVA systems work well in systems that have one dominate mode.  A good
+% example of this is building sway and its compensation.  Based on the
+% design and construction of a building, it will typically have a single,
+% dominate mode.
+
+
 
 %% Environment
 
@@ -33,7 +56,7 @@ pause( 1 );
 
 % linspace( 0.001, 1, 10 )
 
-% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, freq, FRF_type )
+
 
 
 
@@ -66,19 +89,23 @@ rpm = 0:1:350;  % rotations per minute
         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
 
 
+force_frequency = 300 * 0.10472 / ( 2 * pi );  % 5 Hz
+
 h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N
+%
+% This is the amplitude.
 
-force_frequency = 300 * 0.10472 / ( 2 * pi );  % Hz
 
 
-figure( ); ...
-    plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
-    plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
-    line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
-    text( 305, 494, '494 N' );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Dynamic Force Amplitude [N]' );
-    %
-    axis( [ -10 355  -5 705 ] );
+
+% figure( ); ...
+%     plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
+%     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
+%     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
+%     text( 305, 494, '494.4 N' );  grid on;
+%     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Dynamic Force Amplitude [N]' );
+%     %
+%     axis( [ -10 355  -5 705 ] );
     %
     % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
     %
@@ -91,12 +118,37 @@ figure( ); ...
 
 
 
-%% Part 1b
+%% Part 1b -  
 
+return
 
+%% Part 1c
 
+return
 
+%% Part 1d
 
+return
+
+%% Part 1e
+
+return
+
+%% Part 1f
+
+return
+
+%% Strikeforce
+
+% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, freq, FRF_type )
+
+% The FRF output of this function is a 3-dimensional vector with,
+%
+%   First dimension:  The number of frequencies at which the calculation is made.
+%   Second dimension:  The driving force on the masses.
+%   Third dimension:  The response of the masses.
+
+% This matrix will be symmetrical on the second and third dimensions.
 
 
 %% Clean-up
@@ -106,5 +158,43 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
