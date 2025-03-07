@@ -7,6 +7,18 @@
 
 
 
+%% Note(s)
+
+% Dynamic vibration absorption is useful if:
+%
+%   a.)  Can not get away from the resonance frequency;  can not tune the
+%   system to the resonance is away from the frequency of the forcing
+%   function.
+%
+%   b.)  
+
+
+
 %% Environment
 
 close all; clear; clc;
@@ -50,8 +62,10 @@ k1 = 0;  % Spring above DVA mass;  does not exist;  set to zero.
 
 m2 = m;
 k2 = k;
+    % k2 = k*(1+0.1*1j);
 
 k3 = k_dva;
+    k3 = k_dva*(1+0.1*1j);
 
 
 
@@ -114,7 +128,7 @@ w = 0:0.01:40*2*pi;
 
 
 m = [ 1 50 ];
-k = [ 0 100e3 1.8e3 ];
+k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
 
 X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
 X2_original = F0./m(2)*1./(w2^2-w.^2);
