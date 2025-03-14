@@ -30,3 +30,14 @@ Hashtags:  ##COMMENTS
 	https://psu.mediaspace.kaltura.com/media/SARI%20Lecture%203%20-%20Feb%207%2C%202019/0_ml50veke
 	https://psu.mediaspace.kaltura.com/media/SARI%20Lecture%202%20Fall%202019/1_69jct99z
 	https://psu.mediaspace.kaltura.com/media/SARI%20Lecture%201%20Fall%202019/1_sezngymc
+	
+	
+	
+YouTube Videos
+
+	Thursday, March 13, 2025
+	
+		Understanding Vibration and Resonance - https://www.youtube.com/watch?v=vLaFAKnaRJU
+		
+		
+		
