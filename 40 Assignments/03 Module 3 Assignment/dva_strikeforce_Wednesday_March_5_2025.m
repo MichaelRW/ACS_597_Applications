@@ -135,7 +135,7 @@ X2_original = F0./m(2)*1./(w2^2-w.^2);
 
 
 figure( ); ...
-    semilogy( f, abs(X2_original) );  hold on;
+    loglog( f, abs(X2_original) );  hold on;
     loglog( f, abs(X2) );  grid on;
         legend( 'Original', 'With DVA' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
@@ -146,10 +146,26 @@ figure( ); ...
 %% ph
 
 
-% m = [ 1 50 ];
-% k = [ 0 100e3 1.8e3 ];
-% 
-% FRF = nDOF_direct_solution( m, k, [ ], 1:1:1e3, 'admittance' )
+m = [ 50 1 ];
+k = [ 100e3 1.8e3 0 ];
+dampings = [ 0 0 0 ];
+% dampings = [ 0 3 0 ];
+
+f = 0:0.1:100;
+
+FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
+% FRF = nDOF_direct_solution( m, k, dampings, f, 'impedance' );
+
+
+H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
+
+figure( ); ...
+    loglog( f, abs( H ) );
+
+squeeze( FRF( 100, :, : ) );
+
+
+% For the two-stage case, you might need to use FRF( :, 2, 2 ).
 
 
 %       masses:  An nDOF vector of masses.
