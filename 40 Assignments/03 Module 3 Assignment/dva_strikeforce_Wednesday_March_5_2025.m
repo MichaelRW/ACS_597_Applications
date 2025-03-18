@@ -145,7 +145,6 @@ figure( ); ...
 
 %% ph
 
-
 m = [ 50 1 ];
 k = [ 100e3 1.8e3 0 ];
 dampings = [ 0 0 0 ];
@@ -156,13 +155,10 @@ f = 0:0.1:100;
 FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
 % FRF = nDOF_direct_solution( m, k, dampings, f, 'impedance' );
 
-
 H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
 
 figure( ); ...
     loglog( f, abs( H ) );
-
-squeeze( FRF( 100, :, : ) );
 
 
 % For the two-stage case, you might need to use FRF( :, 2, 2 ).

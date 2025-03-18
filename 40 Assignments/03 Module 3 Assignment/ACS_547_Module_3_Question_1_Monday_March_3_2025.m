@@ -48,15 +48,7 @@ format ShortG;
 
 pause( 1 );
 
-
-
-%% Placeholder
-
-% logspace( log10(0.001), log10(1), 10 )
-
-% linspace( 0.001, 1, 10 )
-
-
+PRINT_FIGURES = 0;
 
 
 
@@ -64,7 +56,7 @@ pause( 1 );
 
 machine.mass = 100;  % kg
 machine.rotation_speed = 31.4;  % radians\s
-machine.load = 10;  % kg
+machine.load_mass = 10;  % kg
 machine.static_displacement = 1e-2;  % m
 
 
@@ -73,7 +65,6 @@ machine.static_displacement = 1e-2;  % m
 
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
-
 
 % Maximum force applied to foundation is 100 N.
 
@@ -91,11 +82,7 @@ rpm = 0:1:350;  % rotations per minute
 
 force_frequency = 300 * 0.10472 / ( 2 * pi );  % 5 Hz
 
-h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N
-%
-% This is the amplitude.
-
-
+h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N (amplitude)
 
 
 % figure( ); ...
@@ -103,59 +90,74 @@ h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N
 %     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
 %     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
 %     text( 305, 494, '494.4 N' );  grid on;
-%     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Dynamic Force Amplitude [N]' );
+%     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Amplitude [N]' );
 %     %
 %     axis( [ -10 355  -5 705 ] );
+% 
+%     % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+%     % 
+%     set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+%         pos = get( gcf, 'Position' );
+%             set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+%                 if ( PRINT_FIGURES == 1 )
+%                     print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
+%                 end
+% %
+% % https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
+
+
+
+%% Part 1b
+
+total_mass = machine.mass + machine.load_mass;  % 110 kg
+
+maximum_allowable_displacement = 1e-2;  % m
+
+ks = (total_mass * 9.81) / maximum_allowable_displacement;  % 1.0791e5 N\m
+
+wo = sqrt( ks / total_mass );  % 31.3 radians\s
+    fo = wo / (2*pi);  % 4.98 Hz
+
+
+
+%% Part 1c
+
+frequency_set = 0.1:0.1:1e3;
+
+r = frequency_set ./ fo;
+
+damping_ratio = logspace( log10(0.001), log10(1), 6 );
+    epsilon = damping_ratio ./ ( 2.*sqrt(ks.*total_mass) );
+
+h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
+
+
+figure( ); ...
+    plot( nan, nan );  hold on;
     %
+    for index = 1:1:numel( epsilon )
+        plot( r, h_transmissibility( epsilon( index ), r ) );
+    end
+    %
+    grid on;
+    set( gca, 'XScale', 'log', 'YScale', 'log' );
+    xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Force Transmissibility [$T_F$;  unitless]' );
+    legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
+    %
+    axis( [ 0.1 1e2  1e-4 5e2 ] );
+
     % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
-    %
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             print(gcf, 'Homework_3_Part_1', '-dpdf', '-r0' );
+    % 
+    set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+        pos = get( gcf, 'Position' );
+            set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+                if ( PRINT_FIGURES == 1 )
+                    print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
+                end
 %
 % https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
 
 
-% Displacement Versus Frequency Ratio
-
-Fo = 1;
-wf = 4;  % Force frequency, radians\s
-
-lambda = 1;
-    k = (2*pi)/lambda;
-
-phase_offset = 0;
-
-w = 5;
-    r = wf / w;
-
-time_indices = 0:1e-2:5;
-
-h_x = @( Fo, k, wf, time_indices, phase_offset, r, epsilon ) ( Fo./k.*sin(4*time_indices - phase_offset) ) ./ ( sqrt( (1 - r^2)^2 + (2*r*epsilon)^2 ) );
-
-figure( ); ...
-    epsilon = 0;
-        % plot( time_indices, h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
-    %
-    for wf = 10:-1:1
-        wf
-        epsilon = 0.25;
-        r = wf / w;
-            plot( h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
-        keyboard
-    end
-    %
-    legend( '', '' );
-    xlabel( 'Frequency Ratio [WU]' );  ylabel( 'Normalized Maximum Displacment [WU]' );
-
-
-
-%% Part 1b -  
-
-return
-
-%% Part 1c
 
 return
 
@@ -205,28 +207,37 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% % Displacement Versus Frequency Ratio
+% 
+% Fo = 1;
+% wf = 4;  % Force frequency, radians\s
+% 
+% lambda = 1;
+%     k = (2*pi)/lambda;
+% 
+% phase_offset = 0;
+% 
+% w = 5;
+%     r = wf / w;
+% 
+% time_indices = 0:1e-2:5;
+% 
+% h_x = @( Fo, k, wf, time_indices, phase_offset, r, epsilon ) ( Fo./k.*sin(4*time_indices - phase_offset) ) ./ ( sqrt( (1 - r^2)^2 + (2*r*epsilon)^2 ) );
+% 
+% figure( ); ...
+%     epsilon = 0;
+%         % plot( time_indices, h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
+%     %
+%     for wf = 10:-1:1
+%         wf
+%         epsilon = 0.25;
+%         r = wf / w;
+%             plot( h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
+%         keyboard
+%     end
+%     %
+%     legend( '', '' );
+%     xlabel( 'Frequency Ratio [WU]' );  ylabel( 'Normalized Maximum Displacment [WU]' );
 
 
 
