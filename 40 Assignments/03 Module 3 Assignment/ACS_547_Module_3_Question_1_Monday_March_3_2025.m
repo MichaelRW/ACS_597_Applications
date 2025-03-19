@@ -127,20 +127,24 @@ frequency_set = 0.1:0.1:1e3;
 r = frequency_set ./ fo;
 
 damping_ratio = logspace( log10(0.001), log10(1), 6 );
-    epsilon = damping_ratio ./ ( 2.*sqrt(ks.*total_mass) );
+% damping_ratio = 0.001:0.1:1;
+    % epsilon = damping_ratio ./ ( 2.*sqrt(ks.*total_mass) );
+    epsilon = damping_ratio;
 
 h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
 
 
 figure( ); ...
-    plot( nan, nan );  hold on;
+    hold on;
     %
     for index = 1:1:numel( epsilon )
         plot( r, h_transmissibility( epsilon( index ), r ) );
     end
     %
     grid on;
-    set( gca, 'XScale', 'log', 'YScale', 'log' );
+    % set( gca, 'XScale', 'log', 'YScale', 'log' );
+    set( gca, 'XScale', 'log' );
+    set( gca, 'YScale', 'log' );
     xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Force Transmissibility [$T_F$;  unitless]' );
     legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
     %
