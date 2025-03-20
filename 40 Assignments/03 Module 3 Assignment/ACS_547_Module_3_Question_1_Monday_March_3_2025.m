@@ -36,7 +36,7 @@ close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
-addpath( genpath( './00 Support' ), '-begin' );
+addpath( genpath( '../00 Support' ), '-begin' );
 
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
@@ -70,7 +70,7 @@ dynamic_force.radius = 0.5;  % m
 
 
 
-%% Part 1a
+%% Part 1a - TO REVIEW
 
 h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
@@ -85,25 +85,20 @@ force_frequency = 300 * 0.10472 / ( 2 * pi );  % 5 Hz
 h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N (amplitude)
 
 
-% figure( ); ...
-%     plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
-%     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
-%     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
-%     text( 305, 494, '494.4 N' );  grid on;
-%     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Amplitude [N]' );
-%     %
-%     axis( [ -10 355  -5 705 ] );
-% 
-%     % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
-%     % 
-%     set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-%         pos = get( gcf, 'Position' );
-%             set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-%                 if ( PRINT_FIGURES == 1 )
-%                     print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
-%                 end
-% %
-% % https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
+figure( ); ...
+    plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
+    plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
+    line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
+    text( 305, 494, '494.4 N' );  grid on;
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Amplitude [N]' );
+    axis( [ -10 355  -5 705 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
+    %             end
 
 
 
@@ -116,7 +111,7 @@ maximum_allowable_displacement = 1e-2;  % m
 ks = (total_mass * 9.81) / maximum_allowable_displacement;  % 1.0791e5 N\m
 
 wo = sqrt( ks / total_mass );  % 31.3 radians\s
-    fo = wo / (2*pi);  % 4.98 Hz
+    fo = wo / (2*pi);  % 4.98 Hz - Natural frequency of the mount.
 
 
 
@@ -127,8 +122,6 @@ frequency_set = 0.1:0.1:1e3;
 r = frequency_set ./ fo;
 
 damping_ratio = logspace( log10(0.001), log10(1), 6 );
-% damping_ratio = 0.001:0.1:1;
-    % epsilon = damping_ratio ./ ( 2.*sqrt(ks.*total_mass) );
     epsilon = damping_ratio;
 
 h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
@@ -141,41 +134,88 @@ figure( ); ...
         plot( r, h_transmissibility( epsilon( index ), r ) );
     end
     %
-    grid on;
-    % set( gca, 'XScale', 'log', 'YScale', 'log' );
-    set( gca, 'XScale', 'log' );
-    set( gca, 'YScale', 'log' );
     xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Force Transmissibility [$T_F$;  unitless]' );
-    legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
-    %
+        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
     axis( [ 0.1 1e2  1e-4 5e2 ] );
-
-    % Textheight:  744 pt. and Textwidth:  493 pt. from LaTex document
+    grid on;
+    set( gca, 'XScale', 'log', 'YScale', 'log' );
     % 
-    set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-        pos = get( gcf, 'Position' );
-            set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-                if ( PRINT_FIGURES == 1 )
-                    print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
-                end
-%
-% https://tex.stackexchange.com/questions/179382/best-practices-for-using-matlab-images-in-latex
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
+    %             end
 
-
-
-return
+% return
 
 %% Part 1d
 
-return
+rpm = 0:1:1e3;  % rotations per minute
+    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
+        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
+
+frequency_set = angular_velocity / (2*pi);
+    r = frequency_set ./ fo;
+
+
+figure( ); ...
+    hold on;
+    %
+    for index = 1:1:numel( epsilon )
+        plot( rpm, h_transmissibility( epsilon( index ), r ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );
+    end
+    %
+    line( [ 300, 300 ], [ 200 1e6 ], 'Color', 'r' );
+        text( 305, 300, '5 Hz' );  grid on;
+    line( [ 0 350 ], [ 100 100 ], 'Color', 'r' );
+        text( 0, 205, '100 N' );  grid on;    
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Applied to Foundation [N]' );
+        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'SouthEast' );
+    axis( [ -10 355  0 1e6 ] );
+    grid on;
+    set( gca, 'YScale', 'log' );
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_1d', '-dpdf', '-r0' );
+    %             end
+
+% return
 
 %% Part 1e
 
-return
+% The best damping ratio is 1 kg^0.5 m\s
+
+C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
+
+% The units of a viscous damping coefficient are Newton-seconds per meter (Ns/m) or kilograms per second (kg/s).
+
+
+% Plot admittance as function of frequency.
+m = [ total_mass ];
+k = [ ks  0 ];
+dampings = [ C  0 ];
+
+f = frequency_set;
+
+FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
+% FRF = nDOF_direct_solution( m, k, dampings, f, 'impedance' );
+
+H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
+
+figure( ); ...
+    loglog( f, abs( H ) );
+
+
+
+% return
 
 %% Part 1f
 
-return
+% return
 
 %% Strikeforce
 
@@ -191,6 +231,15 @@ return
 
 
 %% Clean-up
+
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 3, 4, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 2 );
+        end
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
