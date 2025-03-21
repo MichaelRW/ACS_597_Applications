@@ -128,37 +128,40 @@ w = 0:0.01:40*2*pi;
 
 
 m = [ 1 50 ];
-k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
+k = [  0  100e3  1.8e3  ];
+% k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
+
+% m = [ 50 1 ];
+% k = [ 100e3 1.8e3 0 ];
+% dampings = [ 0 0 0 ];
 
 X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
 X2_original = F0./m(2)*1./(w2^2-w.^2);
 
 
-figure( ); ...
+figure( 'Name', 'Displacement with DVA' ); ...
     loglog( f, abs(X2_original) );  hold on;
     loglog( f, abs(X2) );  grid on;
-        legend( 'Original', 'With DVA' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+        legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
 
 
 
 
-%% ph
+%% Admittance
 
 m = [ 50 1 ];
 k = [ 100e3 1.8e3 0 ];
 dampings = [ 0 0 0 ];
 % dampings = [ 0 3 0 ];
 
-f = 0:0.1:100;
+% f = 0:0.1:100;
 
 FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
-% FRF = nDOF_direct_solution( m, k, dampings, f, 'impedance' );
 
-H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
-
-figure( ); ...
-    loglog( f, abs( H ) );
+figure( 'Name', 'Admittance of DVA' ); ...
+    loglog( f, abs( FRF( :, 1, 1 ) ) );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
 % For the two-stage case, you might need to use FRF( :, 2, 2 ).
@@ -175,6 +178,15 @@ figure( ); ...
 
 
 %% Clean-up
+
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 3, 4, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 2 );
+        end
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 

@@ -3,7 +3,7 @@
 
 %% Synopsis
 
-% Problem 1 - Washing Machine Mount Design
+% Problem 1 - Washing Machine Mount Design - 1 Degree of Freedom (DOF)
 
 
 % Part 1 - Single-stage Isolation
@@ -187,6 +187,11 @@ figure( ); ...
 
 %% Part 1e
 
+% Damping ratio is epsilon.
+%
+% Damping coefficient is C -> epsilon * 2 * sqrt( ks * m )
+
+
 % The best damping ratio is 1 kg^0.5 m\s
 
 C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
@@ -195,21 +200,19 @@ C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
 
 
 % Plot admittance as function of frequency.
-m = [ total_mass ];
+m = total_mass;
 k = [ ks  0 ];
-dampings = [ C  0 ];
 dampings = [ 1  0 ];
 
 f = frequency_set;
 
-FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
-% FRF = nDOF_direct_solution( m, k, dampings, f, 'impedance' );
+admittance = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
 
-H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
+% H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
 
 figure( 'Name', 'Admittance' ); ...
-    semilogy( rpm, abs( H ) );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Admittance [$\frac{s^2}{kg}$]' );
+    semilogy( rpm, abs( admittance ) );  grid on;
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
     set( gca, 'YScale', 'log' );
     axis( [ -10 355  0 0.09 ] );
     %
@@ -224,7 +227,7 @@ figure( 'Name', 'Admittance' ); ...
 
 %% Part 1f
 
-displacement = abs( H ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+displacement = abs( admittance ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
 
 
 figure( 'Name', 'Displacement' ); ...

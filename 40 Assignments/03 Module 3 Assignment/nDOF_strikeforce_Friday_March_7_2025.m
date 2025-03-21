@@ -9,7 +9,7 @@
 
 %% Environment
 
-% close all; clear; clc;
+close all; clear; clc;
 % restoredefaultpath;
 
 % addpath( genpath( '' ), '-begin' );
@@ -27,7 +27,38 @@ pause( 1 );
 
 
 
-%% Calculate Admittances
+%% 1 DOF Example
+
+masses = 50;
+stiffnesses = [ 100e3  0 ];
+dampings = [ 0  0 ];
+    % dampings = [ 0  (1 + 0.1*1j) ];
+
+wo = sqrt( 100e3 / 50 );
+    fo = wo/(2*pi);  % 7.1 Hz
+
+frequencies = 0:0.1:100;
+
+
+admittance = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );  % 4001-by-2-by-2
+%
+figure( ); ...
+    loglog( frequencies, abs( admittance ) );  grid on;
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+
+
+impedance_original_function = nDOF_direct_solution_org( masses, stiffnesses, dampings, frequencies, 'impedance' );  % 4001-by-2-by-2
+impedance_updated_function = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'impedance' );  % 4001-by-2-by-2
+%
+figure( ); ...
+    loglog( frequencies, abs( impedance_original_function ) );  hold on;
+    loglog( frequencies, abs( impedance_updated_function ) );  grid on;
+        legend( 'Original Function', 'Updated Function', 'Location', 'North' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Impedance [$\frac{N\cdots}{m}$]' );
+
+return
+
+%% 2 DOF Example
 
 masses = [ 1  50 ];
 stiffnesses = [ 0  1800 100e3 ];
@@ -38,14 +69,6 @@ dampings = [ 0  (1 + 0.1*1j)  (1 + 0.1*1j) ];
 frequencies = 0:0.01:40;
 
 [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );  % 4001-by-2-by-2
-% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'impedance' );  % 4001-by-2-by-2
-%
-    % 'admittance'
-    % 'mobility'
-    % 'accelerance'
-    % 'stiffness'
-    % 'impedance'
-    % 'mass'
 
 
 admittance = zeros( numel( frequencies ), 1 );
@@ -64,21 +87,34 @@ clear temp1 temp2;
 %     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
-figure( ); ...
+figure( 'Name', 'Admittance' ); ...
     semilogy( frequencies, abs( FRF( :, 1, 1 ) ) );  hold on;
     semilogy( frequencies, abs( FRF( :, 1, 2 ) ) );
-    % semilogy( frequencies, abs( FRF( :, 2, 1 ) ) );
-    semilogy( frequencies, abs( FRF( :, 2, 2 ) ) );
-    %
-    semilogy( frequencies, 1 ./ abs( FRF( :, 1, 1 ) ) );
+    semilogy( frequencies, abs( FRF( :, 2, 1 ) ) );
+    semilogy( frequencies, abs( FRF( :, 2, 2 ) ) );  grid on;
+        legend( 'M1 Movement with F1', 'M1 Movement with F2', 'M2 Movement with F1', 'M2 Movement with F2', 'Location', 'North' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+    
+figure( 'Name', 'Dynamic Stiffness' ); ...
+    semilogy( frequencies, 1 ./ abs( FRF( :, 1, 1 ) ) );  hold on;
     semilogy( frequencies, 1 ./ abs( FRF( :, 1, 2 ) ) );
-    % semilogy( frequencies, 1 ./ abs( FRF( :, 2, 1 ) ) );
+    semilogy( frequencies, 1 ./ abs( FRF( :, 2, 1 ) ) );
     semilogy( frequencies, 1 ./ abs( FRF( :, 2, 2 ) ) );  grid on;
+        legend( 'M1 Movement with F1', 'M1 Movement with F2', 'M2 Movement with F1', 'M2 Movement with F2', 'Location', 'North' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
 
 %% Clean-up
+
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 3, 4, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 2 );
+        end
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
