@@ -196,6 +196,13 @@ figure( ); ...
 
 C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
 
+% ONLY the system mass
+
+
+% 10 kg static for the displacement.
+
+
+
 % The units of a viscous damping coefficient are Newton-seconds per meter (Ns/m) or kilograms per second (kg/s).
 
 
