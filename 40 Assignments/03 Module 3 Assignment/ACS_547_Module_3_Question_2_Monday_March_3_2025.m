@@ -73,7 +73,12 @@ masses = [ m2 m1 ];
 stiffnesses = [ k2  k3  k1 ];
 dampings = [ c2  0  c1 ];
 
-frequencies = 0:0.01:40;
+% frequencies = 0:0.01:40;
+
+rpm = 0:1:500;  % rotations per minute
+    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
+        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
+            frequencies = angular_velocity / (2*pi);
 
 FRF = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );
 
@@ -102,17 +107,58 @@ clear temp temp2;
 raft.admittance = admittance;
 
 
-figure( ); ...
-    h1 = loglog( frequencies, washing_machine.admittance );  hold on;
-    h2 = loglog( frequencies, raft.admittance );  grid on;
-        legend( [ h1 h2 ], 'Washing Machine', 'Raft', 'Location', 'SouthWest' );
-    %
-    line( [ 5 5 ], [ 10^-8 10^-2 ] );
+figure( 'Name', '' ); ...
+    h1 = loglog( rpm, washing_machine.admittance );  hold on;
+    h2 = loglog( rpm, raft.admittance );
+    h3 = line( [ 300 300 ], [ 10^-9 10^-2 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'SouthWest' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+    % axis( [ 0 max(frequencies)  1e-9 1e-2 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
+    %             end
 
-return
+
+% The admittance at 5 Hz (300 RPM) is 7.29e-7 m\N, or 2,085 times smaller
+% than it is for the first-order system.
+
+
 
 %% Problem 2d
+
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
+
+
+% rpm = 0:1:350;  % rotations per minute
+%     rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
+%         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
+%             frequencies = angular_velocity / (2*pi);
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
+
+
+temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+
+
+figure( 'Name', '' ); ...
+    h1 = loglog( rpm, washing_machine.admittance.*temp );  hold on;
+    h2 = loglog( rpm, raft.admittance.*temp );
+    h3 = line( [ 300 300 ], [ 10^-9 10^-2 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'SouthWest' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
+    % axis( [ 0 max(frequencies)  1e-9 1e-2 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
+    %             end
 
 return
 

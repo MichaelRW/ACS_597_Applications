@@ -223,7 +223,10 @@ figure( 'Name', 'Admittance' ); ...
     %                 print(gcf, 'Homework_3_Part_1e', '-dpdf', '-r0' );
     %             end
 
-% return
+
+% The admittance at 5 Hz (300 RPM) is 0.00152 m\N.
+
+
 
 %% Part 1f
 
@@ -243,7 +246,10 @@ figure( 'Name', 'Displacement' ); ...
     %                 print(gcf, 'Homework_3_Part_1f', '-dpdf', '-r0' );
     %             end
 
-% return
+
+% The displacement is 0.75 meters at 300 RPM.
+
+
 
 %% Clean-up
 
