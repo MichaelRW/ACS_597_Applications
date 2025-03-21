@@ -3,40 +3,7 @@
 
 %% Synopsis
 
-% Problem 3 - Washing Machine Dynamic Vibration Absorber Design
-
-
-
-%% Environment
-
-close all; clear; clc;
-% restoredefaultpath;
-
-% addpath( genpath( '' ), '-begin' );
-addpath( genpath( './00 Support' ), '-begin' );
-
-% set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
-set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
-set( 0, 'DefaultTextInterpreter', 'Latex' );
-
-format ShortG;
-
-pause( 1 );
-
-
-
-%% ph
-
-
-
-
-
-
-%% Synopsis
-
-% From the recorded video on Dynamic Vibration Absorber (DVA).
+% Problem 3 - Washing Machine Dynamic Vibration Absorber (DVA) Design
 
 
 
@@ -63,7 +30,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 0.8 );
+set( 0, 'DefaultLineLineWidth', 1.5 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -174,7 +141,7 @@ else
 
     m = [ 50 1 ];
     k = [ 100e3 1.8e3 0 ];
-    dampings = [ 0 0 0 ];
+    % dampings = [ 0 0 0 ];
 
     X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
     X2_original = F0./m(1)*1./(w2^2-w.^2);
@@ -196,12 +163,16 @@ figure( 'Name', 'Displacement with DVA' ); ...
 m = [ 50 1 ];
 k = [ 100e3 1.8e3 0 ];
 dampings = [ 0 0 0 ];
+%
+% Damping can be added by using a dampings vector or appending a complex
+% value to the respective spring stiffness.  THESE ARE NOT INTERCHANGABLE.
+
 
 f = 0:0.1:100;  % No matrix singularity warning issued (set 0 to 0.1 if it occurs).
 
 FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
 %
-squeeze( FRF(100, :, :) )
+squeeze( FRF(100, :, :) );
 %
 %   -1.1099e-05   9.6547e-06
 %   9.6547e-06  -0.00049166
@@ -217,7 +188,7 @@ squeeze( FRF(100, :, :) )
 
 FRF_org = nDOF_direct_solution_org( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
 %
-squeeze( FRF_org(100, :, :) )
+squeeze( FRF_org(100, :, :) );
 %
 %   -1.1099e-05   9.6547e-06
 %   9.6547e-06  -0.00049166
