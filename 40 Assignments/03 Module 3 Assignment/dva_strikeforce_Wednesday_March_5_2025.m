@@ -127,16 +127,26 @@ w = 0:0.01:40*2*pi;
     f = w/(2*pi);
 
 
-m = [ 1 50 ];
-k = [  0  100e3  1.8e3  ];
-% k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
+if ( 0 )
 
-% m = [ 50 1 ];
-% k = [ 100e3 1.8e3 0 ];
-% dampings = [ 0 0 0 ];
+    m = [ 1 50 ];
+    k = [  0  100e3  1.8e3  ];
+    % k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
+    dampings = [ 0 0 0 ];
 
-X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
-X2_original = F0./m(2)*1./(w2^2-w.^2);
+    X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
+    X2_original = F0./m(2)*1./(w2^2-w.^2);
+
+else
+
+    m = [ 50 1 ];
+    k = [ 100e3 1.8e3 0 ];
+    dampings = [ 0 0 0 ];
+
+    X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
+    X2_original = F0./m(1)*1./(w2^2-w.^2);
+
+end
 
 
 figure( 'Name', 'Displacement with DVA' ); ...
@@ -153,27 +163,38 @@ figure( 'Name', 'Displacement with DVA' ); ...
 m = [ 50 1 ];
 k = [ 100e3 1.8e3 0 ];
 dampings = [ 0 0 0 ];
-% dampings = [ 0 3 0 ];
 
-% f = 0:0.1:100;
+f = 0:0.1:100;  % No matrix singularity warning issued (set 0 to 0.1 if it occurs).
 
-FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
+FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
+%
+squeeze( FRF(100, :, :) )
+%
+%   -1.1099e-05   9.6547e-06
+%   9.6547e-06  -0.00049166
+%
+% (1, 1) - Force on M1 and its associated displacement.
+% (2, 2) - Force on M2 and its associated displacement.
+%
+% (1, 2) - Force on M1 and the displacement of M2.
+% (2, 1) - Force on M2 and the displacment on M1.
+%
+%   These are interchangeable;  the same result.
+
+
+FRF_org = nDOF_direct_solution_org( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
+%
+squeeze( FRF_org(100, :, :) )
+%
+%   -1.1099e-05   9.6547e-06
+%   9.6547e-06  -0.00049166
+
 
 figure( 'Name', 'Admittance of DVA' ); ...
-    loglog( f, abs( FRF( :, 1, 1 ) ) );  grid on;
+    loglog( f, abs( FRF( :, 1, 1 ) ) );  hold on;
+    loglog( f, abs( FRF_org( :, 1, 1 ) ), 'LineStyle', '--' );  grid on;
+        legend( 'Updated Function', 'Original Function', 'Location', 'NorthWest' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-
-
-% For the two-stage case, you might need to use FRF( :, 2, 2 ).
-
-
-%       masses:  An nDOF vector of masses.
-%       stiffnesses:  An nDOF+1 vector of stiffnesses, with the first and last entries being
-%           connections to ground.
-%       dampings:  An nDOF+1 vector of stiffnesses, with the first and last entries being
-%       connections to ground.
-%       freq:  An nFreq vector of frequencies.
-%       FRF_type:  Is one of:  'admittance', 'mobility', 'accelerance', 'stiffness', 'impedance', or 'mass'.
 
 
 
