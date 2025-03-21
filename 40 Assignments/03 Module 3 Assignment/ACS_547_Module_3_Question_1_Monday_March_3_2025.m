@@ -198,6 +198,7 @@ C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
 m = [ total_mass ];
 k = [ ks  0 ];
 dampings = [ C  0 ];
+dampings = [ 1  0 ];
 
 f = frequency_set;
 
@@ -206,29 +207,40 @@ FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
 
 H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
 
-figure( ); ...
-    loglog( f, abs( H ) );
-
-
+figure( 'Name', 'Admittance' ); ...
+    semilogy( rpm, abs( H ) );  grid on;
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Admittance [$\frac{s^2}{kg}$]' );
+    set( gca, 'YScale', 'log' );
+    axis( [ -10 355  0 0.09 ] );
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_1e', '-dpdf', '-r0' );
+    %             end
 
 % return
 
 %% Part 1f
 
+displacement = abs( H ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+
+
+figure( 'Name', 'Displacement' ); ...
+    plot( rpm, displacement );  grid on;
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Displacement [m]' );
+    set( gca, 'YScale', 'log' );
+    axis( [ -10 355  0 1e6 ] );
+    %
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_1f', '-dpdf', '-r0' );
+    %             end
+
 % return
-
-%% Strikeforce
-
-% [ FRF ] = nDOF_direct_solution( masses, stiffnesses, dampings, freq, FRF_type )
-
-% The FRF output of this function is a 3-dimensional vector with,
-%
-%   First dimension:  The number of frequencies at which the calculation is made.
-%   Second dimension:  The driving force on the masses.
-%   Third dimension:  The response of the masses.
-
-% This matrix will be symmetrical on the second and third dimensions.
-
 
 %% Clean-up
 
