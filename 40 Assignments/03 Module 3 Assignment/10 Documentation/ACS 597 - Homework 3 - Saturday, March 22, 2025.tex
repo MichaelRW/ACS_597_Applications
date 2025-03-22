@@ -56,10 +56,11 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 \vspace{0.25cm}
 Figure~\ref{figure:1aLoadForceVersusRPM} shows the load force produced by the 1 kg imbalanced mass at a 0.5 m radius from the center of the washing machine as a function of angular speed in RPM.
 
+\vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.8, keepaspectratio]{Homework_3_Part_1a.pdf}
-    \vspace{0.25cm}
+        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1a.pdf}
+    \vspace{-0.2cm}
     \caption{Load force of 1 kg imbalanced mass at a 0.5 m radius versus washing machine angular speed.}
     \label{figure:1aLoadForceVersusRPM}
 \end{figure}
@@ -71,7 +72,6 @@ The force amplitude is 493.5 N at a frequency of 5 Hz when the washing machine o
 
 
 
-\vspace{0.25cm}
 \subsection*{Problem 1b}
 
 The static displacement of the load in the washing machine must be less than 1 cm (i.e., the deflection is calculated with only the 10 kg load mass).  The corresponding mount stiffness, $k_s$, is \textbf{9,810 $\frac{N}{m}$}.
@@ -82,16 +82,16 @@ The natural frequency, $w_o$, of the mount is \textbf{1.5 Hz} (or 9.4 $\frac{rad
 
 
 
-\vspace{0.25cm}
+\newpage
 \subsection*{Problem 1c}
 
-\vspace{0.25cm}
 Figure~\ref{figure:1cTransmissionLoss} shows the transmission loss of the system for a set of damping ratios ranging from 0.001 to 1.
 
+\vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.8, keepaspectratio]{Homework_3_Part_1c.pdf}
-    \vspace{0.25cm}
+        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1c.pdf}
+    \vspace{-0.2cm}
     \caption{Transmission loss of the system.  Its natural frequency is 1.5 Hz.}
     \label{figure:1cTransmissionLoss}
 \end{figure}
@@ -100,300 +100,89 @@ Figure~\ref{figure:1cTransmissionLoss} shows the transmission loss of the system
 
 
 
+\subsection*{Problem 1d}
 
+Figure~\ref{figure:1dAppliedForce} shows the force applied to the foundation as a function of RPM.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\newpage
-\section*{Problem 2 - Sabine Room}
-
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
-
-
-\vspace{0.25cm}
-\subsection*{Problem 2a}
-
-The reverberant field sound pressure level is approximately 98.3 dB SPL.
-
-
-
-
-\vspace{0.25cm}
-\subsection*{Problem 2b}
-
-Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total sound pressure levels for a 25 mW, 125 Hz, broadband, omnidirectional source placed centrally in the room (i.e. the directivity factor is 1).
-
+\vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 1.0, keepaspectratio]{Sabine Room.pdf}
-    \vspace{0.25cm}
-    \caption{Sound levels for the room produced by a 25 mW, 125 Hz omnidirectional, broadband source.}
-    \label{figure:sabineRoomLevels}
+        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1d.pdf}
+    \vspace{-0.2cm}
+    \caption{Force applied to the foundation versus RPM.}
+    \label{figure:1dAppliedForce}
 \end{figure}
 
+There is no damping ratio for which the applied force is less than 100 N across the whole operating range.  The best damping ratio is $\zeta = 0.25$.  With this damping ratio, the force applied to the foundation still exceeds the 100 N target in two regions:  91 to 109 RPM and 331 to 350 RPM.  In both regions the force is about 104 N.
 
 
 
 
 
-\newpage
-\section*{Problem 3 - Transmission Loss Measurement}
+\subsection*{Problem 1e}
 
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
+Figure~\ref{figure:1eAdmittance} shows the admittance as a function of RPM.
 
-\vspace{0.25cm}
-Figure~\ref{figure:q3AverageAbsorption} shows the average absorption per octave band based on the T60 data.  The calibration plate isolates the receiver room and the absorption calculation does not consider the calibration plate.
-
-
+\vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 1.0, keepaspectratio]{Q3 Average Absorption.pdf}
-    \vspace{0.25cm}
-    \caption{Average absorption per octave band.}
-    \label{figure:q3AverageAbsorption}
+        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1e.pdf}
+    \vspace{-0.2cm}
+    \caption{Admittance versus RPM.}
+    \label{figure:1eAdmittance}
 \end{figure}
 
-
-\vspace{0.2cm}
-Figure~\ref{figure:q3TransmissionLoss} shows the transmission loss per octave band.
+The admittance at 300 RPM is 1e-5 $\frac{m}{N}$.
 
 
+
+
+
+\subsection*{Problem 1f}
+
+Figure~\ref{figure:1fDisplacement} shows the displacement of the washing machine as a function of RPM.
+
+\vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 1.0, keepaspectratio]{Q3 Transmission Loss.pdf}
-    \vspace{0.25cm}
-    \caption{Transmission loss per octave band.}
-    \label{figure:q3TransmissionLoss}
+        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1f.pdf}
+    \vspace{-0.2cm}
+    \caption{Displacement versus RPM.}
+    \label{figure:1fDisplacement}
 \end{figure}
 
+The displacement of the washing machine at 300 RPM is 5 $mm$.
 
 
 
 
 
-\newpage
-\section*{Problem 4 - Panel Transmission Loss}
 
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
-\subsection*{Problem 4a}
 
-The resonance frequency, $f_o$, of the galvanized steel panel is 4 Hz or 22.6 $\frac{radians}{s}$.
 
 
-\subsection*{Problem 4b}
 
 
-\vspace{0.25cm}
-\subsubsection*{i - Critical Frequency and Coincidence Frequency at 75$^\circ$}
 
-The critical frequency is 10,216 $Hz$ and the coincidence frequency at 75$^\circ$ is 10,494 $Hz$.
 
 
 
-\vspace{0.25cm}
-\subsubsection*{ii - Transmission Loss at Angle of Incidence of 75$^\circ$}
 
-Figure~\ref{figure:q4transmissionLossAt75} shows the transmission loss for an angle of incidence of 75$^\circ$.
 
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.9]{Q4 TL for 75 AOI.pdf}
-    \vspace{0.25cm}
-    \caption{Flexible Panel Transmission Loss for a 75$^\circ$ Incidence Angle}
-    \label{figure:q4transmissionLossAt75}
-\end{figure}
 
 
 
-\vspace{0.25cm}
-\subsubsection*{iii - Transmission Loss for Angles of Incidence between 0-90$^\circ$}
 
-Figure~\ref{figure:q4iiitransmissionLossAt75} shows the transmission loss angles of incidence from 0 to 90$^\circ$ in steps of 10$^\circ$.
 
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.9]{Q4iii TL for 75 AOI.pdf}
-    \vspace{0.25cm}
-    \caption{Flexible Panel Transmission Loss for angles of incidence between 0 and 90$^\circ$.}
-    \label{figure:q4iiitransmissionLossAt75}
-\end{figure}
 
 
 
-\vspace{0.25cm}
-\subsubsection*{iv - Diffuse Transmission Loss}
 
-See the Matlab code in the Appendix~\ref{appendix:problem4}
 
 
 
-\newpage
-\subsection*{Problem 4c}
 
-See the Matlab code in the Appendix~\ref{appendix:problem4}
-
-
-
-\subsection*{Problem 4d}
-
-Figure~\ref{figure:q4dtransmissionLoss} shows the transmission loss angles of incidence from 0 to 90$^\circ$ in steps of 10$^\circ$.
-
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.9]{Q4d TL for 75 AOI.pdf}
-    \vspace{-0.5cm}
-    \caption{Measured data and the modeled responses.}
-    \label{figure:q4dtransmissionLoss}
-\end{figure}
-
-\textbf{The finite flexible panel appears to be the most appropriate model}.  As noted in class, the measured transmission loss at 8 kHz is smaller than the loss a 4 kHz.  This indicates that the loss at 16 kHz should be less than the response of the infinite rigid panel at 16 kHz.
-
-
-
-
-
-
-
-\newpage
-\section*{Problem 5 - Large Enclosure Design}
-
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem5}.
-
-\vspace{0.25cm}
-My enclosure is a 2 $m$ cube that sits on the ground (5 sides of enclosure material) over the machine.  The machine is suspended above the pad (directivity factor of unity).  It is assumed that there is no noise transmission through the ground.
-
-\vspace{0.25cm}
-Table~\ref{table:targetInsertionLosses} lists the target insertion losses, the calculated insertion losses for four materials, and the loss difference between the target and each type of material.  \textit{A positive value indicates that the target insertion loss for the given octave band was not met}.
-
-\vspace{0.25cm}
-Figure~\ref{figure:q5ilPlot} shows calculated insertion loss differences for the data in Table~\ref{table:targetInsertionLosses}.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.25}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | c | c | c | c |}
-            \hline
-            \textbf{Octave Band [Hz]}  &  \textbf{Target IL [dB]}  &  \textbf{QBV 2 [dB]}  &  \textbf{QBV 3 [dB]}  &  \textbf{HTL (100MM) [dB]}  &  \textbf{HTL 4 [dB]}  \\
-            \hline
-            250    &  44  &  28.0  &  19.7  &  10.6   &  5.6  \\
-            \rowcolor{Gray}
-            500    &  54  &  26.7  &  22.2  &  6.6    &  -4.4  \\
-            1,000  &  45  &  5.6   &  1.4   &  -15.4  &  -22.4  \\
-            \rowcolor{Gray}
-            2,000  &  47  &  -8.4  &  -2.2  &  -18.4  &  -19.4  \\
-            4,000  &  58  &  -2.4  &  5.7   &  -11.0  &  -13.0  \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Calculated insertion losses for the 4 enclosure materials.}
-    \label{table:targetInsertionLosses}
-\end{table}
-
-\vspace{-0.5cm}
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.8]{Q5 IL Plot.pdf}
-    \vspace{-0.5cm}
-    \caption{Insertion loss differences.}
-    \label{figure:q5ilPlot}
-\end{figure}
-
-The most restrictive case given the 2 cubic-meter, 5-sided enclosure, is the HTL 4 material, Case 4, which was presented in class.  The target insertion loss was reached by all of the octave bands except the 250 Hz band.
-
-\vspace{0.25cm}
-With the same enclosure dimensions and machine orientation, the HTL (100MM) material, Case 3, was found to be the second best material, not meeting the 250 Hz and 500 Hz targets. Figure~\ref{figure:q5AWcaseData} shows the transmission loss and absorption coefficient data for the material selected from \href{https://www.acousticsworld.com/machine-acoustic-enclosures/}{Acoustics World}.
-
-\vspace{0.25cm}
-The QBV-2 and QBV-3 , Case 1 and Case 2, respectively, had the poorest performance.
-Figure~\ref{figure:q5CNcaseData} shows the transmission loss and absorption coefficient data for these material from
-\href{https://www.controlnoise.com/wp-content/uploads/2022/02/Acoustic-Enclosures-Datasheet.pdf}{Control Noise}.
-
-\vspace{0.25cm}
-Using the HTL 4 material from class, a cube with 2 $m$ sides appeared to produce the optimal insertion loss for the 250 Hz octave band.  Making the size of the enclosure larger does not reduce this insertion loss and does not seem to be practical.  A supplementary approach for this octave band should be considered.
-
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.5]{Q5 AW Data.png}
-    \caption{HTL (100MM) data from Acoustics World.}
-    \label{figure:q5AWcaseData}
-\end{figure}
-
-\begin{figure}[htbp]
-    \center
-    \includegraphics[scale=0.5]{Q5 NW Data.png}
-    \caption{QBV-2 and QBV-3 data from Control Noise.}
-    \label{figure:q5CNcaseData}
-\end{figure}
-
-
-
-
-
-
-\newpage
-\section*{Problem 6 - Close-fitting Enclosure Design}
-
-% For the insertion loss to be high, we need:
-%
-%   1.)  Compliance of the air to be high;  volume of enclosure must be large.
-%   2.)  Compliance of each enclosure wall to be low;  low area, high stiffness, edges clamped).
-%           AREA IS THE DOMINATE FACTOR OVER VOLUME.
-
-
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem6}.
-
-\vspace{0.25cm}
-The required target insertion loss is 13 dB.  This is estimated with the given data and the assumption that the sound measurement distance is beyond the critical distance (i.e., in the diffuse field).
-
-
-\vspace{0.25cm}
-Table~\ref{table:Q6enclosureDesign} lists the dimensions of the designed enclosure.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.25}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | c | }
-            \hline
-            \textbf{Height [m]}  &  \textbf{Width [m]}  &  \textbf{Depth [m]}  \\
-            \hline
-            3  &  1.25 &  1.5  \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Dimensions of the designed enclosure.}
-    \label{table:Q6enclosureDesign}
-\end{table}
 
 
 Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the design enclosure.
@@ -459,20 +248,6 @@ The estimated insertion loss with the hole is 1.2 dB, based on the hole depth co
 \newpage
 \section{Appendix - Matlab Code for Problem 4}
 \label{appendix:problem4}
-
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
-
-
-\newpage
-\section{Appendix - Matlab Code for Problem 5}
-\label{appendix:problem5}
-
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
-
-
-\newpage
-\section{Appendix - Matlab Code for Problem 6}
-\label{appendix:problem6}
 
 %\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
 

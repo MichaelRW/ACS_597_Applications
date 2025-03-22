@@ -153,11 +153,11 @@ figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
     %                 print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
     %             end
 
-return
+
 
 %% Part 1d
 
-rpm = 0:1:1e3;  % rotations per minute
+rpm = 0:1:350;  % rotations per minute
     rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
 
@@ -165,21 +165,21 @@ frequency_set = angular_velocity / (2*pi);
     r = frequency_set ./ fo;
 
 
-figure( ); ...
+figure( 'Name', 'Problem 1d - Applied Force to Foundation' ); ...
     hold on;
     %
-    for index = 1:1:numel( epsilon )
-        plot( rpm, h_transmissibility( epsilon( index ), r ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );
+    for index = 1:1:numel( damping_ratio )
+        plot( rpm, h_transmissibility( damping_ratio( index ), r ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );
     end
     %
-    line( [ 300, 300 ], [ 200 1e6 ], 'Color', 'r' );
-        text( 305, 300, '5 Hz' );  grid on;
-    line( [ 0 350 ], [ 100 100 ], 'Color', 'r' );
+    line( [ 300, 300 ], [ 2 1e4 ], 'Color', 'k', 'LineStyle', '--' );
+        text( 305, 2, '5 Hz' );  grid on;
+    line( [ 0 350 ], [ 100 100 ], 'Color', 'k', 'LineStyle', '--' );
         text( 0, 205, '100 N' );  grid on;    
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Applied to Foundation [N]' );
-        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'SouthEast' );
-    axis( [ -10 355  0 1e6 ] );
-    grid on;
+        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'South' );
+    axis( [ -10 355  1 2e4 ] );
+    grid on;  box on;
     set( gca, 'YScale', 'log' );
     %
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
@@ -193,41 +193,27 @@ figure( ); ...
 
 %% Part 1e
 
-% Damping ratio is epsilon.
-%
-% Damping coefficient is C -> epsilon * 2 * sqrt( ks * m )
+% The best damping ratio is 0.25.
 
-
-% The best damping ratio is 1 kg^0.5 m\s
-
-C = 1 * 2*sqrt(ks*total_mass);  % 6,890.6
-
-% ONLY the system mass
-
-
-% 10 kg static for the displacement.
-
-
+C = 0.25 * 2*sqrt( ks * total_mass );  % 519.4 kg\s
 
 % The units of a viscous damping coefficient are Newton-seconds per meter (Ns/m) or kilograms per second (kg/s).
 
 
-% Plot admittance as function of frequency.
 m = total_mass;
 k = [ ks  0 ];
-dampings = [ 1  0 ];
+dampings = [ C  0 ];
+    admittance = nDOF_direct_solution( m, k, dampings, frequency_set, 'admittance' );
 
-f = frequency_set;
 
-admittance = nDOF_direct_solution( m, k, dampings, f, 'admittance' );
-
-% H = FRF( :, 1, 1 );  % Need to multiply this be frequency dependent forcing function.
-
-figure( 'Name', 'Admittance' ); ...
+figure( 'Name', 'Problem 1e - Admittance' ); ...
     semilogy( rpm, abs( admittance ) );  grid on;
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
     set( gca, 'YScale', 'log' );
-    axis( [ -10 355  0 0.09 ] );
+    %
+    line( [ 300, 300 ], [ 7e-6 2e-5 ], 'Color', 'k', 'LineStyle', '--' );
+        text( 305, 1.2e-5, '5 Hz' );  grid on;
+    axis( [ -10 355  6e-6 2.5e-4 ] );
     %
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
     %     pos = get( gcf, 'Position' );
@@ -236,10 +222,7 @@ figure( 'Name', 'Admittance' ); ...
     %                 print(gcf, 'Homework_3_Part_1e', '-dpdf', '-r0' );
     %             end
 
-
-% The admittance at 5 Hz (300 RPM) is 0.00152 m\N.
-
-
+% return
 
 %% Part 1f
 
@@ -249,8 +232,10 @@ displacement = abs( admittance ) .* h_force( dynamic_force.mass, angular_velocit
 figure( 'Name', 'Displacement' ); ...
     plot( rpm, displacement );  grid on;
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Displacement [m]' );
+    line( [ 300, 300 ], [ 1e-3 1e-2 ], 'Color', 'k', 'LineStyle', '--' );
+        text( 305, 1e-3, '5 Hz' );  grid on;
     set( gca, 'YScale', 'log' );
-    axis( [ -10 355  0 1e6 ] );
+    axis( [ -10 355  1e-7 2e-2 ] );
     %
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
     %     pos = get( gcf, 'Position' );
@@ -258,9 +243,6 @@ figure( 'Name', 'Displacement' ); ...
     %             if ( PRINT_FIGURES == 1 )
     %                 print(gcf, 'Homework_3_Part_1f', '-dpdf', '-r0' );
     %             end
-
-
-% The displacement is 0.75 meters at 300 RPM.
 
 
 
