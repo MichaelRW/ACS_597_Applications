@@ -109,7 +109,7 @@ figure( 'Name', 'Load Force Versus Angular Velocity' ); ...
     %                 print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
     %             end
 
-% return
+return
 
 %% Part 1b
 

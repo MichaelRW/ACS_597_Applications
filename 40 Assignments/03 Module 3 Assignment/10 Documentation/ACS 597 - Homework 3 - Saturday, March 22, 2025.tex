@@ -46,65 +46,27 @@
 
 
 \vspace{-0.25cm}
-\section*{Problem 1 - Modal Behaviour of a Cylindrical Room}
+\section*{Problem 1 - Washing Machine Mount Design}
+
+
+\subsection*{Problem 1a}
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 
+\vspace{0.25cm}
+Figure~\ref{figure:loadForceVersusRPM} shows the load force produced by the 1 kg imbalanced mass at a 0.5 m radius from the center of the washing machine as a function of angular speed in RPM.
 
-Figure~\ref{figure:sabineRoomLevels} shows the direct, reverberant, and total sound pressure levels for a 25 mW, 125 Hz, broadband, omnidirectional source placed centrally in the room (i.e. the directivity factor is 1).
+\vspace{0.25cm}
+The force amplitude is 493.5 N at a frequency of 5 Hz when the washing machine operates at 300 RPM.
 
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.8, keepaspectratio]{Homework_3_Part_1a.pdf}
     \vspace{0.25cm}
-    \caption{Sound levels for the room produced by a 25 mW, 125 Hz omnidirectional, broadband source.}
-    \label{figure:sabineRoomLevels}
+    \caption{Load force of 1 kg imbalanced mass at a 0.5 m radius versus washing machine angular speed.}
+    \label{figure:loadForceVersusRPM}
 \end{figure}
 
-
-
-
-\vspace{0.25cm}
-\subsection*{Problem 1a}
-
-Table~\ref{table:resonanceFrequencies} lists the ten lowest resonance mode orders for the room and the respective frequency.
-
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | c | }
-            \hline
-            \textbf{Index}  &  \textbf{Mode ($\mathbf n_x$, $\mathbf n_\theta$, $\mathbf n_r$)}  &  \textbf{Frequency [Hz]}  \\
-            \hline
-                0  &  0, 0, 0  &  0  \\
-                \rowcolor{Gray}
-                1  &  1, 0, 0  &  17.2  \\
-                2  &  0, 1, 0  &  33.5  \\
-                \rowcolor{Gray}
-                3  &  2, 0, 0  &  34.3  \\
-                4  &  1, 1, 0  &  37.6  \\
-                \rowcolor{Gray}
-                5  &  2, 1, 0  &  48.0  \\
-                \rowcolor{pink}
-                \hline
-                6  &  3, 0, 0  &  51.5  \\
-                \rowcolor{pink}
-                \hline
-                7  &  0, 2, 0  &  55.6  \\
-                \hline
-                8  &  1, 2, 0  &  58.2  \\
-                \rowcolor{Gray}
-                9  &  3, 1, 0  &  61.4  \\
-                10  &  2, 2, 0  &  65.3  \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Resonant modes of the cylindrical room.}
-    \label{table:resonanceFrequencies}
-\end{table}
 
 
 
