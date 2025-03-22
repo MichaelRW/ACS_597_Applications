@@ -30,6 +30,15 @@
 
 
 
+%% To Do
+
+% 1c - Transmission loss is in dB.  It is the 10*log10 of transmissibility.
+%       Check plots and make the context clear in the write-up.
+
+%
+
+
+
 %% Environment
 
 close all; clear; clc;
@@ -44,7 +53,7 @@ set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
-format ShortG;
+format LongG;
 
 pause( 1 );
 
@@ -52,16 +61,16 @@ PRINT_FIGURES = 0;
 
 
 
-%% Define Machine
+%% Washing Machine Information
 
 machine.mass = 100;  % kg
-machine.rotation_speed = 31.4;  % radians\s
+machine.rotation_speed = 31.4;  % radians\s or 300 rotations per minute (RPM)
 machine.load_mass = 10;  % kg
 machine.static_displacement = 1e-2;  % m
 
 
 
-%% Define Force
+%% Load Force Information
 
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
@@ -70,27 +79,27 @@ dynamic_force.radius = 0.5;  % m
 
 
 
-%% Part 1a - TO REVIEW
+%% Part 1a
 
 h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
 
-rpm = 0:1:350;  % rotations per minute
-    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
-        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
+rpm = 0:1:350;  % RPM
+    rpm_conversion_to_radians_per_second = 0.10472;
+        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
 
 
-force_frequency = 300 * 0.10472 / ( 2 * pi );  % 5 Hz
+% Characteristics of the dynamic load.
+force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 Hz
+h_force( dynamic_force.mass, 300*rpm_conversion_to_radians_per_second, dynamic_force.radius );  % 493.5 N
 
-h_force( dynamic_force.mass, 300*0.10472, dynamic_force.radius );  % 494.4 N (amplitude)
 
-
-figure( ); ...
+figure( 'Name', 'Load Force Versus Angular Velocity' ); ...
     plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
-    text( 305, 494, '494.4 N' );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Amplitude [N]' );
+    text( 305, 494, '493.5 N' );  grid on;
+    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Load Force [N]' );
     axis( [ -10 355  -5 705 ] );
     % 
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
@@ -100,7 +109,7 @@ figure( ); ...
     %                 print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
     %             end
 
-
+% return
 
 %% Part 1b
 
@@ -127,7 +136,7 @@ damping_ratio = logspace( log10(0.001), log10(1), 6 );
 h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
 
 
-figure( ); ...
+figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
     hold on;
     %
     for index = 1:1:numel( epsilon )
@@ -183,7 +192,7 @@ figure( ); ...
     %                 print(gcf, 'Homework_3_Part_1d', '-dpdf', '-r0' );
     %             end
 
-% return
+
 
 %% Part 1e
 
