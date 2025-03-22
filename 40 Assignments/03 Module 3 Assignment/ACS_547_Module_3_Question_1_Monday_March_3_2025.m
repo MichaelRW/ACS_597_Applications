@@ -84,7 +84,7 @@ dynamic_force.radius = 0.5;  % m
 h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
 
-rpm = 0:1:350;  % RPM
+rpm = 0:1:350;
     rpm_conversion_to_radians_per_second = 0.10472;
         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
 
@@ -94,7 +94,7 @@ force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 
 h_force( dynamic_force.mass, 300*rpm_conversion_to_radians_per_second, dynamic_force.radius );  % 493.5 N
 
 
-figure( 'Name', 'Load Force Versus Angular Velocity' ); ...
+figure( 'Name', 'Problem 1a - Load Force Versus Angular Velocity' ); ...
     plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
     plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
     line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
@@ -109,45 +109,42 @@ figure( 'Name', 'Load Force Versus Angular Velocity' ); ...
     %                 print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
     %             end
 
-return
+
 
 %% Part 1b
 
-total_mass = machine.mass + machine.load_mass;  % 110 kg
-
 maximum_allowable_displacement = 1e-2;  % m
+    ks = ( machine.load_mass * 9.81) / maximum_allowable_displacement;  % 9,810 N\m
 
-ks = (total_mass * 9.81) / maximum_allowable_displacement;  % 1.0791e5 N\m
 
-wo = sqrt( ks / total_mass );  % 31.3 radians\s
-    fo = wo / (2*pi);  % 4.98 Hz - Natural frequency of the mount.
+total_mass = machine.mass + machine.load_mass;  % 110 kg
+    wo = sqrt( ks / total_mass );  % 9.4 radians\s
+        fo = wo / (2*pi);  % 1.5 Hz - Natural frequency of the mount.
 
 
 
 %% Part 1c
 
-frequency_set = 0.1:0.1:1e3;
-
-r = frequency_set ./ fo;
+frequency_set = 0.1:0.01:1e3;
+    r = frequency_set ./ fo;
 
 damping_ratio = logspace( log10(0.001), log10(1), 6 );
-    epsilon = damping_ratio;
-
+    
 h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
 
 
 figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
     hold on;
     %
-    for index = 1:1:numel( epsilon )
-        plot( r, h_transmissibility( epsilon( index ), r ) );
+    for index = 1:1:numel( damping_ratio )
+        plot( r, 10*log10( h_transmissibility( damping_ratio( index ), r ) ) );
     end
     %
-    xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Force Transmissibility [$T_F$;  unitless]' );
+    xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Tranmission Loss [dB]' );
         legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
-    axis( [ 0.1 1e2  1e-4 5e2 ] );
-    grid on;
-    set( gca, 'XScale', 'log', 'YScale', 'log' );
+    axis( [ 0.1 665  -60 25 ] );
+    grid on;  box on;
+    set( gca, 'XScale', 'log' );
     % 
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
     %     pos = get( gcf, 'Position' );
@@ -156,7 +153,7 @@ figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
     %                 print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
     %             end
 
-% return
+return
 
 %% Part 1d
 
