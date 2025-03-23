@@ -5,6 +5,8 @@
 
 % Problem 2 - Washing Machine Two-stage Mount Design
 
+% See Lecture 14, Monday, March 3, 2025
+
 
 
 %% Note(s):
