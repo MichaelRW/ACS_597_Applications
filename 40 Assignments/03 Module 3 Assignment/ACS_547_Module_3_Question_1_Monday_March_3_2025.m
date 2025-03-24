@@ -6,36 +6,11 @@
 % Problem 1 - Washing Machine Mount Design - 1 Degree of Freedom (DOF)
 
 
-% Part 1 - Single-stage Isolation
-%
-% The challenge here is that the mass does no go away.
-
-% Part 2 - Two-stage Isolation
-%
-% A 2 degrees-of-freedom (DOF) system is better than a 1 DOF system.
-
-% Part 3 - Dynamic Vibration Absorption (DVA) System
-%
-% At 300 RPM, this system will attenuate\reduce vibration amplitude more
-% than the 2 DOF and 1 DOF systems.
-
-
-% The DVA system acts like a Helmholtz resonator, working as a mechanical
-% notch filter at a particular frequency.
-
-% DVA systems work well in systems that have one dominate mode.  A good
-% example of this is building sway and its compensation.  Based on the
-% design and construction of a building, it will typically have a single,
-% dominate mode.
-
-
 
 %% To Do
 
 % 1c - Transmission loss is in dB.  It is the 10*log10 of transmissibility.
 %       Check plots and make the context clear in the write-up.
-
-%
 
 
 

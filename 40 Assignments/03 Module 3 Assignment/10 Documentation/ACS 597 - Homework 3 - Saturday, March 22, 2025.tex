@@ -170,19 +170,27 @@ The displacement of the washing machine at 300 RPM is 5 $mm$.  This amount of di
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
 \vspace{0.25cm}
-Figure~\ref{figure:2aDiagramTwoStageMount} illustrates the two stage mount considered here.
+Figure~\ref{figure:2aDiagramTwoStageMount} illustrates the two-stage vibration mount considered here (see slide 8 of 42 for Lecture 14 on Monday, March 3, 2025).  Modeling will be done using discrete viscous damping elements.
 
 \vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.7, keepaspectratio]{ACS 547 - Homework 3, Problem 2.pdf}
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{ACS 547 - Homework 3, Problem 2.pdf}
     \vspace{-0.2cm}
-    \caption{Two-stage washing machine mount system.}
+    \caption{Two-stage vibration mount system for the washing machine.}
     \label{figure:2aDiagramTwoStageMount}
 \end{figure}
 
+
+
+
+
+\subsection*{Problem 2b}
+
+The static displacement of the load in the washing machine must be less than 1 cm (i.e., the deflection is calculated with only the 10 kg load mass).  The corresponding mount stiffness, $k_s$, is \textbf{9,810 $\frac{N}{m}$}.
+
 \vspace{0.25cm}
-ph
+The natural frequency, $w_o$, of the mount is \textbf{1.5 Hz} (or 9.4 $\frac{radians}{s}$).
 
 
 
@@ -195,7 +203,27 @@ ph
 
 
 
+% Part 1 - Single-stage Isolation
+%
+% The challenge here is that the mass does no go away.
 
+% Part 2 - Two-stage Isolation
+%
+% A 2 degrees-of-freedom (DOF) system is better than a 1 DOF system.
+
+% Part 3 - Dynamic Vibration Absorption (DVA) System
+%
+% At 300 RPM, this system will attenuate\reduce vibration amplitude more
+% than the 2 DOF and 1 DOF systems.
+
+
+% The DVA system acts like a Helmholtz resonator, working as a mechanical
+% notch filter at a particular frequency.
+
+% DVA systems work well in systems that have one dominate mode.  A good
+% example of this is building sway and its compensation.  Based on the
+% design and construction of a building, it will typically have a single,
+% dominate mode.
 
 
 
