@@ -67,16 +67,24 @@ fo = 5;  % Hz
 
 m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
     k1 = 1e2;  % N\m
-    c1 = 0;
+    c1 = 5;
 
 m2 = 100;  % kg - UPPER LIMIT
     k2 = 1e2;  % N\m
-    c2 = 0;
+    c2 = 5;
 
-k3 = 1e1;
+% m2 = m1;  k2 = k1;
+% m1 = 100;  m2 = 10;
 
 
-% Blocked frequencies of resonance.
+k3 = 1e3;  % Admittance:  9.31e-6 m\N  KEEP
+% k3 = 1e2;  % Admittance:  9.23e-6 m\N
+%
+% Note(s):
+%
+%   a.) Strong coupling produces a high w+.
+
+
 w1 = sqrt( ( k1 + k3 ) / m1 );  %  radians\s;  washing machine
     f1 = w1 / (2*pi);
         rpm1 = f1*(2*pi)/0.10471;
@@ -90,7 +98,7 @@ w2 = sqrt( ( k2 + k3 ) / m2 );  %  radians\s;  raft
 
 
 
-%% Problem 2b - Coupled Frequencies (Equation 9.15 of the Notes)
+%% Problem 2b - Coupled Frequencies
 
 mu_4 = ( k3^2 / (m1*m2) );  %  (radians\s)^4
     mu = ( mu_4 )^0.25;
@@ -102,9 +110,11 @@ w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 
 w_minus = w(2);              %  0.97 radians\s  (lower than w1, 1, and w2, 1.05 radians\s)
     f_minus = w(2)/(2*pi);  %  0.1545 Hz
+        rpm_minus = h_f_to_rpm( f_minus );
 %
 w_plus = w(1);                 %  1.08 radians\s  (higher than w1, 1, and w2, 1.05 radians\s)
     f_plus = w(1)/(2*pi);    %  0.17124 Hz
+        rpm_plus = h_f_to_rpm( f_plus );
 %
 % Note(s):
 %
@@ -114,6 +124,33 @@ w_plus = w(1);                 %  1.08 radians\s  (higher than w1, 1, and w2, 1.
 clear w mu_4;
 
 
+
+%% Problem 2b - Mode Shapes
+
+phi_plus = [ ...
+    1; ...
+    -(1/mu^2)*sqrt(m1/m2)*(w_plus^2 - w1^2), ...
+    ];
+
+phi_minus = [ ...
+    1; ...
+    (1/mu^2)*sqrt(m1/m2)*(w1^2 - w_minus^2), ...
+    ];
+
+
+% Note(s):
+%
+% When m1 = m2 and k1 = k3,
+%
+%   a.)  At w_minus, m1 and m2 move the same amount and are in-phase.
+%   b.)  At w_plus, m1 and m2 move the same amount, but are out-of-phase.
+
+% In general, for a 2 DOF system there will be 2 modes (in-phase and out-of-phase).
+
+
+% With different initial conditions (no forcing), the behaviour is a weighted sum of the two modes.
+
+% return
 
 %% Problem 2c
 
@@ -125,7 +162,7 @@ masses = [ m1 m2 ];
 stiffnesses = [ k1  k3  k2 ];
 dampings = [ c1  0  c2 ];
 
-rpm = 0:1:500;  % rotations per minute
+rpm = 0:0.1:500;  % rotations per minute
     rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
             frequencies = angular_velocity / (2*pi);
@@ -136,7 +173,7 @@ FRF = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admitta
 admittance = zeros( numel( frequencies ), 1 );
 
 for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 2, 2 ) ) );
+    temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
         admittance( index ) = abs( temp );
 end
 %
@@ -148,7 +185,7 @@ washing_machine.admittance = admittance;
 admittance = zeros( numel( frequencies ), 1 );
 
 for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 2, 1 ) ) );
+    temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
         admittance( index ) = abs( temp );
 end
 %
@@ -157,17 +194,22 @@ clear temp temp2;
 raft.admittance = admittance;
 
 
-figure( 'Name', '' ); ...
-    h1 = loglog( rpm, washing_machine.admittance );  hold on;
-    h2 = loglog( rpm, raft.admittance );
+figure( 'Name', 'Admittance - Magnitude' ); ...
+    h1 = loglog( rpm, washing_machine.admittance, 'Color', 'r' );  hold on;
+    h2 = loglog( rpm, raft.admittance, 'Color', 'b' );
     h3 = line( [ 300 300 ], [ 10^-9 10^-2 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'SouthWest' );
     %
-    line( [ rpm1 rpm2 ], [ 1e-8 1e-1 ], 'Color', 'r', 'LineStyle', '--' );
-    line( [ rpm2 rpm2 ], [ 1e-8 1e-1 ], 'Color', 'r', 'LineStyle', '--' );
+    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', 'g', 'LineStyle', '-.' );
+    %
+    line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '--' );
+    line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '--' );
+    %
+    h5 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', 'g', 'LineStyle', '-' );
+    %
+    legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
     %
     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    % axis( [ 10 600  1e-8 1e-1 ] );
+    axis( [ 6 400  1e-8 1e1 ] );
     % 
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
     %     pos = get( gcf, 'Position' );
@@ -177,8 +219,60 @@ figure( 'Name', '' ); ...
     %             end
 
 
-washing_machine.admittance( 300 )
-washing_machine.admittance( 300 ) < 9.99049512983748e-06
+washing_machine.admittance( 3001 )
+washing_machine.admittance( 3001 ) < 9.99049512983748e-06
+
+( 9.99049512983748e-06 - washing_machine.admittance( 3001 ) ) / washing_machine.admittance( 3001 ) * 100
+
+
+
+admittance = zeros( numel( frequencies ), 1 );
+
+for index = 1:1:numel( frequencies )
+    temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
+        admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
+end
+%
+clear temp temp2;
+
+washing_machine.admittance_phase = admittance;
+
+
+admittance = zeros( numel( frequencies ), 1 );
+
+for index = 1:1:numel( frequencies )
+    temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
+        admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
+end
+%
+clear temp temp2;
+
+raft.admittance_phase = admittance;
+
+figure( 'Name', 'Admittance - Phase' ); ...
+    h1 = semilogx( rpm, washing_machine.admittance_phase, 'Color', 'r' );  hold on;
+    h2 = semilogx( rpm, raft.admittance_phase   , 'Color', 'b', 'LineStyle', '--' );  grid on;
+    h3 = line( [ 300 300 ], [ -200 200 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+    %
+    h4 = line( [ rpm_minus rpm_minus], [ -200 200 ], 'Color', 'g', 'LineStyle', '-.' );
+    %
+    line( [ rpm1 rpm1 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
+    line( [ rpm2 rpm2 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
+    %
+    h5 = line( [ rpm_plus rpm_plus ], [ -200 200 ], 'Color', 'g', 'LineStyle', '-' );
+    %
+    legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
+    %
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+    xlim( [ 6 400 ] );
+    % axis( [ 6 400  1e-8 1e1 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
+    %             end
 
 % return
 
