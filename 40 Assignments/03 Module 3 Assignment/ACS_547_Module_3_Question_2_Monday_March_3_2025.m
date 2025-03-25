@@ -69,16 +69,11 @@ m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
     k1 = 1e2;  % N\m
     c1 = 5;
 
-m2 = 100;  % kg - UPPER LIMIT
+m2 = 100;  % kg - UPPER LIMIT OF 100 kg
     k2 = 1e2;  % N\m
     c2 = 5;
 
-% m2 = m1;  k2 = k1;
-% m1 = 100;  m2 = 10;
-
-
-k3 = 1e3;  % Admittance:  9.31e-6 m\N  KEEP
-% k3 = 1e2;  % Admittance:  9.23e-6 m\N
+k3 = 1e3;  % Admittance:  9.31e-6 m\N
 %
 % Note(s):
 %
@@ -150,22 +145,18 @@ phi_minus = [ ...
 
 % With different initial conditions (no forcing), the behaviour is a weighted sum of the two modes.
 
-% return
+
 
 %% Problem 2c
-
-% masses = [ m2 m1 ];
-% stiffnesses = [ k2  k3  k1 ];
-% dampings = [ c2  0  c1 ];
 
 masses = [ m1 m2 ];
 stiffnesses = [ k1  k3  k2 ];
 dampings = [ c1  0  c2 ];
 
 rpm = 0:0.1:500;  % rotations per minute
-    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
-        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
-            frequencies = angular_velocity / (2*pi);
+    rpm_conversion_to_radians_per_second = 0.10472;
+        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
+            frequencies = angular_velocity / (2*pi);  % Hz
 
 FRF = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );
 
@@ -226,55 +217,55 @@ washing_machine.admittance( 3001 ) < 9.99049512983748e-06
 
 
 
-admittance = zeros( numel( frequencies ), 1 );
+% admittance = zeros( numel( frequencies ), 1 );
+% 
+% for index = 1:1:numel( frequencies )
+%     temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
+%         admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
+% end
+% %
+% clear temp temp2;
+% 
+% washing_machine.admittance_phase = admittance;
+% 
+% 
+% admittance = zeros( numel( frequencies ), 1 );
+% 
+% for index = 1:1:numel( frequencies )
+%     temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
+%         admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
+% end
+% %
+% clear temp temp2;
+% 
+% raft.admittance_phase = admittance;
+% 
+% figure( 'Name', 'Admittance - Phase' ); ...
+%     h1 = semilogx( rpm, washing_machine.admittance_phase, 'Color', 'r' );  hold on;
+%     h2 = semilogx( rpm, raft.admittance_phase   , 'Color', 'b', 'LineStyle', '--' );  grid on;
+%     h3 = line( [ 300 300 ], [ -200 200 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+%     %
+%     h4 = line( [ rpm_minus rpm_minus], [ -200 200 ], 'Color', 'g', 'LineStyle', '-.' );
+%     %
+%     line( [ rpm1 rpm1 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
+%     line( [ rpm2 rpm2 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
+%     %
+%     h5 = line( [ rpm_plus rpm_plus ], [ -200 200 ], 'Color', 'g', 'LineStyle', '-' );
+%     %
+%     legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
+%     %
+%     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+%     xlim( [ 6 400 ] );
+%     % axis( [ 6 400  1e-8 1e1 ] );
+%     % 
+%     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+%     %     pos = get( gcf, 'Position' );
+%     %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+%     %             if ( PRINT_FIGURES == 1 )
+%     %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
+%     %             end
 
-for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
-        admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
-end
-%
-clear temp temp2;
 
-washing_machine.admittance_phase = admittance;
-
-
-admittance = zeros( numel( frequencies ), 1 );
-
-for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
-        admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
-end
-%
-clear temp temp2;
-
-raft.admittance_phase = admittance;
-
-figure( 'Name', 'Admittance - Phase' ); ...
-    h1 = semilogx( rpm, washing_machine.admittance_phase, 'Color', 'r' );  hold on;
-    h2 = semilogx( rpm, raft.admittance_phase   , 'Color', 'b', 'LineStyle', '--' );  grid on;
-    h3 = line( [ 300 300 ], [ -200 200 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-    %
-    h4 = line( [ rpm_minus rpm_minus], [ -200 200 ], 'Color', 'g', 'LineStyle', '-.' );
-    %
-    line( [ rpm1 rpm1 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
-    line( [ rpm2 rpm2 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
-    %
-    h5 = line( [ rpm_plus rpm_plus ], [ -200 200 ], 'Color', 'g', 'LineStyle', '-' );
-    %
-    legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
-    %
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    xlim( [ 6 400 ] );
-    % axis( [ 6 400  1e-8 1e1 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
-    %             end
-
-% return
 
 %% Problem 2d
 

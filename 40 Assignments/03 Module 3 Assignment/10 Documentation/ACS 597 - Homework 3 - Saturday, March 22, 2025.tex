@@ -187,10 +187,73 @@ Figure~\ref{figure:2aDiagramTwoStageMount} illustrates the two-stage vibration m
 
 \subsection*{Problem 2b}
 
-The static displacement of the load in the washing machine must be less than 1 cm (i.e., the deflection is calculated with only the 10 kg load mass).  The corresponding mount stiffness, $k_s$, is \textbf{9,810 $\frac{N}{m}$}.
+Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficients for the system.
 
 \vspace{0.25cm}
-The natural frequency, $w_o$, of the mount is \textbf{1.5 Hz} (or 9.4 $\frac{radians}{s}$).
+\setlength{\abovecaptionskip}{1pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.25}
+\begin{table}[htpb!]
+
+    \centering
+    
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M1}  &  110  &  $kg$   \\
+        \hline
+        \textbf{K1}  &  100  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C1}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+        \hfill
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M2}  &  100  &  $kg$   \\
+        \hline
+        \textbf{K2}  &  100  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C2}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+        \hfill
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M3}  &  0  &  $kg$   \\
+        \hline
+        \textbf{K3}  &  1,000  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C3}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+        
+        \vspace{0.5cm}
+        \caption{Initial values of stiffness and damping coefficients.}
+        \label{table:2bParameters}
+        
+\end{table}
+
+
+
+
+
+\subsection*{Problem 2c}
+
+\vspace{0.25cm}
+Figure~\ref{figure:2cAdmittance} illustrates the admittance of the washing machine and the raft with the force applied to the washing machine.
+
+At the operating speed of 300 RPM, the admittance of the washing machine is $9.31e-6 \frac{m}{N}$.
+
+\vspace{-0.25cm}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{test.pdf}
+    \vspace{-0.2cm}
+    \caption{Admittance of the washing machine and the raft with a force on the washing machine.}
+    \label{figure:2cAdmittance}
+\end{figure}
+
+
 
 
 
@@ -274,40 +337,40 @@ The natural frequency, $w_o$, of the mount is \textbf{1.5 Hz} (or 9.4 $\frac{rad
 
 
 
-\newpage
-Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the design enclosure.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{0pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.25}
-\begin{table}[h!]
-    \begin{center}
-        \small
-        \begin{tabular}{ | c | c | c | c | c | c | c | }
-            \hline
-            \textbf{Wall}  &  \textbf{Width [m]}  &  \textbf{Height [m]}  &  \textbf{Area [$\mathbf m^2$]}  &  \textbf{Aspect Ratio}  &  \textbf{Correction}  &  \textbf{Compliance [$\frac{m^3\cdot s^2}{kg}$]}  \\
-            \hline
-            Top     &  1.25  &  1.5  &  1.875  &  1.2   &  1.8  &  1.42e-6  \\
-            \hline
-            Side 1  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
-            Side 2  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
-            \hline
-            Side 3  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
-            Side 4  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
-            \rowcolor{Gray}
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Enclosure design summary.}
-    \label{table:DesignParametersEnclosure}
-\end{table}
-
-
-The estimated insertion loss without the hole is 13.5 dB, which exceeds the target loss of 13.
-
-\vspace{0.25cm}
-The estimated insertion loss with the hole is 1.2 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 11.8 dB of insertion loss.
+%\newpage
+%Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the design enclosure.
+%
+%\vspace{0.25cm}
+%\setlength{\abovecaptionskip}{0pt}
+%\vspace{0.1cm}
+%{\renewcommand{\arraystretch}{1.25}
+%\begin{table}[h!]
+%    \begin{center}
+%        \small
+%        \begin{tabular}{ | c | c | c | c | c | c | c | }
+%            \hline
+%            \textbf{Wall}  &  \textbf{Width [m]}  &  \textbf{Height [m]}  &  \textbf{Area [$\mathbf m^2$]}  &  \textbf{Aspect Ratio}  &  \textbf{Correction}  &  \textbf{Compliance [$\frac{m^3\cdot s^2}{kg}$]}  \\
+%            \hline
+%            Top     &  1.25  &  1.5  &  1.875  &  1.2   &  1.8  &  1.42e-6  \\
+%            \hline
+%            Side 1  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
+%            Side 2  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
+%            \hline
+%            Side 3  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
+%            Side 4  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
+%            \rowcolor{Gray}
+%            \hline
+%        \end{tabular}
+%    \end{center}
+%    \caption{Enclosure design summary.}
+%    \label{table:DesignParametersEnclosure}
+%\end{table}
+%
+%
+%The estimated insertion loss without the hole is 13.5 dB, which exceeds the target loss of 13.
+%
+%\vspace{0.25cm}
+%The estimated insertion loss with the hole is 1.2 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 11.8 dB of insertion loss.
 
 
 
