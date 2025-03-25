@@ -26,6 +26,8 @@
 
 \usepackage{printlen}  % \printlength\textwidth - To determine textwidth of document.  Here is it 496 pt.
 
+\usepackage{siunitx}
+
 \usepackage[table]{xcolor}
 \definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
 \definecolor{LightCyan}{rgb}{0.88,1,1}
@@ -151,7 +153,7 @@ Figure~\ref{figure:1fDisplacement} shows the displacement of the washing machine
     \label{figure:1fDisplacement}
 \end{figure}
 
-The displacement of the washing machine at 300 RPM is 5 $mm$.  This amount of displacement for the 300 RPM operating state seems excessive.  The washing machine undergoes larger momentary displacements as is spins up to the 300 RPM operating state, in particular around 100 RPM.
+The displacement of the washing machine at 300 RPM is \SI{5e-3}~~$m$.  This amount of displacement for the 300 RPM operating state seems excessive.  The washing machine undergoes larger momentary displacements as is spins up to the 300 RPM operating state, in particular around 100 RPM.
 
 
 
@@ -242,16 +244,51 @@ Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficie
 \vspace{0.25cm}
 Figure~\ref{figure:2cAdmittance} illustrates the admittance of the washing machine and the raft with the force applied to the washing machine.
 
-At the operating speed of 300 RPM, the admittance of the washing machine is $9.31e-6 \frac{m}{N}$.
+\vspace{0.25cm}
+At the operating speed of 300 RPM, the admittance of the washing machine is \SI{9.31e-6}~~$\frac{m}{N}$.
 
 \vspace{-0.25cm}
-\begin{figure}[htb!]
+\begin{figure}[htpb!]
     \center
-        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{test.pdf}
-    \vspace{-0.2cm}
+        \includegraphics[scale = 0.8, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2c.pdf}
+    \vspace{0.25cm}    
     \caption{Admittance of the washing machine and the raft with a force on the washing machine.}
     \label{figure:2cAdmittance}
 \end{figure}
+
+
+
+
+
+\newpage
+\subsection*{Problem 2d}
+
+\vspace{0.25cm}
+Figure~\ref{figure:2dDisplacement} illustrates the displacement of the washing machine and the raft with the force applied to the washing machine.
+
+\vspace{0.25cm}
+At the operating speed of 300 RPM, the displacement of the washing machine is \SI{4.6e-3}~~$m$, which is less than the \SI{5.0e-3}~~$m$ displacement with the first-order system.
+
+The displacement of the raft is \SI{4.7e-5}~~$m$.
+
+\vspace{-0.25cm}
+\begin{figure}[htpb!]
+    \center
+        \includegraphics[scale = 0.8, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2d.pdf}
+    \vspace{0.25cm}
+    \caption{Displacement of the washing machine and the raft with a force on the washing machine.}
+    \label{figure:2dDisplacement}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
 
 
 

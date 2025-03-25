@@ -188,18 +188,19 @@ raft.admittance = admittance;
 figure( 'Name', 'Admittance - Magnitude' ); ...
     h1 = loglog( rpm, washing_machine.admittance, 'Color', 'r' );  hold on;
     h2 = loglog( rpm, raft.admittance, 'Color', 'b' );
-    h3 = line( [ 300 300 ], [ 10^-9 10^-2 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+    h3 = line( [ 300 300 ], [ 1e-6 1e-4 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 1e-4, '5 Hz' );
     %
-    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', 'g', 'LineStyle', '-.' );
+    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-.' );
     %
-    line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '--' );
-    line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '--' );
+    h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-.' );
+    h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-' );
     %
-    h5 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', 'g', 'LineStyle', '-' );
+        h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-' );
     %
-    legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
+    legend( [ h1 h2 h3 h4 h5 h6 h7 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w1', 'w2', 'w+', 'Location', 'NorthEast' );
     %
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance (Magnitude) [$\frac{m}{N}$]' );
     axis( [ 6 400  1e-8 1e1 ] );
     % 
     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
@@ -269,39 +270,35 @@ washing_machine.admittance( 3001 ) < 9.99049512983748e-06
 
 %% Problem 2d
 
-% dynamic_force.mass = 1;  % kg
-% dynamic_force.radius = 0.5;  % m
-% 
-% 
-% % rpm = 0:1:350;  % rotations per minute
-% %     rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
-% %         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;
-% %             frequencies = angular_velocity / (2*pi);
-% 
-% h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
-% 
-% 
-% temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-% 
-% 
-% figure( 'Name', '' ); ...
-%     h1 = loglog( rpm, washing_machine.admittance.*temp );  hold on;
-%     h2 = loglog( rpm, raft.admittance.*temp );
-%     h3 = line( [ 300 300 ], [ 10^-9 10^-2 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-%         legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'SouthWest' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
-%     % axis( [ 0 max(frequencies)  1e-9 1e-2 ] );
-%     % 
-%     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-%     %     pos = get( gcf, 'Position' );
-%     %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-%     %             if ( PRINT_FIGURES == 1 )
-%     %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
-%     %             end
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
 
-% return
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
+
+temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+
+
+figure( 'Name', '' ); ...
+    h1 = loglog( rpm, washing_machine.admittance.*temp, 'Color', 'r' );  hold on;
+    h2 = loglog( rpm, raft.admittance.*temp, 'Color', 'b' );
+    h3 = line( [ 300 300 ], [ 1e-6 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 1e-1, '5 Hz' );
+        legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'South' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
+    axis( [ 6 400  1e-8 1e1 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2d', '-dpdf', '-r0' );
+    %             end
+
+
 
 %% Problem 2e
+
+displacement of the raft multiplied by the K2 spring constant.
 
 % return
 
@@ -378,5 +375,7 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
+
+% https://tex.stackexchange.com/questions/295059/three-tables-side-by-side-on-one-page
 
 
