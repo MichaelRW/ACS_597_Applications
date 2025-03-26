@@ -88,8 +88,9 @@ wo = sqrt( k / m);  % 9.4 radians\s
 
 % Add a Dynamic Vibration Absorber (DVA)
 m_dva = 15;  % kg
-% k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
-k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
+k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
+% k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
+% k_dva = 100;  % N\m ->  
 % k_dva = 10;  % N\m ->  6.7593e-05;  2.1402e-05;  0.20995
 % k_dva = 1;  % N\m ->  6.7552e-05;  2.1389e-05;  0.20983
 
