@@ -7,10 +7,9 @@
 
 
 
-%% To Do
+%% Notes
 
-% 1c - Transmission loss is in dB.  It is the 10*log10 of transmissibility.
-%       Check plots and make the context clear in the write-up.
+% The mass of the washing machine "does not go away."
 
 
 

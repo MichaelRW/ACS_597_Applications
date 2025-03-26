@@ -9,13 +9,20 @@
 
 %% Note(s)
 
-% Dynamic vibration absorption is useful if:
-%
-%   a.)  Can not get away from the resonance frequency;  can not tune the
-%   system to the resonance is away from the frequency of the forcing
-%   function.
-%
-%   b.)  
+% At 300 RPM, the load frequency, this system will isolated vibration more
+% than the 2 DOF and 1 DOF systems.
+
+% The DVA behaves like a Helmholtz resonator, working as a mechnical notch
+% filter at a particular frequency.
+
+% DVAs work well in systems that have one dominate mode.  A good
+% example of this is building sway and its compensation.  Based on the
+% design and construction of a building, it will typically have a single,
+% dominate mode.
+
+% DVA is useful if you can not get away from the resonance frequency;  can
+% not tune a 2 DOF system when the resonance frequency is away from the
+% forcing frequency.
 
 
 
@@ -30,7 +37,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 % set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.5 );
+set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;

@@ -198,7 +198,7 @@ Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficie
 \begin{table}[htpb!]
 
     \centering
-    
+
         \begin{tabular}{ | c | c | c | }
         \hline
         \textbf{M1}  &  110  &  $kg$   \\
@@ -228,17 +228,18 @@ Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficie
         \textbf{C3}  &  5  &  $\frac{kg}{s}$  \\
         \hline
         \end{tabular}
-        
+
         \vspace{0.5cm}
         \caption{Initial values of stiffness and damping coefficients.}
         \label{table:2bParameters}
-        
+
 \end{table}
 
 
 
 
 
+\newpage
 \subsection*{Problem 2c}
 
 \vspace{0.25cm}
@@ -250,8 +251,8 @@ At the operating speed of 300 RPM, the admittance of the washing machine is \SI{
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
     \center
-        \includegraphics[scale = 0.8, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2c.pdf}
-    \vspace{0.25cm}    
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2c.pdf}
+    \vspace{0.25cm}
     \caption{Admittance of the washing machine and the raft with a force on the washing machine.}
     \label{figure:2cAdmittance}
 \end{figure}
@@ -260,30 +261,62 @@ At the operating speed of 300 RPM, the admittance of the washing machine is \SI{
 
 
 
-\newpage
 \subsection*{Problem 2d}
 
 \vspace{0.25cm}
 Figure~\ref{figure:2dDisplacement} illustrates the displacement of the washing machine and the raft with the force applied to the washing machine.
+
+\vspace{-0.25cm}
+\begin{figure}[htpb!]
+    \center
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2d.pdf}
+    \vspace{0.25cm}
+    \caption{Displacement of the washing machine and the raft with a force on the washing machine.}
+    \label{figure:2dDisplacement}
+\end{figure}
 
 \vspace{0.25cm}
 At the operating speed of 300 RPM, the displacement of the washing machine is \SI{4.6e-3}~~$m$, which is less than the \SI{5.0e-3}~~$m$ displacement with the first-order system.
 
 The displacement of the raft is \SI{4.7e-5}~~$m$.
 
+
+
+
+
+\subsection*{Problem 2e}
+
+\vspace{0.25cm}
+Figure~\ref{figure:2eLoadForce} illustrates the force applied to the ground by the raft.  This is calculated by multiplying the displacement of the raft by the K2 spring constant.
+
+The load on the ground is always less than 100 $N$.
+
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
     \center
-        \includegraphics[scale = 0.8, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2d.pdf}
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2e.pdf}
     \vspace{0.25cm}
-    \caption{Displacement of the washing machine and the raft with a force on the washing machine.}
-    \label{figure:2dDisplacement}
+    \caption{Force applied to the ground by the raft.}
+    \label{figure:2eLoadForce}
 \end{figure}
 
 
 
 
 
+\subsection*{Problem 2f}
+
+\vspace{0.25cm}
+The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitated a displacement of the washing machine of \SI{4.6e-3}~~$m$ at 300 RPM, which is less than the \SI{5.0e-3}~~$m$ found for the 1 DOF system.  The force applied to the ground by the raft is less than the required 100 $N$ maximum.
+
+
+
+
+
+\subsection*{Problem 2g}
+
+\vspace{0.25cm}
+The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitated a displacement of the washing machine of \SI{4.6e-3}~~$m$ at 300 RPM, which is less than the \SI{5.0e-3}~~$m$ found for the 1 DOF system.  The force applied to the ground by the raft is less than the required 100 $N$ maximum.
 
 
 
@@ -291,70 +324,15 @@ The displacement of the raft is \SI{4.7e-5}~~$m$.
 
 
 
+\newpage
+\section*{Problem 3 - Washing Machine Dynamic Vibration Absorber Design}
 
 
+\subsection*{Problem 3a}
 
-% 5 regions of interest:
-
-% 1.)  Low frequency:  w < w_minus:
-%
-%   Stiffness controlled;  two masses moving together;  strong coupling (k3 high).
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
 
-% 2.)  Force at a resonance frequency:  w = w_minus (lowest resonance frequency):
-%
-%   At lowest resonance frequency;  at w_minus mode, masses moving in same direction (in-phase) with same high amplitude
-
-
-% 3.) Forcing frequency between w_minus and w2
-
-
-% 4.)  Forcing frequency w = w2
-
-
-% 5.)  Forcing frequency w < w < w+
-%
-%   No a special frequency.
-
-
-% 6.)  Forcing frequency w = w+
-%
-% At highest resonance frequency;  at w_plus mode, masses moving in opposite directions (out-of-phase) with same high amplitude
-
-
-% 7.)  Forcing frequency w+ < w
-%
-% Mass controlled region;  mass 1 (washing machine) moves more than mass 2 (raft);  
-
-
-
-
-
-
-
-
-
-% Part 1 - Single-stage Isolation
-%
-% The challenge here is that the mass does no go away.
-
-% Part 2 - Two-stage Isolation
-%
-% A 2 degrees-of-freedom (DOF) system is better than a 1 DOF system.
-
-% Part 3 - Dynamic Vibration Absorption (DVA) System
-%
-% At 300 RPM, this system will attenuate\reduce vibration amplitude more
-% than the 2 DOF and 1 DOF systems.
-
-
-% The DVA system acts like a Helmholtz resonator, working as a mechanical
-% notch filter at a particular frequency.
-
-% DVA systems work well in systems that have one dominate mode.  A good
-% example of this is building sway and its compensation.  Based on the
-% design and construction of a building, it will typically have a single,
-% dominate mode.
 
 
 
