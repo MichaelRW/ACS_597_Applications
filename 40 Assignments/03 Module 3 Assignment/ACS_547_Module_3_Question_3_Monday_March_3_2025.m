@@ -46,17 +46,48 @@ pause( 1 );
 
 
 
+%% Define Anonymous Functions
+
+h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
+h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
+h_w_to_f = @( w )  w/(2*pi);
+h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
+
+
+
+%% Washing Machine Information
+
+machine.mass = 100;  % kg
+machine.rotation_speed = 31.4;  % radians\s or 300 rotations per minute (RPM)
+machine.load_mass = 10;  % kg
+machine.static_displacement = 1e-2;  % m
+
+
+
+%% Load Force Information
+
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
+
+% Maximum force applied to foundation is 100 N.
+
+
+
 %% Dynamic Vibration Absorber (DVA)
 
-m =  50;  % kg
-k = 100e3;  % N\m
+maximum_allowable_displacement = 1e-2;  % m
+    ks = ( machine.load_mass * 9.81) / maximum_allowable_displacement;  % 9,810 N\m
 
-wo = sqrt( k / m);  % 44.7 radians\s
-    fo = wo/(2*pi);  % 7.1 Hz
+
+m = 110;  % kg;  washing machine mass and load mass
+k = ks;  % N\m
+
+wo = sqrt( k / m);  % 9.4 radians\s
+    fo = wo/(2*pi);  % 1.5 Hz
 
 
 % Add a Dynamic Vibration Absorber (DVA)
-m_dva = 1;  % kg
+m_dva = 15;  % kg
 k_dva = 1800;  % N\m
 
 wo_dva = sqrt( k_dva / m_dva );  % 42.4 radians\s
@@ -68,13 +99,13 @@ m1 = m_dva;
 k1 = 0;  % Spring above DVA mass;  does not exist;  set to zero.
 
 m2 = m;
-k2 = k;  % 100e3 N/m
-    k2 = k*(1+0.1*1j);
+k2 = k;  %  N/m
+    % k2 = k*(1+0.1*1j);
 
 k3 = k_dva;  % 1,800 N/m
-    k3 = k_dva*(1+0.1*1j);
+    % k3 = k_dva*(1+0.1*1j);
 
-
+% return
 
 %% Blocked Frequencies (Euqation 9.1 of the Notes)
 
@@ -134,10 +165,10 @@ w = 0:0.01:40*2*pi;
     f = w/(2*pi);
 
 
-if ( 0 )
+if ( 1 )
 
-    m = [ 1 50 ];
-    k = [  0  100e3  1.8e3  ];
+    m = [ 15 110 ];
+    k = [  0  k_dva  k ];
     % k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
     dampings = [ 0 0 0 ];
 
@@ -146,8 +177,8 @@ if ( 0 )
 
 else
 
-    m = [ 50 1 ];
-    k = [ 100e3 1.8e3 0 ];
+    m = [ 110  15 ];
+    k = [ k  k_dva  0 ];
     % dampings = [ 0 0 0 ];
 
     X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
@@ -156,33 +187,29 @@ else
 end
 
 
-figure( 'Name', 'Displacement with DVA' ); ...
-    loglog( f, abs(X2_original) );  hold on;
-    loglog( f, abs(X2) );  grid on;
-        legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
+% figure( 'Name', 'Displacement with DVA' ); ...
+%     loglog( f, abs(X2_original) );  hold on;
+%     loglog( f, abs(X2) );  grid on;
+%         legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
+%     xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
 
 
 
 
 %% Admittance
 
-m = [ 50 1 ];
-k = [ 100e3 1.8e3 0 ];
-dampings = [ 0 0 0 ];
-%
 % Damping can be added by using a dampings vector or appending a complex
 % value to the respective spring stiffness.  THESE ARE NOT INTERCHANGABLE.
 
 
-f = 0:0.1:100;  % No matrix singularity warning issued (set 0 to 0.1 if it occurs).
+% 350 RPM is 5.8 Hz
+
+
+f = 0:0.01:5.8;  % No matrix singularity warning issued (set 0 to 0.1 if it occurs).
 
 FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
 %
-squeeze( FRF(100, :, :) );
-%
-%   -1.1099e-05   9.6547e-06
-%   9.6547e-06  -0.00049166
+squeeze( FRF( numel( f ), :, :) );
 %
 % (1, 1) - Force on M1 and its associated displacement.
 % (2, 2) - Force on M2 and its associated displacement.
@@ -193,19 +220,74 @@ squeeze( FRF(100, :, :) );
 %   These are interchangeable;  the same result.
 
 
-FRF_org = nDOF_direct_solution_org( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
-%
-squeeze( FRF_org(100, :, :) );
-%
-%   -1.1099e-05   9.6547e-06
-%   9.6547e-06  -0.00049166
-
-
 figure( 'Name', 'Admittance of DVA' ); ...
-    loglog( f, abs( FRF( :, 1, 1 ) ) );  hold on;
-    loglog( f, abs( FRF_org( :, 1, 1 ) ), 'LineStyle', '--' );  grid on;
-        legend( 'Updated Function', 'Original Function', 'Location', 'NorthWest' );
+    loglog( f, abs( FRF( :, 1, 1 ) ), 'Color', 'r' );  hold on;
+    line( [ 5  5 ], [ 1e-5  1e-3 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+    text( 6, 3e-4, '5 Hz' );
+        legend( 'Washing Machine', 'Load Frequency', 'Location', 'NorthWest' );
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+
+
+
+%% Displacement
+
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
+
+angular_velocity = f / (2*pi);
+rpm = h_f_to_rpm( f );
+
+temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+
+
+figure( 'Name', '' ); ...
+    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp, 'Color', 'r' );  hold on;
+    h2 = line( [ 300 300 ], [ 1e-6 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 1e-1, '5 Hz' );
+        legend( [ h1  h2 ], 'Washing Machine', 'Load Frequency', 'Location', 'South' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
+    axis( [ 6 400  1e-8 1e1 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2d', '-dpdf', '-r0' );
+    %             end
+
+
+
+
+%% Force Applied to the Ground
+
+dynamic_force.mass = 1;  % kg
+dynamic_force.radius = 0.5;  % m
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
+
+angular_velocity = f / (2*pi);
+rpm = h_f_to_rpm( f );
+
+temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+
+
+figure( 'Name', 'Force Applied to Ground by Raft' ); ...
+    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp*k2, 'Color', 'b' );  hold on;
+    h2 = line( [ 300 300 ], [ 1e-4 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+    h3 = line( [ 6 400 ], [ 100 100 ], 'Color', 'r' );
+        text( 220, 1e-1, '5 Hz' );
+        legend( [ h1 h2 h3 ], 'Raft', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Force Applied to Ground [N]' );
+    axis( [ 6 400  1e-5 1e3 ] );
+    % 
+    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
+    %     pos = get( gcf, 'Position' );
+    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
+    %             if ( PRINT_FIGURES == 1 )
+    %                 print(gcf, 'Homework_3_Part_2e', '-dpdf', '-r0' );
+    %             end
 
 
 
