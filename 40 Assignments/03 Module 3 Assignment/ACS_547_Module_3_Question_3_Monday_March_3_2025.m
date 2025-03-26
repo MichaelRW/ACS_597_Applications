@@ -88,60 +88,57 @@ wo = sqrt( k / m);  % 9.4 radians\s
 
 % Add a Dynamic Vibration Absorber (DVA)
 m_dva = 15;  % kg
-k_dva = 1800;  % N\m
+% k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
+k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
+% k_dva = 10;  % N\m ->  6.7593e-05;  2.1402e-05;  0.20995
+% k_dva = 1;  % N\m ->  6.7552e-05;  2.1389e-05;  0.20983
 
-wo_dva = sqrt( k_dva / m_dva );  % 42.4 radians\s
-    fo_dva = wo_dva/(2*pi);  % 6.8 Hz
-
-
-% Solve
-m1 = m_dva;
-k1 = 0;  % Spring above DVA mass;  does not exist;  set to zero.
-
-m2 = m;
-k2 = k;  %  N/m
-    % k2 = k*(1+0.1*1j);
-
-k3 = k_dva;  % 1,800 N/m
-    % k3 = k_dva*(1+0.1*1j);
+wo_dva = sqrt( k_dva / m_dva );  % 8.2 radians\s
+    fo_dva = wo_dva/(2*pi);  % 1.3 Hz
 
 % return
 
 %% Blocked Frequencies (Euqation 9.1 of the Notes)
 
-w1 = sqrt( ( k1 + k3 ) / m1 );  % 42.4 radians\s;  smaller than the system resonant frequency.
-    f1 = w1/(2*pi);  % 6.8 Hz
+m1 = m_dva;
+k1 = 0;  % Spring above DVA mass;  does not exist;  set to zero.
+
+m2 = m;
+k2 = k;  %  N/m
+
+k3 = k_dva;  % 1,800 N/m
 
 
-w2 = sqrt( ( k2 + k3 ) / m2 );  % 45.1 radians\s;  greater than the system resonant frequency.
-    f2 = w2/(2*pi);  % 7.2 Hz
+w1 = sqrt( ( k1 + k3 ) / m1 );  % 10.95 radians\s;  smaller than the system resonant frequency.
+    f1 = w1/(2*pi)  % 1.3 Hz
 
 
+w2 = sqrt( ( k2 + k3 ) / m2 );  % 10.27 radians\s;  greater than the system resonant frequency.
+    f2 = w2/(2*pi)  % 1.6 Hz
+
+% return
 
 %% Coupled Frequencies (Equation 9.15 of the Notes)
 
-mu_4 = ( k3^2 / (m1*m2) );  % 64.8e3 (radians\s)^4
-    mu = ( mu_4 )^0.25;
+mu_4 = ( k3^2 / (m1*m2) );  % 1,963.6 (radians\s)^4
+    mu = ( mu_4 )^0.25;  % 6.66 radians\s
 
 w(1) = 0.5*( ( w1^2 + w2^2 )  +  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
     w = sqrt( w );
 
 
-w_minus = w(2);              % 40.5 radians\s  (lower than 42.4 and 45.1 radians\s)
-    f_minus = w(2)/(2*pi);  % 6.4 Hz
+w_minus = w(2);              % 8.2 radians\s  (lower than 42.4 and 45.1 radians\s)
+    f_minus = w(2)/(2*pi);  % 1.31 Hz
 %
-w_plus = w(1);                 % 46.9 radians\s (higher than 42.4 and 45.1 radians\s)
-    f_plus = w(1)/(2*pi);    % 7.4 Hz
+w_plus = w(1);                 % 12.6 radians\s (higher than 42.4 and 45.1 radians\s)
+    f_plus = w(1)/(2*pi);    % 2.0 Hz
 %
 % Note(s):
 %
 %   The blocked frequencies are always between these two frequencies.
 
-
-clear w mu_4;
-
-
+% return
 
 %% Mode Shapes (Equations 9.18 and 9.19 of the Notes)
 
@@ -187,12 +184,11 @@ else
 end
 
 
-% figure( 'Name', 'Displacement with DVA' ); ...
-%     loglog( f, abs(X2_original) );  hold on;
-%     loglog( f, abs(X2) );  grid on;
-%         legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
-
+figure( 'Name', 'Displacement with DVA' ); ...
+    loglog( f, abs(X2_original) );  hold on;
+    loglog( f, abs(X2) );  grid on;
+        legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
 
 
 
@@ -228,6 +224,10 @@ figure( 'Name', 'Admittance of DVA' ); ...
     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
+temp2 = abs( FRF( :, 1, 1 ) );
+    temp2( 501 )
+
+
 
 %% Displacement
 
@@ -257,6 +257,9 @@ figure( 'Name', '' ); ...
     %                 print(gcf, 'Homework_3_Part_2d', '-dpdf', '-r0' );
     %             end
 
+
+temp2 = abs( FRF( :, 1, 1 ) ).*temp;
+    temp2( 501 )
 
 
 
@@ -288,6 +291,10 @@ figure( 'Name', 'Force Applied to Ground by Raft' ); ...
     %             if ( PRINT_FIGURES == 1 )
     %                 print(gcf, 'Homework_3_Part_2e', '-dpdf', '-r0' );
     %             end
+
+
+temp2 = abs( FRF( :, 1, 1 ) ).*temp*k2;
+    temp2( 501 )
 
 
 
