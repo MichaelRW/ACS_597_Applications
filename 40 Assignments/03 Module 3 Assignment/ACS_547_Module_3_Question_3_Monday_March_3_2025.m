@@ -172,7 +172,9 @@ w = 0:0.01:37;  % 37 radians\s is 350 RPM
 
 
 m = [ 15 110 ];
-k = [  0  k_dva  k ];
+k = [  0  k_dva  k2 ];
+% k = [  0  k_dva.*(1+0.1*1i)  k2 ];
+% k = [  0  k_dva  k2.*(1+0.1*1i)  ];
 dampings = [ 0 0 0 ];
 
 admittance_modified = F0 ./ ( m(1)*m(2) )*k(2) ./ (( w.^2 - w_plus^2 ) .* ( w.^2 - w_minus^2) );
