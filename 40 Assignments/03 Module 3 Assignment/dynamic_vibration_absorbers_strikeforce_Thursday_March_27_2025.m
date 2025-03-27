@@ -90,8 +90,8 @@ wo = sqrt( k / m);  % 9.4 radians\s
 m_dva = 15;  % kg
 % % m_dva = 1;  % kg
 
-% k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
-k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
+k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
+% k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
 % k_dva = 100;  % N\m ->  6.8007e-05;  2.1533e-05;  0.21124
 % k_dva = 10;  % N\m ->  6.7593e-05;  2.1402e-05;  0.20995
 % k_dva = 1;  % N\m ->  6.7552e-05;  2.1389e-05;  0.20983
@@ -132,10 +132,10 @@ w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 
 
 w_minus = w(2);              % 8.2 radians\s  (lower than 42.4 and 45.1 radians\s)
-    f_minus = w(2)/(2*pi)  % 1.31 Hz
+    f_minus = w(2)/(2*pi);  % 1.31 Hz
 %
 w_plus = w(1);                 % 12.6 radians\s (higher than 42.4 and 45.1 radians\s)
-    f_plus = w(1)/(2*pi)    % 2.0 Hz
+    f_plus = w(1)/(2*pi);    % 2.0 Hz
 %
 % Note(s):
 %
@@ -161,43 +161,39 @@ phi_minus = [ ...
 
 F0 = 1;
 
-w = 0:0.01:37;  % 37 radians\s is 350 RPM
+w = 0:0.01:40*2*pi;
     f = w/(2*pi);
 
 
-m = [ 15 110 ];
-k = [  0  k_dva  k ];
-dampings = [ 0 0 0 ];
+if ( 1 )
 
-X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
-X2_original = F0./m(2)*1./(w2^2-w.^2);
+    m = [ 15 110 ];
+    k = [  0  k_dva  k ];
+    % k = [  0  100e3*(1+0.1*1j)  1.8e3*(1+0.1*1j)  ];
+    dampings = [ 0 0 0 ];
 
-% m = [ 110  15 ];
-% k = [ k  k_dva  0 ];
-% dampings = [ 0 0 0 ];
-%
-% X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
-% X2_original = F0./m(1)*1./(w2^2-w.^2);
+    X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
+    X2_original = F0./m(2)*1./(w2^2-w.^2);
+
+else
+
+    m = [ 110  15 ];
+    k = [ k  k_dva  0 ];
+    % dampings = [ 0 0 0 ];
+
+    X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
+    X2_original = F0./m(1)*1./(w2^2-w.^2);
+
+end
 
 
-figure( 'Name', 'System Displacement' ); ...
-    h1 = loglog( h_f_to_rpm( f ), abs(X2_original) );  hold on;
-    h2 = loglog( h_f_to_rpm( f ), abs(X2) );
-    h3 = line( [ 300 300 ], [ 1e-6 1e-4 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-    text( 220, 2e-4, '300 RPM' );
-    
-    h4 = line( [ f_minus f_minus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-.' );
-    
-    % h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-.' );
-    % h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-' );
-    
-    % h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-' );
-    
-    axis( [ 10 400  1e-7 2e2 ] );
-        legend( [ h1 h2 h3 ], 'Original System', 'DVA System', 'Operating RPM', 'Location', 'South' );
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Displacement [m]' );
+figure( 'Name', 'Displacement with DVA' ); ...
+    loglog( f, abs(X2_original) );  hold on;
+    loglog( f, abs(X2) );  grid on;
+        legend( 'Original Displacment', 'Displacement With DVA', 'Location', 'NorthWest' );
+    xlabel( 'Frequency [Hz]' );  ylabel( 'Displacment [m]' );
 
-return
+
 
 %% Admittance
 
