@@ -24,6 +24,9 @@
 % not tune a 2 DOF system when the resonance frequency is away from the
 % forcing frequency.
 
+% DVA introduces two resonances for the original resonance.  These new
+% resonances will produce greater motion at the new resonance frequencies.
+
 
 
 %% Environment
@@ -52,6 +55,8 @@ h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
 h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
 h_w_to_f = @( w )  w/(2*pi);
 h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
 
 
@@ -113,11 +118,11 @@ k3 = k_dva;  % 1,800 N/m
 
 
 w1 = sqrt( ( k1 + k3 ) / m1 );  % 10.95 radians\s;  smaller than the system resonant frequency.
-    f1 = w1/(2*pi)  % 1.3 Hz
+    f1 = w1/(2*pi);  % 1.3 Hz
 
 
 w2 = sqrt( ( k2 + k3 ) / m2 );  % 10.27 radians\s;  greater than the system resonant frequency.
-    f2 = w2/(2*pi)  % 1.6 Hz
+    f2 = w2/(2*pi);  % 1.6 Hz
 
 % return
 
@@ -132,10 +137,10 @@ w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 
 
 w_minus = w(2);              % 8.2 radians\s  (lower than 42.4 and 45.1 radians\s)
-    f_minus = w(2)/(2*pi)  % 1.31 Hz
+    f_minus = w(2)/(2*pi);  % 1.31 Hz
 %
 w_plus = w(1);                 % 12.6 radians\s (higher than 42.4 and 45.1 radians\s)
-    f_plus = w(1)/(2*pi)    % 2.0 Hz
+    f_plus = w(1)/(2*pi);   % 2.0 Hz
 %
 % Note(s):
 %
@@ -157,58 +162,53 @@ phi_minus = [ ...
 
 
 
-%% Plot Admittance - Magnitude of Displacement over Force
+%% Plot (1) Admittance Using Equations from DVA Lecture
 
 F0 = 1;
 
 w = 0:0.01:37;  % 37 radians\s is 350 RPM
     f = w/(2*pi);
+        rpm = h_f_to_rpm( f );
 
 
 m = [ 15 110 ];
 k = [  0  k_dva  k ];
 dampings = [ 0 0 0 ];
 
-X2 = F0/(m(1)*m(2))*k(3)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
-X2_original = F0./m(2)*1./(w2^2-w.^2);
-
-% m = [ 110  15 ];
-% k = [ k  k_dva  0 ];
-% dampings = [ 0 0 0 ];
-%
-% X2 = F0/(m(2)*m(1))*k(1)./((w.^2-w_plus^2).*(w.^2-w_minus^2));
-% X2_original = F0./m(1)*1./(w2^2-w.^2);
+admittance_modified = F0 ./ ( m(1)*m(2) )*k(2) ./ (( w.^2 - w_plus^2 ) .* ( w.^2 - w_minus^2) );
+admittance_original = F0 ./ m(2) * 1 ./ ( w2^2 - w.^2 );
 
 
-figure( 'Name', 'System Displacement' ); ...
-    h1 = loglog( h_f_to_rpm( f ), abs(X2_original) );  hold on;
-    h2 = loglog( h_f_to_rpm( f ), abs(X2) );
-    h3 = line( [ 300 300 ], [ 1e-6 1e-4 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-    text( 220, 2e-4, '300 RPM' );
+figure( 'Name', 'Admittance - Equations from DVA Lecture' ); ...
+    h1 = loglog( rpm, abs( admittance_original ) );  hold on;
+    h2 = loglog( rpm, abs( admittance_modified ) );
+    h3 = line( [ 300 300 ], [ 1e-6 1e-2 ], 'Color', 'k', 'LineStyle', '--' );
+        text( 220, 2e-2, '300 RPM' );
+    h4 = line( [ h_f_to_rpm( f_minus )  h_f_to_rpm( f_minus ) ], [ 1e-7 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
     
-    h4 = line( [ f_minus f_minus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-.' );
+    h5 = line( [ h_f_to_rpm( f1 )  h_f_to_rpm( f1 ) ], [ 1e-7 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
+    h6 = line( [ h_f_to_rpm( f2 )  h_f_to_rpm( f2 ) ], [ 1e-7 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
     
-    % h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-.' );
-    % h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-' );
+    h7 = line( [ h_f_to_rpm( f_plus )  h_f_to_rpm( f_plus ) ], [ 1e-7 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '--' );    grid on;
     
-    % h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-' );
-    
-    axis( [ 10 400  1e-7 2e2 ] );
-        legend( [ h1 h2 h3 ], 'Original System', 'DVA System', 'Operating RPM', 'Location', 'South' );
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Displacement [m]' );
+    axis( [ 2e1 4e2  1e-7 2e2 ] );
+        legend( [ h1 h2 h3 h4 h5 h6 h7 ], 'Original System', 'DVA System', 'Operating RPM', ...
+            '$w_-$', '$w_1$', ...
+            '$w_2$', '$w_+$', ...
+            'Location', 'NorthWest', 'Interpreter', 'Latex' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
-return
 
-%% Admittance
+
+%% Plot (2) Admittance Using nDOF Function
 
 % Damping can be added by using a dampings vector or appending a complex
 % value to the respective spring stiffness.  THESE ARE NOT INTERCHANGABLE.
 
 
-% 350 RPM is 5.8 Hz
-
-
-f = 0:0.01:5.8;  % No matrix singularity warning issued (set 0 to 0.1 if it occurs).
+rpm = 0:0.1:350;
+    f = h_rpm_to_f( rpm );
+        w = f ./ (2*pi);
 
 FRF = nDOF_direct_solution( m, k, dampings, f, 'admittance' );  % Symmetric matrix.
 %
@@ -223,16 +223,27 @@ squeeze( FRF( numel( f ), :, :) );
 %   These are interchangeable;  the same result.
 
 
-figure( 'Name', 'Admittance of DVA' ); ...
-    loglog( f, abs( FRF( :, 1, 1 ) ), 'Color', 'r' );  hold on;
-    line( [ 5  5 ], [ 1e-5  1e-3 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-    text( 6, 3e-4, '5 Hz' );
-        legend( 'Washing Machine', 'Load Frequency', 'Location', 'NorthWest' );
-    xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
+figure( 'Name', 'Admittance - nDOF Calculated' ); ...
+    h1 = loglog( h_f_to_rpm( f ), abs( FRF( :, 1, 1 ) ), 'Color', 'r' );  hold on;
+    h2 = line( [ 300 300 ], [ 1e-6 1e-2 ], 'Color', 'k', 'LineStyle', '--' );
+        text( 220, 2e-2, '300 RPM' );
+    h3 = line( [ h_f_to_rpm( f_minus )  h_f_to_rpm( f_minus ) ], [ 1e-7 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
+    
+    h4 = line( [ h_f_to_rpm( f1 )  h_f_to_rpm( f1 ) ], [ 1e-7 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
+    h5 = line( [ h_f_to_rpm( f2 )  h_f_to_rpm( f2 ) ], [ 1e-7 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
+    
+    h6 = line( [ h_f_to_rpm( f_plus )  h_f_to_rpm( f_plus ) ], [ 1e-7 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '--' );    grid on;
+    
+    axis( [ 2e1 4e2  1e-7 2e2 ] );
+        legend( [ h1 h2 h3 h4 h5 h6 ], 'DVA System', 'Operating RPM', ...
+            '$w_-$', '$w_1$', ...
+            '$w_2$', '$w_+$', ...
+            'Location', 'NorthWest', 'Interpreter', 'Latex' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
 temp2 = abs( FRF( :, 1, 1 ) );
-    temp2( 501 )
+    temp2( 3001 )
 
 
 
@@ -241,67 +252,54 @@ temp2 = abs( FRF( :, 1, 1 ) );
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
+% angular_velocity = f / (2*pi);
+% rpm = h_f_to_rpm( f );
 
-angular_velocity = f / (2*pi);
-rpm = h_f_to_rpm( f );
-
-temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+temp = h_force( dynamic_force.mass, w, dynamic_force.radius ).';
 
 
-figure( 'Name', '' ); ...
+figure( 'Name', 'Displacement' ); ...
     h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp, 'Color', 'r' );  hold on;
-    h2 = line( [ 300 300 ], [ 1e-6 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        text( 220, 1e-1, '5 Hz' );
-        legend( [ h1  h2 ], 'Washing Machine', 'Load Frequency', 'Location', 'South' );
+    h2 = line( [ 300 300 ], [ 1e-7 1e-3 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 2e-3, '300 RPM' );
+    h4 = line( [ h_f_to_rpm( f_minus )  h_f_to_rpm( f_minus ) ], [ 1e-8 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
+    
+    h5 = line( [ h_f_to_rpm( f1 )  h_f_to_rpm( f1 ) ], [ 1e-8 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
+    h6 = line( [ h_f_to_rpm( f2 )  h_f_to_rpm( f2 ) ], [ 1e-8 1e3 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
+    
+    h7 = line( [ h_f_to_rpm( f_plus )  h_f_to_rpm( f_plus ) ], [ 1e-8 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '--' );    grid on;
+        
+        legend( [ h1  h2 ], 'Washing Machine', 'Load Frequency', 'Location', 'Northwest' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
-    axis( [ 6 400  1e-8 1e1 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2d', '-dpdf', '-r0' );
-    %             end
+    axis( [ 2e1 400  1e-8 1e1 ] );
 
 
 temp2 = abs( FRF( :, 1, 1 ) ).*temp;
-    temp2( 501 )
+    temp2( 3001 )
 
+% return
 
-
-%% Force Applied to the Ground
+%% Ground Force
 
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
-angular_velocity = f / (2*pi);
-rpm = h_f_to_rpm( f );
-
-temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+temp = h_force( dynamic_force.mass, w, dynamic_force.radius ).';
 
 
-figure( 'Name', 'Force Applied to Ground by Raft' ); ...
-    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp*k2, 'Color', 'b' );  hold on;
-    h2 = line( [ 300 300 ], [ 1e-4 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+figure( 'Name', 'Ground Force' ); ...
+    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp.*k2, 'Color', 'k' );  hold on;
+    h2 = line( [ 300 300 ], [ 1e-2 1e-0 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 2e-0, '300 RPM' );
     h3 = line( [ 6 400 ], [ 100 100 ], 'Color', 'r' );
-        text( 220, 1e-1, '5 Hz' );
-        legend( [ h1 h2 h3 ], 'Raft', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Force Applied to Ground [N]' );
-    axis( [ 6 400  1e-5 1e3 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2e', '-dpdf', '-r0' );
-    %             end
+        legend( [ h1 h2 h3 ], 'Ground Force', 'Operating RPM', 'Maximum Floor Load', 'Location', 'South' );
+    xlabel( 'Rotation [RPM]' );  ylabel( ' Force [N]' );
+    axis( [ 2e1 400  1e-5 1e3 ] );
 
 
 temp2 = abs( FRF( :, 1, 1 ) ).*temp*k2;
-    temp2( 501 )
+    temp2( 3001 )
 
 
 
