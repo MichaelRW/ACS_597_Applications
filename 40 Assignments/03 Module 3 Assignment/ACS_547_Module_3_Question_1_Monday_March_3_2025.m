@@ -31,7 +31,11 @@ format LongG;
 
 pause( 1 );
 
-PRINT_FIGURES = 0;
+
+
+%% Anonymous Function Definitions
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
 
 
@@ -55,9 +59,6 @@ dynamic_force.radius = 0.5;  % m
 
 %% Part 1a
 
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
-
-
 rpm = 0:1:350;
     rpm_conversion_to_radians_per_second = 0.10472;
         angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
@@ -65,7 +66,7 @@ rpm = 0:1:350;
 
 % Characteristics of the dynamic load.
 force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 Hz
-h_force( dynamic_force.mass, 300*rpm_conversion_to_radians_per_second, dynamic_force.radius );  % 493.5 N
+    h_force( dynamic_force.mass, 300*rpm_conversion_to_radians_per_second, dynamic_force.radius );  % 493.5 N
 
 
 figure( 'Name', 'Problem 1a - Load Force Versus Angular Velocity' ); ...
@@ -75,13 +76,6 @@ figure( 'Name', 'Problem 1a - Load Force Versus Angular Velocity' ); ...
     text( 305, 494, '493.5 N' );  grid on;
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Load Force [N]' );
     axis( [ -10 355  -5 705 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_1a', '-dpdf', '-r0' );
-    %             end
 
 
 
