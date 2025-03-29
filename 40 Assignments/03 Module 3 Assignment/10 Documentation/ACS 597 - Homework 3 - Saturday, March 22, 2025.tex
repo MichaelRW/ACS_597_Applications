@@ -55,7 +55,7 @@
 
 
 \memodate{\today~(Submitted)}
-\memosubject{ACS 547, Noise Control Applications - Module 2 Assignment\\}
+\memosubject{ACS 547, Noise Control Applications - Module 3 Assignment\\}
 
 
 
@@ -65,7 +65,7 @@
 
 
 \vspace{-0.25cm}
-\section*{Problem 1 - Washing Machine Mount Design (1 DOF)}
+\section*{Problem 1 - Washing Machine Mount Design}
 
 
 \subsection*{Problem 1a}
@@ -73,30 +73,35 @@
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 
 \vspace{0.25cm}
-Figure~\ref{figure:1aLoadForceVersusRPM} shows the load force produced by the 1 kg imbalanced mass at a 0.5 m radius from the center of the washing machine as a function of angular speed in RPM.
+Equation~\ref{equation:1aForcingFunction} calculates the force produced by the imbalanced 1kg mass at a 0.5 $m$ radius from the center of the washing machine as a function of angular velocity,
+
+\vspace{-0.25cm}
+\begin{equation}
+    F = m \cdot \omega^2 \cdot r
+\end{equation}
+\label{equation:1aForcingFunction}
+
+where $m$ is 0.5 $kg$, $\omega$ is the angular velocity in $\frac{radians}{s}$, and $r$ is 0.5 $m$.
+
+\vspace{0.25cm}
+Figure~\ref{figure:1aLoadForceVersusRPM} shows the force produced by the 1 kg load as a function of angular velocity in RPM.
 
 \vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1a.pdf}
-    \caption{Load force of 1 kg imbalanced mass at a 0.5 m radius versus washing machine angular speed.}
+    \caption{Load force versus washing machine angular speed.}
     \label{figure:1aLoadForceVersusRPM}
 \end{figure}
 
 \vspace{0.25cm}
-The force amplitude is 493.5 N at a frequency of 5 Hz when the washing machine operates at 300 RPM.
-
-
+At 300 RPM, or 5 Hz, the imbalanced load force amplitude is 493.5 N.
 
 
 
 \subsection*{Problem 1b}
 
-The static displacement of the load in the washing machine must be less than 1 cm (i.e., the deflection is calculated with only the 10 kg load mass).  The corresponding mount stiffness, $k_s$, is \textbf{9,810 $\frac{N}{m}$}.
-
-\vspace{0.25cm}
-The natural frequency, $w_o$, of the mount is \textbf{1.5 Hz} (or 9.4 $\frac{radians}{s}$).
-
+The required spring stiffness, $k_s$, is 9,810 $\frac{N}{m}$.  The mount's natural frequency, $w_o$, is 1.5 $Hz$.
 
 
 
@@ -109,40 +114,41 @@ Figure~\ref{figure:1cTransmissionLoss} shows the transmission loss of the system
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1c.pdf}
-    \caption{Transmission loss of the system.  Its natural frequency is 1.5 Hz.}
+    \caption{Transmission loss as a function of damping ratio.  The natural frequency is 1.5 $Hz$.}
     \label{figure:1cTransmissionLoss}
 \end{figure}
 
 
 
-
-
 \subsection*{Problem 1d}
 
-Figure~\ref{figure:1dAppliedForce} shows the force applied to the foundation as a function of RPM.
+Figure~\ref{figure:1dAppliedForce} shows the force applied to the foundation.
 
-\vspace{-0.25cm}
+\vspace{-0.55cm}
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1d.pdf}
-    \caption{Force applied to the foundation versus RPM.}
+    \caption{Force applied to the foundation as a function of damping ratio.}
     \label{figure:1dAppliedForce}
 \end{figure}
 
-There is no damping ratio for which the applied force is less than 100 N across the whole operating range.  The best damping ratio is $\zeta = 0.25$.  With this damping ratio, the force applied to the foundation still exceeds the 100 N target in two regions:  91 to 109 RPM and 331 to 350 RPM.  In both regions the force is about 104 N.
+No damping ratio makes the applied force less than 100 N across the 0 to 350 RPM operating range.
+
+The best damping ratio is $\zeta = 0.25$.  The force applied to the foundation still exceeds the 100 N target in only two small RPM regions:  91 to 109, and 331 to 350 RPM.  In both of these regions the force is approximately 104 $N$.
 
 
 
-
-
+\vspace{-0.1cm}
 \subsection*{Problem 1e}
 
-Figure~\ref{figure:1eAdmittance} shows the admittance as a function of RPM.
+The viscous damping coefficient is 519.4 $\frac{kg}{s}$ based on a total mass of 110 $kg$.
 
-\vspace{-0.25cm}
+Figure~\ref{figure:1eAdmittance} shows the admittance.
+
+\vspace{-0.45cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1e.pdf}
+        \includegraphics[scale = 0.675, keepaspectratio]{Homework_3_Part_1e.pdf}
     \caption{Admittance versus RPM.}
     \label{figure:1eAdmittance}
 \end{figure}
@@ -151,22 +157,21 @@ The admittance at 300 RPM is 1e-5 $\frac{m}{N}$.
 
 
 
-
-
+\vspace{-0.1cm}
 \subsection*{Problem 1f}
 
-Figure~\ref{figure:1fDisplacement} shows the displacement of the washing machine as a function of RPM.
+Figure~\ref{figure:1fDisplacement} shows the displacement of the washing machine.
 
-\vspace{-0.25cm}
+\vspace{-0.45cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1f.pdf}
+        \includegraphics[scale = 0.675, keepaspectratio]{Homework_3_Part_1f.pdf}
     \vspace{-0.2cm}
     \caption{Displacement versus RPM.}
     \label{figure:1fDisplacement}
 \end{figure}
 
-The displacement of the washing machine at 300 RPM is \SI{5e-3}~~$m$.  This amount of displacement for the 300 RPM operating state seems excessive.  The washing machine undergoes larger momentary displacements as is spins up to the 300 RPM operating state, in particular around 100 RPM.
+The displacement of the washing machine at 300 RPM is approximately \SI{4.9e-3}~~$m$.  The washing machine undergoes larger momentary displacements as is spins up to 300 RPM, in particular around 100 RPM.
 
 
 
@@ -414,11 +419,13 @@ Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance response of t
     \label{figure:3aEquationsFromDvaLecture}
 \end{figure}
 
+The washing machine admittance at 300 RPM is reduced from the blue curve resonance peak to a point between the two resonances on the red curve).
 
 
-\subsection*{Part 3c}
 
-Figure~\ref{figure:3bAdmittance} shows the admittance response of the DVA system using the nDOF function script-file.  The stiffness of the coupling spring, $k_3$, is set to place the null of the admittance response at the 300 RPM operating state of the washing machine.
+\subsection*{Part 3c - Admittance}
+
+Figure~\ref{figure:3bAdmittance} shows the admittance response of the DVA system using the nDOF function script-file.  The stiffness of the coupling spring, $k_3$, is set to place the null of the admittance response at the 300 RPM operating state of the washing machine.  \textit{The admittance at 300 RPM is approximately \SI{1.2e-6}~~$\frac{m}{N}$}.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -428,16 +435,12 @@ Figure~\ref{figure:3bAdmittance} shows the admittance response of the DVA system
     \label{figure:3bAdmittance}
 \end{figure}
 
-Added damping to the DVA system reduces the prominence of its two resonant peaks.
 
 
-
-\subsection*{Part 3d}
+\subsection*{Part 3d - Displacement}
 
 \vspace{0.25cm}
-Figure~\ref{figure:3cDisplacement} ph
-
-The ramp up to 300 RPM occurs quickly so that the large displacements are transient.
+Figure~\ref{figure:3cDisplacement} shows the displacement of the washing machine as a function of RPM.  The ramp up to 300 RPM occurs quickly so that the large displacements are transient and the maximum speed is 350 RPM (the large displacement associated with the resonance peak at higher frequencies is not reached).  \textit{The displacement at 300 RPM is approximately \SI{38.2e-6}~~$m$}.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -453,9 +456,7 @@ The ramp up to 300 RPM occurs quickly so that the large displacements are transi
 \subsection*{Part 3e}
 
 \vspace{0.25cm}
-Figure~\ref{figure:3dForce} ph
-
-ph
+Figure~\ref{figure:3dForce} shows the force applied to the floor by the washing machine.  \textit{The force applied to the floor at 300 RPM is approximately \SI{3.75e-3}~~$m$}.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -481,6 +482,20 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 
 \subsection*{Part 3a}
+
+
+
+
+
+
+
+\newpage
+\section*{Summary}
+\setcounter{figure}{0}
+
+ph
+
+% Include table with results.
 
 
 

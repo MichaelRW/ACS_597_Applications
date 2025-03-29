@@ -94,7 +94,7 @@ maximum_allowable_displacement = 1e-2;  % m
 
 
 m = 110;  % kg;  washing machine mass and load mass
-k = ks;  % N\m
+k = ks;  % 9,810 N\m
 
 wo = sqrt( k / m);  % 9.4 radians\s
     fo = wo/(2*pi);  % 1.5 Hz
@@ -119,34 +119,34 @@ k2 = k;
 k3 = k_dva;
 
 
-w1 = sqrt( ( k1 + k3 ) / m1 );  % Smaller than the system resonant frequency.
-    f1 = w1/(2*pi);
+w1 = sqrt( ( k1 + k3 ) / m1 );  % 81.7 radians\s;  smaller than the system resonant frequency.
+    f1 = w1/(2*pi);  % 13 Hz
 
-w2 = sqrt( ( k2 + k3 ) / m2 );  %  Greater than the system resonant frequency.
-    f2 = w2/(2*pi);
+w2 = sqrt( ( k2 + k3 ) / m2 );  % 31.6 radians\s;  greater than the system resonant frequency.
+    f2 = w2/(2*pi);  % 5.0 Hz
 
 
 
 %% Coupled Frequencies (Equation 9.15 of the Notes)
 
-mu_4 = ( k3^2 / (m1*m2) );
-    mu = ( mu_4 )^0.25;
+mu_4 = ( k3^2 / (m1*m2) );  % 6.1 (kg\s)^4
+    mu = ( mu_4 )^0.25;  % 49.1 kg\s
 
 w(1) = 0.5*( ( w1^2 + w2^2 )  +  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
     w = sqrt( w );
 
 
-w_minus = w(2);              % 8.2 radians\s  (lower than 42.4 and 45.1 radians\s)
-    f_minus = w(2)/(2*pi);
+w_minus = w(2);  % 8.9 radians\s  (lower than 31.6 and 81.7 radians\s)
+    f_minus = w(2)/(2*pi);  % 1.4 Hz
 %
-w_plus = w(1);                 % 12.6 radians\s (higher than 42.4 and 45.1 radians\s)
-    f_plus = w(1)/(2*pi);
+w_plus = w(1);  % 87.1 radians\s (greater than 31.6 and 81.7 radians\s)
+    f_plus = w(1)/(2*pi);  % 13.9 Hz
 
 
-% The blocked frequencies are always between these two frequencies.
+% The blocked frequencies are always between the lower and higher coupled frequencies.
 
-% return
+
 
 %% Mode Shapes (Equations 9.18 and 9.19 of the Notes)
 
@@ -154,15 +154,22 @@ phi_plus = [ ...
     1; ...
     -(1/mu^2)*sqrt(m1/m2)*(w_plus^2 - w1^2), ...
     ];
+%
+%   1
+%   -0.14
+
 
 phi_minus = [ ...
     1; ...
     (1/mu^2)*sqrt(m1/m2)*(w1^2 - w_minus^2), ...
     ];
+%
+%   1
+%   0.99
 
 
 
-%% Plot (1) Admittance Using Equations from DVA Lecture
+%% Admittance Using Equations from DVA Lecture
 
 MAXIMUM_RPM = 3e3;
 
@@ -202,7 +209,7 @@ figure( 'Name', 'Admittance - Equations from DVA Lecture' ); ...
 
 
 
-%% Plot (2) Admittance Using nDOF Function
+%% Admittance Using nDOF Function
 
 % Damping can be added by using a dampings vector or appending a complex
 % value to the respective spring stiffness.  THESE ARE NOT INTERCHANGABLE.
@@ -244,8 +251,8 @@ figure( 'Name', 'Admittance - nDOF Calculated' ); ...
     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
 
-temp2 = abs( FRF( :, 1, 1 ) );
-    temp2( 3001 )
+% temp2 = abs( FRF( :, 1, 1 ) );
+    % round( temp2( 3001 ), 3, 'significant' )
 
 
 
@@ -254,14 +261,9 @@ temp2 = abs( FRF( :, 1, 1 ) );
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
-% angular_velocity = f / (2*pi);
-% rpm = h_f_to_rpm( f );
-
-temp = h_force( dynamic_force.mass, w, dynamic_force.radius ).';
-
 
 figure( 'Name', 'Displacement' ); ...
-    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp, 'Color', 'r' );  hold on;
+    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).', 'Color', 'r' );  hold on;
     h2 = line( [ 300 300 ], [ 1e-7 1e-3 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
         text( 220, 2e-3, '300 RPM' );
     h4 = line( [ h_f_to_rpm( f_minus )  h_f_to_rpm( f_minus ) ], [ 1e-8 1e3 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
@@ -280,10 +282,10 @@ figure( 'Name', 'Displacement' ); ...
     axis( [ 2e1 MAXIMUM_RPM  1e-8 1 ] );
 
 
-temp2 = abs( FRF( :, 1, 1 ) ).*temp;
-    temp2( 3001 )
+% temp2 = abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).';
+    % round( temp2( 3001 ), 3, 'significant' )
 
-% return
+
 
 %% Ground Force
 
@@ -301,8 +303,8 @@ figure( 'Name', 'Ground Force' ); ...
     axis( [ 2e1 MAXIMUM_RPM  1e-5 1e3 ] );
 
 
-temp2 = abs( FRF( :, 1, 1 ) ).*temp*k2;
-    temp2( 3001 )
+temp2 = abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).'*k2;
+    % round( temp2( 3001 ), 3, 'significant' )
 
 
 

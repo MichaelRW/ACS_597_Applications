@@ -7,12 +7,6 @@
 
 
 
-%% Notes
-
-% The mass of the washing machine "does not go away."
-
-
-
 %% Environment
 
 close all; clear; clc;
@@ -35,6 +29,10 @@ pause( 1 );
 
 h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
+h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
+
+rpm_conversion_to_radians_per_second = 0.10472;
+
 
 
 %% Washing Machine Information
@@ -51,6 +49,8 @@ machine.static_displacement = 1e-2;  % m
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
+force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 Hz
+
 % Maximum force applied to foundation is 100 N.
 
 
@@ -58,13 +58,7 @@ dynamic_force.radius = 0.5;  % m
 %% Part 1a
 
 rpm = 0:1:350;
-    rpm_conversion_to_radians_per_second = 0.10472;
-        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
-
-
-% Characteristics of the dynamic load.
-force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 Hz
-    h_force( dynamic_force.mass, 300*rpm_conversion_to_radians_per_second, dynamic_force.radius );  % 493.5 N
+    angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
 
 
 figure( 'Name', 'Problem 1a - Load Force Versus Angular Velocity' ); ...
@@ -95,8 +89,6 @@ frequency_set = 0.1:0.01:1e3;
     r = frequency_set ./ fo;
 
 damping_ratio = logspace( log10(0.001), log10(1), 6 );
-    
-h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
 
 
 figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
@@ -106,18 +98,11 @@ figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
         plot( r, 10*log10( h_transmissibility( damping_ratio( index ), r ) ) );
     end
     %
-    xlabel( 'Frequency Ratio [$\frac{f}{fo}$;  unitless]' );  ylabel( 'Tranmission Loss [dB]' );
+    xlabel( 'Frequency Ratio, $\frac{f}{fo}$ [unitless]' );  ylabel( 'Tranmission Loss [dB]' );
         legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
     axis( [ 0.1 665  -60 25 ] );
     grid on;  box on;
     set( gca, 'XScale', 'log' );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_1c', '-dpdf', '-r0' );
-    %             end
 
 
 
@@ -139,21 +124,14 @@ figure( 'Name', 'Problem 1d - Applied Force to Foundation' ); ...
     end
     %
     line( [ 300, 300 ], [ 2 1e4 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 2, '5 Hz' );  grid on;
-    line( [ 0 350 ], [ 100 100 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 0, 205, '100 N' );  grid on;    
+        text( 305, 2, '300 RPM' );  grid on;
+    line( [ 0 350 ], [ 100 100 ], 'Color', 'r', 'LineStyle', '--' );
+        text( 0, 150, '100 N' );  grid on;    
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Applied to Foundation [N]' );
         legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'South' );
     axis( [ -10 355  1 2e4 ] );
     grid on;  box on;
     set( gca, 'YScale', 'log' );
-    %
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_1d', '-dpdf', '-r0' );
-    %             end
 
 
 
@@ -178,17 +156,14 @@ figure( 'Name', 'Problem 1e - Admittance' ); ...
     set( gca, 'YScale', 'log' );
     %
     line( [ 300, 300 ], [ 7e-6 2e-5 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 1.2e-5, '5 Hz' );  grid on;
+        text( 305, 2e-5, '300 RPM' );  grid on;
     axis( [ -10 355  6e-6 2.5e-4 ] );
-    %
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_1e', '-dpdf', '-r0' );
-    %             end
 
-% return
+
+% temp2 = abs( admittance );
+%     round( temp2( 301 ), 3, 'significant' )
+
+
 
 %% Part 1f
 
@@ -199,16 +174,13 @@ figure( 'Name', 'Displacement' ); ...
     plot( rpm, displacement );  grid on;
     xlabel( 'Angular Speed [RPM]' );  ylabel( 'Displacement [m]' );
     line( [ 300, 300 ], [ 1e-3 1e-2 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 1e-3, '5 Hz' );  grid on;
+        text( 305, 1e-3, '300 RPM' );  grid on;
     set( gca, 'YScale', 'log' );
     axis( [ -10 355  1e-7 2e-2 ] );
-    %
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_1f', '-dpdf', '-r0' );
-    %             end
+
+
+temp2 = abs( displacement );
+    round( temp2( 301 ), 3, 'significant' )
 
 
 
@@ -228,52 +200,5 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% % Displacement Versus Frequency Ratio
-% 
-% Fo = 1;
-% wf = 4;  % Force frequency, radians\s
-% 
-% lambda = 1;
-%     k = (2*pi)/lambda;
-% 
-% phase_offset = 0;
-% 
-% w = 5;
-%     r = wf / w;
-% 
-% time_indices = 0:1e-2:5;
-% 
-% h_x = @( Fo, k, wf, time_indices, phase_offset, r, epsilon ) ( Fo./k.*sin(4*time_indices - phase_offset) ) ./ ( sqrt( (1 - r^2)^2 + (2*r*epsilon)^2 ) );
-% 
-% figure( ); ...
-%     epsilon = 0;
-%         % plot( time_indices, h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
-%     %
-%     for wf = 10:-1:1
-%         wf
-%         epsilon = 0.25;
-%         r = wf / w;
-%             plot( h_x( Fo, k, wf, time_indices, phase_offset, r, epsilon ) );  hold on;
-%         keyboard
-%     end
-%     %
-%     legend( '', '' );
-%     xlabel( 'Frequency Ratio [WU]' );  ylabel( 'Normalized Maximum Displacment [WU]' );
-
-
 
 

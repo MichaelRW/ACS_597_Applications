@@ -246,6 +246,10 @@ figure( 'Name', 'Admittance - Magnitude' ); ...
     %             end
 
 
+% temp2 = abs( FRF( :, 1, 1 ) );
+    % round( temp2( 3001 ), 3, 'significant' )
+
+
 
 %% Problem 2d
 
