@@ -62,7 +62,6 @@ Figure~\ref{figure:1aLoadForceVersusRPM} shows the load force produced by the 1 
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1a.pdf}
-    \vspace{-0.2cm}
     \caption{Load force of 1 kg imbalanced mass at a 0.5 m radius versus washing machine angular speed.}
     \label{figure:1aLoadForceVersusRPM}
 \end{figure}
@@ -93,7 +92,6 @@ Figure~\ref{figure:1cTransmissionLoss} shows the transmission loss of the system
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1c.pdf}
-    \vspace{-0.2cm}
     \caption{Transmission loss of the system.  Its natural frequency is 1.5 Hz.}
     \label{figure:1cTransmissionLoss}
 \end{figure}
@@ -110,7 +108,6 @@ Figure~\ref{figure:1dAppliedForce} shows the force applied to the foundation as 
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1d.pdf}
-    \vspace{-0.2cm}
     \caption{Force applied to the foundation versus RPM.}
     \label{figure:1dAppliedForce}
 \end{figure}
@@ -129,7 +126,6 @@ Figure~\ref{figure:1eAdmittance} shows the admittance as a function of RPM.
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Homework_3_Part_1e.pdf}
-    \vspace{-0.2cm}
     \caption{Admittance versus RPM.}
     \label{figure:1eAdmittance}
 \end{figure}
@@ -165,6 +161,7 @@ The displacement of the washing machine at 300 RPM is \SI{5e-3}~~$m$.  This amou
 
 \newpage
 \section*{Problem 2 - Washing Machine Mount Design (2 DOF)}
+\setcounter{figure}{0}
 
 
 \subsection*{Problem 2a}
@@ -326,9 +323,29 @@ The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitate
 
 \newpage
 \section*{Problem 3 - Washing Machine Dynamic Vibration Absorber Design}
+\setcounter{figure}{0}
 
 
-\subsection*{Equations from DVA Tutorial Lecture}
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
+
+
+\subsection*{Part 3a}
+
+Figure~\ref{figure:3aDiagramDVA} illustrates the dynamic vibration absorber (DVA) system.
+
+\vspace{-0.25cm}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{ACS 547 - Homework 3, Problem 3 DVA.pdf}
+    \caption{Dynamic vibration absorber system for the washing machine.}
+    \label{figure:3aDiagramDVA}
+\end{figure}
+
+
+
+
+
+\subsection*{Part 3b}
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
@@ -351,11 +368,15 @@ ph
 \begin{figure}[htpb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3a.pdf}
-    \vspace{0.25cm}
     \caption{Equations from DVA tutorial lecture.}
     \label{figure:3aEquationsFromDvaLecture}
 \end{figure}
 
+
+
+
+
+\subsection*{Part 3c}
 
 
 \vspace{0.25cm}
@@ -367,12 +388,13 @@ ph
 \begin{figure}[htpb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3b.pdf}
-    \vspace{0.25cm}
     \caption{Solution using nDOF script-file function.}
     \label{figure:3bnDofSolution}
 \end{figure}
 
 
+
+\subsection*{Part 3c}
 
 \vspace{0.25cm}
 Figure~\ref{figure:3cDisplacement} ph
@@ -389,6 +411,8 @@ ph
 \end{figure}
 
 
+
+\subsection*{Part 3d}
 
 \vspace{0.25cm}
 Figure~\ref{figure:3dForce} ph
@@ -410,57 +434,19 @@ ph
 
 
 
+\newpage
+\section*{Problem 4 - Washing Machine Abuse Testing}
+\setcounter{figure}{0}
+
+
+The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
+
+
+\subsection*{Part 3a}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-%\newpage
-%Table~\ref{table:DesignParametersEnclosure} lists the design parameters for the design enclosure.
-%
-%\vspace{0.25cm}
-%\setlength{\abovecaptionskip}{0pt}
-%\vspace{0.1cm}
-%{\renewcommand{\arraystretch}{1.25}
-%\begin{table}[h!]
-%    \begin{center}
-%        \small
-%        \begin{tabular}{ | c | c | c | c | c | c | c | }
-%            \hline
-%            \textbf{Wall}  &  \textbf{Width [m]}  &  \textbf{Height [m]}  &  \textbf{Area [$\mathbf m^2$]}  &  \textbf{Aspect Ratio}  &  \textbf{Correction}  &  \textbf{Compliance [$\frac{m^3\cdot s^2}{kg}$]}  \\
-%            \hline
-%            Top     &  1.25  &  1.5  &  1.875  &  1.2   &  1.8  &  1.42e-6  \\
-%            \hline
-%            Side 1  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
-%            Side 2  &  1.5   &  3    &  4.5    &  2.0   &  0.6  &  2.57e-6  \\
-%            \hline
-%            Side 3  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
-%            Side 4  &  1.25   &  3    &  3.75    &  2.4   &  0.5  &  1.49e-6  \\
-%            \rowcolor{Gray}
-%            \hline
-%        \end{tabular}
-%    \end{center}
-%    \caption{Enclosure design summary.}
-%    \label{table:DesignParametersEnclosure}
-%\end{table}
-%
-%
-%The estimated insertion loss without the hole is 13.5 dB, which exceeds the target loss of 13.
-%
-%\vspace{0.25cm}
-%The estimated insertion loss with the hole is 1.2 dB, based on the hole depth correction of Deng (1998).  The hole reduces the required insertion loss.  The intake silencer needs to provide 11.8 dB of insertion loss.
 
 
 
@@ -471,28 +457,28 @@ ph
 \section{Appendix - Matlab Code for Problem 1}
 \label{appendix:problem1}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_3_Question_1_Monday_March_3_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 2}
 \label{appendix:problem2}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_3_Question_2_Monday_March_3_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 3}
 \label{appendix:problem3}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_3_Question_3_Monday_March_3_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 4}
 \label{appendix:problem4}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_3_Question_4_Monday_March_3_2025.m}
 
 
 

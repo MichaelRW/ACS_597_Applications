@@ -12,10 +12,8 @@
 close all; clear; clc;
 % restoredefaultpath;
 
-% addpath( genpath( '' ), '-begin' );
 addpath( genpath( './00 Support' ), '-begin' );
 
-% set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );

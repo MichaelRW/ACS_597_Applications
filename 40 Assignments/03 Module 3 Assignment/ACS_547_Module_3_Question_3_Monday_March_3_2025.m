@@ -34,10 +34,8 @@
 close all; clear; clc;
 % restoredefaultpath;
 
-% addpath( genpath( '' ), '-begin' );
 addpath( genpath( './00 Support' ), '-begin' );
 
-% set( 0, 'DefaultFigurePosition', [  400  400  900  400  ] );  % [ left bottom width height ]
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
@@ -51,11 +49,14 @@ pause( 1 );
 
 %% Define Anonymous Functions
 
-h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
-h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
-h_w_to_f = @( w )  w/(2*pi);
 h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
 h_rpm_to_w = @( rpm )  ( rpm * 0.10471 );
+
+h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
+
+h_w_to_f = @( w )  w/(2*pi);
+h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
+
 
 h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
