@@ -1,5 +1,12 @@
 
 
+% To do:
+
+% remove comment statements
+
+% verify indices for required values
+
+
 
 %% Synopsis
 
@@ -290,11 +297,8 @@ dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
 
-temp = h_force( dynamic_force.mass, w, dynamic_force.radius ).';
-
-close all
 figure( 'Name', 'Ground Force' ); ...
-    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*temp.*k2, 'Color', 'k' );  hold on;
+    h1 = loglog( rpm, abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).'.*k2, 'Color', 'k' );  hold on;
     h2 = line( [ 300 300 ], [ 1e-4 1e-0 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
         text( 220, 2e-0, '300 RPM' );
     h3 = line( [ 6 MAXIMUM_RPM ], [ 100 100 ], 'Color', 'r' );

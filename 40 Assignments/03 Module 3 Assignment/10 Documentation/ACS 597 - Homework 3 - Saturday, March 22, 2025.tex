@@ -182,17 +182,18 @@ Figure~\ref{figure:2aDiagramTwoStageMount} illustrates the two-stage vibration m
 
 
 
-
-
+\newpage
 \subsection*{Problem 2b}
 
-Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficients for the system.
+Table~\ref{table:2Parameters} lists the initial stiffness and damping coefficients for the system.
 
 \vspace{0.25cm}
-\setlength{\abovecaptionskip}{1pt}
+\setlength{\abovecaptionskip}{1.5pt}
 \vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.25}
+{\renewcommand{\arraystretch}{1.5}
 \begin{table}[htpb!]
+
+    \footnotesize
 
     \centering
 
@@ -228,15 +229,12 @@ Table~\ref{table:2bParameters} lists the initial stiffness and damping coefficie
 
         \vspace{0.5cm}
         \caption{Initial values of stiffness and damping coefficients.}
-        \label{table:2bParameters}
+        \label{table:2Parameters}
 
 \end{table}
 
 
 
-
-
-\newpage
 \subsection*{Problem 2c}
 
 \vspace{0.25cm}
@@ -253,8 +251,6 @@ At the operating speed of 300 RPM, the admittance of the washing machine is \SI{
     \caption{Admittance of the washing machine and the raft with a force on the washing machine.}
     \label{figure:2cAdmittance}
 \end{figure}
-
-
 
 
 
@@ -279,8 +275,6 @@ The displacement of the raft is \SI{4.7e-5}~~$m$.
 
 
 
-
-
 \subsection*{Problem 2e}
 
 \vspace{0.25cm}
@@ -299,14 +293,10 @@ The load on the ground is always less than 100 $N$.
 
 
 
-
-
 \subsection*{Problem 2f}
 
 \vspace{0.25cm}
 The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitated a displacement of the washing machine of \SI{4.6e-3}~~$m$ at 300 RPM, which is less than the \SI{5.0e-3}~~$m$ found for the 1 DOF system.  The force applied to the ground by the raft is less than the required 100 $N$ maximum.
-
-
 
 
 
@@ -341,65 +331,95 @@ Figure~\ref{figure:3aDiagramDVA} illustrates the dynamic vibration absorber (DVA
     \label{figure:3aDiagramDVA}
 \end{figure}
 
+Table~\ref{table:3Parameters} lists the initial stiffness and damping coefficients for the system.
+
+\vspace{0.25cm}
+\setlength{\abovecaptionskip}{1.5pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[htpb!]
+
+    \footnotesize
+
+    \centering
+
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M1}  &  110  &  $kg$   \\
+        \hline
+        \textbf{K1}  &  100  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C1}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+        \hfill
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M2}  &  100  &  $kg$   \\
+        \hline
+        \textbf{K2}  &  100  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C2}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+        \hfill
+        \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{M3}  &  0  &  $kg$   \\
+        \hline
+        \textbf{K3}  &  1,000  &  $\frac{N}{m}$  \\
+        \hline
+        \textbf{C3}  &  5  &  $\frac{kg}{s}$  \\
+        \hline
+        \end{tabular}
+
+        \vspace{0.5cm}
+        \caption{Initial values of stiffness and damping coefficients.}
+        \label{table:3Parameters}
+
+\end{table}
 
 
 
 
 \subsection*{Part 3b}
 
-The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
-
-\vspace{0.25cm}
-A DVA is used at a particular operating frequency, here 300 RPM or 5 Hz.  Not used across a wide range of operating RPMs.
-
-The ramp up to 300 RPM occurs quickly so that the large displacements are transient.
-
-Higher roll-off of admittance with a DVA system, relative to the system in Problem 1 (see video at -09:35 mark).
-
-Adding damping to the DVA system reduces the promenicne of its two resonsnaces peaks, while still reducing the amount of amittance and displacement of the original mass.
-
-
-\vspace{0.25cm}
-Figure~\ref{figure:3aEquationsFromDvaLecture} ph
-
-ph
+Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance responses of the original system and DVA system based on the equations presented in the tutorial lecture on DVA system analysis.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3a.pdf}
-    \caption{Equations from DVA tutorial lecture.}
+    \caption{Admittance responses based on the equations from the DVA tutorial lecture.}
     \label{figure:3aEquationsFromDvaLecture}
 \end{figure}
 
-
+A DVA is used at a specific operating frequency, here it is 300 RPM or 5 Hz.
 
 
 
 \subsection*{Part 3c}
 
+Figure~\ref{figure:3bAdmittance} ph
 
-\vspace{0.25cm}
-Figure~\ref{figure:3bnDofSolution} ph
-
-ph
+Adding damping to the DVA system reduces the promenicne of its two resonsnaces peaks, while still reducing the amount of amittance and displacement of the original mass.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
     \center
         \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3b.pdf}
     \caption{Solution using nDOF script-file function.}
-    \label{figure:3bnDofSolution}
+    \label{figure:3bAdmittance}
 \end{figure}
 
 
 
-\subsection*{Part 3c}
+\subsection*{Part 3d}
 
 \vspace{0.25cm}
 Figure~\ref{figure:3cDisplacement} ph
 
-ph
+The ramp up to 300 RPM occurs quickly so that the large displacements are transient.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -412,7 +432,7 @@ ph
 
 
 
-\subsection*{Part 3d}
+\subsection*{Part 3e}
 
 \vspace{0.25cm}
 Figure~\ref{figure:3dForce} ph
