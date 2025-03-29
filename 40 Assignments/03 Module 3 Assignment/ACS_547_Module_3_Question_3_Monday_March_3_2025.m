@@ -102,12 +102,6 @@ wo = sqrt( k / m);  % 9.4 radians\s
 
 m_dva = 15;  % kg
 k_dva = 1e5;  % N\m
-% k_dva = 2e5;  % N\m
-% k_dva = 1800;  % N\m ->  7.7095e-05;  2.4411e-05;  0.23947 ->  f2 IS LESS THAN f1
-% k_dva = 1000;  % N\m ->  7.2494e-05;  2.2954e-05;  0.22518
-% k_dva = 100;  % N\m ->  6.8007e-05;  2.1533e-05;  0.21124
-% k_dva = 10;  % N\m ->  6.7593e-05;  2.1402e-05;  0.20995
-% k_dva = 1;  % N\m ->  6.7552e-05;  2.1389e-05;  0.20983
 
 wo_dva = sqrt( k_dva / m_dva );  % 81.7 radians\s
     fo_dva = wo_dva/(2*pi);  % 13.0 Hz
@@ -125,18 +119,18 @@ k2 = k;
 k3 = k_dva;
 
 
-w1 = sqrt( ( k1 + k3 ) / m1 );  % 81.6 radians\s;  smaller than the system resonant frequency.
-    f1 = w1/(2*pi);  % 1.3 Hz
+w1 = sqrt( ( k1 + k3 ) / m1 );  % Smaller than the system resonant frequency.
+    f1 = w1/(2*pi);
 
-w2 = sqrt( ( k2 + k3 ) / m2 );  % 31.6 radians\s;  greater than the system resonant frequency.
-    f2 = w2/(2*pi);  % 1.6 Hz
+w2 = sqrt( ( k2 + k3 ) / m2 );  %  Greater than the system resonant frequency.
+    f2 = w2/(2*pi);
 
-% return
+
 
 %% Coupled Frequencies (Equation 9.15 of the Notes)
 
-mu_4 = ( k3^2 / (m1*m2) );  % 1,963.6 (radians\s)^4
-    mu = ( mu_4 )^0.25;  % 6.66 radians\s
+mu_4 = ( k3^2 / (m1*m2) );
+    mu = ( mu_4 )^0.25;
 
 w(1) = 0.5*( ( w1^2 + w2^2 )  +  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
@@ -144,14 +138,13 @@ w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 
 
 w_minus = w(2);              % 8.2 radians\s  (lower than 42.4 and 45.1 radians\s)
-    f_minus = w(2)/(2*pi);  % 1.31 Hz
+    f_minus = w(2)/(2*pi);
 %
 w_plus = w(1);                 % 12.6 radians\s (higher than 42.4 and 45.1 radians\s)
-    f_plus = w(1)/(2*pi);   % 2.0 Hz
-%
-% Note(s):
-%
-%   The blocked frequencies are always between these two frequencies.
+    f_plus = w(1)/(2*pi);
+
+
+% The blocked frequencies are always between these two frequencies.
 
 % return
 
@@ -181,7 +174,8 @@ w = 0:0.01:h_rpm_to_w( MAXIMUM_RPM );
 
 
 m = [ 15 110 ];
-k = [  0  k_dva  k2.*(1+0.2*1i)  ];
+k = [  0  k_dva.*(1+0.1*1i)  k2.*(1+0.2*1i)  ];
+
 
 admittance_modified = F0 ./ ( m(1)*m(2) )*k(2) ./ (( w.^2 - w_plus^2 ) .* ( w.^2 - w_minus^2) );
 admittance_original = F0 ./ m(2) * 1 ./ ( w2^2 - w.^2 );

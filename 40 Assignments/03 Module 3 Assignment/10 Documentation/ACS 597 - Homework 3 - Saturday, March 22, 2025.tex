@@ -6,10 +6,14 @@
 \usepackage{amsmath}
 \usepackage{color, soul}
 \usepackage{dcolumn}
+\usepackage{enumitem}
+
     \newcolumntype{d}[1]{D{.}{.}{#1}}
 \usepackage[colorlinks=true, citecolor=blue]{hyperref}
-\usepackage{enumitem}
+
 \usepackage{graphicx, lipsum}
+
+\usepackage{imakeidx}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -28,10 +32,23 @@
 
 \usepackage{siunitx}
 
+\usepackage{tablefootnote}
+
 \usepackage[table]{xcolor}
 \definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
 \definecolor{LightCyan}{rgb}{0.88,1,1}
 \definecolor{Gray}{gray}{0.85}
+
+
+\newcommand{\is}[1]{%
+\if@noftnote%
+\index{#1}%
+\else%
+\index{#1|fn{\number\value{footnote}}}%
+\fi%
+}
+
+\makeindex
 
 
 \graphicspath{ {../} }
@@ -331,7 +348,7 @@ Figure~\ref{figure:3aDiagramDVA} illustrates the dynamic vibration absorber (DVA
     \label{figure:3aDiagramDVA}
 \end{figure}
 
-Table~\ref{table:3Parameters} lists the initial stiffness and damping coefficients for the system.
+Table~\ref{table:3Parameters} lists the stiffness and damping coefficients for the system.
 
 \vspace{0.25cm}
 \setlength{\abovecaptionskip}{1.5pt}
@@ -345,21 +362,21 @@ Table~\ref{table:3Parameters} lists the initial stiffness and damping coefficien
 
         \begin{tabular}{ | c | c | c | }
         \hline
-        \textbf{M1}  &  110  &  $kg$   \\
+        \textbf{M1}  &  15  &  $kg$   \\
         \hline
-        \textbf{K1}  &  100  &  $\frac{N}{m}$  \\
+        \textbf{K1}  &  0  &  $\frac{N}{m}$  \\
         \hline
-        \textbf{C1}  &  5  &  $\frac{kg}{s}$  \\
+        \textbf{C1}  &  0  &  $\frac{kg}{s}$  \\
         \hline
         \end{tabular}
         \hfill
         \begin{tabular}{ | c | c | c | }
         \hline
-        \textbf{M2}  &  100  &  $kg$   \\
+        \textbf{M2}  &  110  &  $kg$   \\
         \hline
-        \textbf{K2}  &  100  &  $\frac{N}{m}$  \\
+        \textbf{K2}  &  9,810  &  $\frac{N}{m}$  \\
         \hline
-        \textbf{C2}  &  5  &  $\frac{kg}{s}$  \\
+        \textbf{C2}  &  1,962  &  $\frac{kg}{s}$\tablefootnote{0.2 fraction of respective spring stiffness.}  \\
         \hline
         \end{tabular}
         \hfill
@@ -367,24 +384,27 @@ Table~\ref{table:3Parameters} lists the initial stiffness and damping coefficien
         \hline
         \textbf{M3}  &  0  &  $kg$   \\
         \hline
-        \textbf{K3}  &  1,000  &  $\frac{N}{m}$  \\
+        \textbf{K3}  &  1e5  &  $\frac{N}{m}$  \\
         \hline
-        \textbf{C3}  &  5  &  $\frac{kg}{s}$  \\
+        \textbf{C3}  &  1e4  &  $\frac{kg}{s}$\tablefootnote{0.1 fraction of respective spring stiffness.}  \\
         \hline
         \end{tabular}
 
         \vspace{0.5cm}
-        \caption{Initial values of stiffness and damping coefficients.}
+        \caption{Stiffness and damping coefficients for the DVA system.}
         \label{table:3Parameters}
 
 \end{table}
 
 
+Damping was implemented by adding with an imaginary component to the respective spring stiffness\footnote{Not equivalent to using a damping vector in the argument to the given Matlab nDOF function script-file.}.
 
 
+
+\newpage
 \subsection*{Part 3b}
 
-Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance responses of the original system and DVA system based on the equations presented in the tutorial lecture on DVA system analysis.
+Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance response of the original system and DVA system based on the equations presented in the tutorial lecture on DVA system analysis.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -394,15 +414,11 @@ Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance responses of 
     \label{figure:3aEquationsFromDvaLecture}
 \end{figure}
 
-A DVA is used at a specific operating frequency, here it is 300 RPM or 5 Hz.
-
 
 
 \subsection*{Part 3c}
 
-Figure~\ref{figure:3bAdmittance} ph
-
-Adding damping to the DVA system reduces the promenicne of its two resonsnaces peaks, while still reducing the amount of amittance and displacement of the original mass.
+Figure~\ref{figure:3bAdmittance} shows the admittance response of the DVA system using the nDOF function script-file.  The stiffness of the coupling spring, $k_3$, is set to place the null of the admittance response at the 300 RPM operating state of the washing machine.
 
 \vspace{-0.25cm}
 \begin{figure}[htpb!]
@@ -411,6 +427,8 @@ Adding damping to the DVA system reduces the promenicne of its two resonsnaces p
     \caption{Solution using nDOF script-file function.}
     \label{figure:3bAdmittance}
 \end{figure}
+
+Added damping to the DVA system reduces the prominence of its two resonant peaks.
 
 
 
