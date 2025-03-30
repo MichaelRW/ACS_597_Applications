@@ -5,8 +5,6 @@
 
 % Problem 2 - Washing Machine Two-stage Mount Design
 
-% See Lecture 14, Monday, March 3, 2025
-
 
 
 %% Note(s)
@@ -29,6 +27,8 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
+set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
@@ -48,6 +48,9 @@ h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
 h_w_to_f = @( w )  w/(2*pi);
 
 h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
+
+
+h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
 
 
@@ -152,8 +155,6 @@ masses = [ m1 m2 ];
 stiffnesses = [ k1  k3  k2 ];
 dampings = [ c1  0  c2 ];
 
-% ADD DAMPING AS A COMPLEX COMPONENT TO THE SPRING STIFFNESS.
-
 
 rpm = 0:0.1:500;  % rotations per minute
     rpm_conversion_to_radians_per_second = 0.10472;
@@ -187,48 +188,50 @@ clear temp temp2;
 raft.admittance = admittance;
 
 
-figure( 'Name', 'Admittance - Magnitude' ); ...
-    h1 = loglog( rpm, washing_machine.admittance, 'Color', 'r' );  hold on;
-    h2 = loglog( rpm, raft.admittance, 'Color', 'b' );
+figure( 'Name', 'Admittance' ); ...
+    h1 = loglog( rpm, washing_machine.admittance, 'Color', 'r', 'LineWidth', 0.8 );  hold on;
+    h2 = loglog( rpm, raft.admittance, 'Color', 'b', 'LineWidth', 0.8 );
     h3 = line( [ 300 300 ], [ 1e-6 1e-4 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        text( 220, 1e-4, '5 Hz' );
+        text( 220, 2e-4, '300 RPM' );
     %
-    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-.' );
+    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
     %
-    h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-.' );
-    h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', 'm', 'LineStyle', '-' );
+    h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
+    h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-' );
     %
-        h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 1.00, 0.41, 0.16 ], 'LineStyle', '-' );
+        h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-' );
     %
     legend( [ h1 h2 h3 h4 h5 h6 h7 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w1', 'w2', 'w+', 'Location', 'NorthEast' );
     %
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance (Magnitude) [$\frac{m}{N}$]' );
+    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
     axis( [ 6 400  1e-8 1e1 ] );
 
 
-% temp2 = abs( FRF( :, 1, 1 ) );
-    % round( temp2( 3001 ), 3, 'significant' )
+round( washing_machine.admittance( 3001 ), 3, 'significant' )
 
-return
+
 
 %% Problem 2d
 
 dynamic_force.mass = 1;  % kg
 dynamic_force.radius = 0.5;  % m
 
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
 
-temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-
-
-figure( 'Name', '' ); ...
-    h1 = loglog( rpm, washing_machine.admittance.*temp, 'Color', 'r' );  hold on;
-    h2 = loglog( rpm, raft.admittance.*temp, 'Color', 'b' );
-    h3 = line( [ 300 300 ], [ 1e-6 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        text( 220, 1e-1, '5 Hz' );
+figure( 'Name', 'Displacement' ); ...
+    h1 = loglog( rpm, washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).', 'Color', 'r' );  hold on;
+    h2 = loglog( rpm, raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).', 'Color', 'b' );
+    h3 = line( [ 300 300 ], [ 1e-5 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+        text( 220, 0.21, '300 RPM' );
         legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'South' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
-    axis( [ 6 400  1e-8 1e1 ] );
+    axis( [ 6 400  1e-6 1 ] );
+
+
+temp = washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+    round( temp( 3001 ), 3, 'significant' )
+
+% temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+%     round( temp( 3001 ), 3, 'significant' )
 
 
 
@@ -246,12 +249,16 @@ temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
 
 figure( 'Name', 'Force Applied to Ground by Raft' ); ...
     h1 = loglog( rpm, raft.admittance.*temp*k2, 'Color', 'b' );  hold on;
-    h2 = line( [ 300 300 ], [ 1e-4 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
+    h2 = line( [ 300 300 ], [ 2e-3 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
     h3 = line( [ 6 400 ], [ 100 100 ], 'Color', 'r' );
-        text( 220, 1e-1, '5 Hz' );
-        legend( [ h1 h2 h3 ], 'Raft', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
+        text( 220, 2e-1, '300 RPM' );
+        legend( [ h1 h2 h3 ], 'Raft Force', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Force Applied to Ground [N]' );
-    axis( [ 6 400  1e-5 1e3 ] );
+    axis( [ 6 400  1e-3 1e3 ] );
+
+
+temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).'*k2;
+    round( temp( 3001 ), 3, 'significant' )
 
 
 
@@ -262,55 +269,6 @@ figure( 'Name', 'Force Applied to Ground by Raft' ); ...
 %% Problem 2g
 
 % return
-
-%% 2 DOF Example
-
-% masses = [ 50  1 ];
-% stiffnesses = [ 100e3  1800  0 ];
-% 
-% dampings = [ 0  0  0 ];
-% % dampings = [ 0  (1 + 0.1*1j)  (1 + 0.1*1j) ];
-% 
-% frequencies = 0:0.01:40;
-% 
-% FRF = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );  % 4001-by-2-by-2
-% 
-% 
-% admittance = zeros( numel( frequencies ), 1 );
-% 
-% for index = 1:1:numel( frequencies )
-%     temp = diag( squeeze( FRF( index, :, : ) ) );
-%         temp2 = temp(1) + temp(2)*1j;
-%         admittance( index ) = abs( temp2 );
-% end
-% 
-% clear temp1 temp2;
-% 
-% 
-% % figure( ); ...
-% %     semilogy( frequencies, admittance );  grid on;
-% %     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-% 
-% 
-% figure( 'Name', 'Admittance' ); ...
-%     semilogy( frequencies, abs( FRF( :, 1, 1 ) ) );  hold on;
-%     semilogy( frequencies, abs( FRF( :, 1, 2 ) ) );
-%     semilogy( frequencies, abs( FRF( :, 2, 1 ) ) );
-%     semilogy( frequencies, abs( FRF( :, 2, 2 ) ) );  grid on;
-%         legend( 'M1 Movement with F1', 'M1 Movement with F2', 'M2 Movement with F1', 'M2 Movement with F2', 'Location', 'North' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-%     axis( [ 5.5 10.5  1e-7 1e2 ] );
-
-
-% figure( 'Name', 'Dynamic Stiffness (Reciprocal of Admittance)' ); ...
-%     semilogy( frequencies, 1 ./ abs( FRF( :, 1, 1 ) ) );  hold on;
-%     semilogy( frequencies, 1 ./ abs( FRF( :, 1, 2 ) ) );
-%     semilogy( frequencies, 1 ./ abs( FRF( :, 2, 1 ) ) );
-%     semilogy( frequencies, 1 ./ abs( FRF( :, 2, 2 ) ) );  grid on;
-%         legend( 'M1 Movement with F1', 'M1 Movement with F2', 'M2 Movement with F1', 'M2 Movement with F2', 'Location', 'North' );
-%     xlabel( 'Frequency [Hz]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-
-
 
 %% Clean-up
 
@@ -332,6 +290,8 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Comment(s)
+
+
 
 %% Regions of Interest
 

@@ -43,6 +43,8 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
+set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
@@ -207,7 +209,7 @@ figure( 'Name', 'Admittance - Equations from DVA Lecture' ); ...
             'Location', 'NorthWest', 'Interpreter', 'Latex' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
-
+return
 
 %% Admittance Using nDOF Function
 
