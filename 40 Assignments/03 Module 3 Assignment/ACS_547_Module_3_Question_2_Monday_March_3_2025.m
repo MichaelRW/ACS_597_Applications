@@ -17,10 +17,8 @@
 % respectively, to each be attached to ground independently.
 
 % With the force applied to the washing machine and the displacement of the
-% washing machine, use FSF( :, 1, 1 ).
-
-% However, if the force is applied elsewhere, than FSF( :, 2, 2, ) might
-% need to be used.
+% washing machine, use FSF( :, 1, 1 ).  However, if the force is applied elsewhere,
+% than FSF( :, 2, 2, ) must be used.
 
 
 
@@ -45,11 +43,13 @@ pause( 1 );
 %% Define Anonymous Functions
 
 h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
+
 h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
 h_w_to_f = @( w )  w/(2*pi);
+
 h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
 
-% return
+
 
 %% Problem 2a
 
@@ -72,20 +72,16 @@ m2 = 100;  % kg - UPPER LIMIT OF 100 kg
     k2 = 1e2;  % N\m
     c2 = 5;
 
-k3 = 1e3;  % Admittance:  9.31e-6 m\N
-%
-% Note(s):
-%
-%   a.) Strong coupling produces a high w+.
+k3 = 1e3;  % N\m -> Larger values produce stronger coupling (higher w+).
 
 
-w1 = sqrt( ( k1 + k3 ) / m1 );  %  radians\s;  washing machine
-    f1 = w1 / (2*pi);
-        rpm1 = f1*(2*pi)/0.10471;
+w1 = sqrt( ( k1 + k3 ) / m1 );  % 3.2 radians\s;  washing machine
+    f1 = w1 / (2*pi);  % 0.5 Hz
+        rpm1 = f1*(2*pi)/0.10471;  % 30.1 RPM
 
-w2 = sqrt( ( k2 + k3 ) / m2 );  %  radians\s;  raft
-    f2 = w2 / (2*pi);
-        rpm2 = f2*(2*pi)/0.10471;
+w2 = sqrt( ( k2 + k3 ) / m2 );  % 3.3 radians\s;  raft
+    f2 = w2 / (2*pi);  % 0.53 Hz
+        rpm2 = f2*(2*pi)/0.10471;  % 31.7 RPM
 
 % Note:  If k3 is set to zero, then these frequencies represent the
 % resonance frequencies for each mass on their own.
@@ -94,26 +90,25 @@ w2 = sqrt( ( k2 + k3 ) / m2 );  %  radians\s;  raft
 
 %% Problem 2b - Coupled Frequencies
 
-mu_4 = ( k3^2 / (m1*m2) );  %  (radians\s)^4
-    mu = ( mu_4 )^0.25;
+mu_4 = ( k3^2 / (m1*m2) );  % 90.9 (radians\s)^4
+    mu = ( mu_4 )^0.25;  % 3.1 radians\s
 
 w(1) = 0.5*( ( w1^2 + w2^2 )  +  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
 w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
     w = sqrt( w );
 
 
-w_minus = w(2);              %  0.97 radians\s  (lower than w1, 1, and w2, 1.05 radians\s)
+w_minus = w(2);  %  0.97 radians\s  (lower than w1, 1, and w2, 1.05 radians\s)
     f_minus = w(2)/(2*pi);  %  0.1545 Hz
-        rpm_minus = h_f_to_rpm( f_minus );
+        rpm_minus = h_f_to_rpm( f_minus );  % 9.3 RPM
 %
-w_plus = w(1);                 %  1.08 radians\s  (higher than w1, 1, and w2, 1.05 radians\s)
-    f_plus = w(1)/(2*pi);    %  0.17124 Hz
-        rpm_plus = h_f_to_rpm( f_plus );
+w_plus = w(1);  %  4.5 radians\s  (higher than w1, 1, and w2, 1.05 radians\s)
+    f_plus = w(1)/(2*pi);  %  0.71 Hz
+        rpm_plus = h_f_to_rpm( f_plus );  % 42.8 RPM
 %
 % Note(s):
 %
 %   The blocked frequencies, w1 and w2, are always between these two frequencies.
-
 
 clear w mu_4;
 
@@ -125,11 +120,17 @@ phi_plus = [ ...
     1; ...
     -(1/mu^2)*sqrt(m1/m2)*(w_plus^2 - w1^2), ...
     ];
+%
+%   1
+%   -1.10
 
 phi_minus = [ ...
     1; ...
     (1/mu^2)*sqrt(m1/m2)*(w1^2 - w_minus^2), ...
     ];
+%
+%   1
+%   0.99
 
 
 % Note(s):
@@ -141,44 +142,7 @@ phi_minus = [ ...
 
 % In general, for a 2 DOF system there will be 2 modes (in-phase and out-of-phase).
 
-
 % With different initial conditions (no forcing), the behaviour is a weighted sum of the two modes.
-
-
-
-%% Regions of Interest
-
-% 5 regions of interest:
-
-% 1.)  Low frequency:  w < w_minus:
-%
-%   Stiffness controlled;  two masses moving together;  strong coupling (k3 high).
-
-
-% 2.)  Force at a resonance frequency:  w = w_minus (lowest resonance frequency):
-%
-%   At lowest resonance frequency;  at w_minus mode, masses moving in same direction (in-phase) with same high amplitude
-
-
-% 3.) Forcing frequency between w_minus and w2
-
-
-% 4.)  Forcing frequency w = w2
-
-
-% 5.)  Forcing frequency w < w < w+
-%
-%   No a special frequency.
-
-
-% 6.)  Forcing frequency w = w+
-%
-% At highest resonance frequency;  at w_plus mode, masses moving in opposite directions (out-of-phase) with same high amplitude
-
-
-% 7.)  Forcing frequency w+ < w
-%
-% Mass controlled region;  mass 1 (washing machine) moves more than mass 2 (raft);
 
 
 
@@ -187,6 +151,9 @@ phi_minus = [ ...
 masses = [ m1 m2 ];
 stiffnesses = [ k1  k3  k2 ];
 dampings = [ c1  0  c2 ];
+
+% ADD DAMPING AS A COMPLEX COMPONENT TO THE SPRING STIFFNESS.
+
 
 rpm = 0:0.1:500;  % rotations per minute
     rpm_conversion_to_radians_per_second = 0.10472;
@@ -237,19 +204,12 @@ figure( 'Name', 'Admittance - Magnitude' ); ...
     %
     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance (Magnitude) [$\frac{m}{N}$]' );
     axis( [ 6 400  1e-8 1e1 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
-    %             end
 
 
 % temp2 = abs( FRF( :, 1, 1 ) );
     % round( temp2( 3001 ), 3, 'significant' )
 
-
+return
 
 %% Problem 2d
 
@@ -269,13 +229,6 @@ figure( 'Name', '' ); ...
         legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'South' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
     axis( [ 6 400  1e-8 1e1 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2d', '-dpdf', '-r0' );
-    %             end
 
 
 
@@ -299,13 +252,6 @@ figure( 'Name', 'Force Applied to Ground by Raft' ); ...
         legend( [ h1 h2 h3 ], 'Raft', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Force Applied to Ground [N]' );
     axis( [ 6 400  1e-5 1e3 ] );
-    % 
-    % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-    %     pos = get( gcf, 'Position' );
-    %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-    %             if ( PRINT_FIGURES == 1 )
-    %                 print(gcf, 'Homework_3_Part_2e', '-dpdf', '-r0' );
-    %             end
 
 
 
@@ -383,61 +329,42 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 %% Reference(s)
 
-% https://tex.stackexchange.com/questions/295059/three-tables-side-by-side-on-one-page
 
 
+%% Comment(s)
 
-%% Reference Code
+%% Regions of Interest
 
-% admittance = zeros( numel( frequencies ), 1 );
-% 
-% for index = 1:1:numel( frequencies )
-%     temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
-%         admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
-% end
-% %
-% clear temp temp2;
-% 
-% washing_machine.admittance_phase = admittance;
-% 
-% 
-% admittance = zeros( numel( frequencies ), 1 );
-% 
-% for index = 1:1:numel( frequencies )
-%     temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
-%         admittance( index ) = unwrap( angle ( temp ) ) * 180 / pi;
-% end
-% %
-% clear temp temp2;
-% 
-% raft.admittance_phase = admittance;
-% 
-% figure( 'Name', 'Admittance - Phase' ); ...
-%     h1 = semilogx( rpm, washing_machine.admittance_phase, 'Color', 'r' );  hold on;
-%     h2 = semilogx( rpm, raft.admittance_phase   , 'Color', 'b', 'LineStyle', '--' );  grid on;
-%     h3 = line( [ 300 300 ], [ -200 200 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-%     %
-%     h4 = line( [ rpm_minus rpm_minus], [ -200 200 ], 'Color', 'g', 'LineStyle', '-.' );
-%     %
-%     line( [ rpm1 rpm1 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
-%     line( [ rpm2 rpm2 ], [ -200 200 ], 'Color', 'm', 'LineStyle', '--' );
-%     %
-%     h5 = line( [ rpm_plus rpm_plus ], [ -200 200 ], 'Color', 'g', 'LineStyle', '-' );
-%     %
-%     legend( [ h1 h2 h3 h4 h5 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w+', 'Location', 'NorthEast' );
-%     %
-%     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-%     xlim( [ 6 400 ] );
-%     % axis( [ 6 400  1e-8 1e1 ] );
-%     % 
-%     % set( gcf, 'units', 'point', 'pos', [ 200 200    493*0.8 744*0.5 ] );
-%     %     pos = get( gcf, 'Position' );
-%     %         set( gcf, 'PaperPositionMode', 'Auto', 'PaperUnits', 'points', 'PaperSize', [pos(3), pos(4)] );
-%     %             if ( PRINT_FIGURES == 1 )
-%     %                 print(gcf, 'Homework_3_Part_2c', '-dpdf', '-r0' );
-%     %             end
+% 5 regions of interest:
+
+% 1.)  Low frequency:  w < w_minus:
+%
+%   Stiffness controlled;  two masses moving together;  strong coupling (k3 high).
 
 
+% 2.)  Force at a resonance frequency:  w = w_minus (lowest resonance frequency):
+%
+%   At lowest resonance frequency;  at w_minus mode, masses moving in same direction (in-phase) with same high amplitude
 
+
+% 3.) Forcing frequency between w_minus and w2
+
+
+% 4.)  Forcing frequency w = w2
+
+
+% 5.)  Forcing frequency w < w < w+
+%
+%   No a special frequency.
+
+
+% 6.)  Forcing frequency w = w+
+%
+% At highest resonance frequency;  at w_plus mode, masses moving in opposite directions (out-of-phase) with same high amplitude
+
+
+% 7.)  Forcing frequency w+ < w
+%
+% Mass controlled region;  mass 1 (washing machine) moves more than mass 2 (raft);
 
 
