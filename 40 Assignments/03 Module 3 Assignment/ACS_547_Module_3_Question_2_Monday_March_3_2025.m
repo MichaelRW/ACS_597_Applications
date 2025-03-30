@@ -67,15 +67,34 @@ fo = 5;  % Hz
     wo = 2*pi*fo;  % 31.4 radians\s
 
 
-m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
-    k1 = 1e2;  % N\m
-    c1 = 5;
+switch ( 2 )
 
-m2 = 100;  % kg - UPPER LIMIT OF 100 kg
-    k2 = 1e2;  % N\m
-    c2 = 5;
+    case 1  % Initial design parameters.
 
-k3 = 1e3;  % N\m -> Larger values produce stronger coupling (higher w+).
+        m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
+            k1 = 1e2;  % N\m
+            c1 = 5;
+        
+        m2 = 100;  % kg - UPPER LIMIT OF 100 kg
+            k2 = 1e2;  % N\m
+            c2 = 5;
+        
+        k3 = 1e3;  % N\m -> Larger values produce stronger coupling (higher w+).
+
+
+    case 2  % Optimized design parameters.
+
+        m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
+            k1 = 1e2;  % N\m
+            c1 = 5;
+        
+        m2 = 100;  % kg - UPPER LIMIT OF 100 kg
+            k2 = 1e2;  % N\m
+            c2 = 5;
+        
+        k3 = 1e1;  % N\m -> Larger values produce stronger coupling (higher w+).
+
+end
 
 
 w1 = sqrt( ( k1 + k3 ) / m1 );  % 3.2 radians\s;  washing machine

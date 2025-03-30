@@ -4,6 +4,7 @@
 \documentclass[letter, 11pt, margins=0.3in]{texMemo}  % The texMemo package by Rob Oakes.
 
 \usepackage{amsmath}
+\usepackage{booktabs}
 \usepackage{color, soul}
 \usepackage{dcolumn}
 \usepackage{enumitem}
@@ -299,7 +300,6 @@ At 300 RPM, the washing machine displacement  is \SI{4.6e-3}~~$m$, less than \SI
 
 \subsection*{Problem 2e}
 
-\vspace{0.25cm}
 Figure~\ref{figure:2eLoadForce} shows the force applied to the ground by the raft.
 
 The force is is calculated by multiplying the displacement of the raft by the K2 spring constant.
@@ -319,16 +319,48 @@ The ground force at 300 RPM is \SI{4.7e-3}~~$N$.  The force on the ground is alw
 
 \subsection*{Problem 2f}
 
-\vspace{0.25cm}
-Table~\ref{table:2Parameters} shows
+The performance of this system was improved by \textit{lowering the stiffness of the coupling spring, $k_3$}.  Lowering $k_3$ decreases the separation of the two resonance peaks and shifts them down in frequency.  This results in lower admittances for the washing machine and the raft at 300 RPM.  However, due to the quadratic characteristic of the load force with RPM and the second-order roll-off of the admittance curve for the washing machine, optimization is restricted.
 
-The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitated a displacement of the washing machine of \SI{4.6e-3}~~$m$ at 300 RPM, which is less than the \SI{5.0e-3}~~$m$ found for the 1 DOF system.  The force applied to the ground by the raft is less than the required 100 $N$ maximum.
-
+In Figure~\ref{figure:2dDisplacement}, displacement of the washing machine after the second resonance frequency ``plateaus'' with much less roll-off relative to the raft displacement.  This restricts the degree of optimization that can be done in this case.
 
 
+
+\newpage
 \subsection*{Problem 2g}
 
+Table~\ref{table:2Comparisons} compares the admittance, displacement, and ground force for the initial and optimized systems.
+
 \vspace{0.25cm}
+\setlength{\abovecaptionskip}{1.5pt}
+\vspace{0.1cm}
+{\renewcommand{\arraystretch}{1.5}
+\begin{table}[htbp!]
+
+    \centering
+    
+    \small
+
+    \begin{tabular}{lllll}
+    
+        \cline{2-4}
+        \multicolumn{1}{l|}{} &
+          \multicolumn{1}{l|}{\textbf{Admittance {[}$\frac{m}{N}${]}}} &
+          \multicolumn{1}{l|}{\textbf{Displacement {[}m{]}}} &
+          \multicolumn{1}{l|}{\textbf{Ground Force {[}N{]}}} &
+           \\ \cline{1-4}
+        \multicolumn{1}{|l|}{\textbf{Initial Design}}   & \multicolumn{1}{c|}{\SI{9.31e-3}} & \multicolumn{1}{c|}{\SI{4.59e-3}} & \multicolumn{1}{c|}{\SI{4.7e-3}} &  \\ \cline{1-4}
+        \multicolumn{1}{|l|}{\textbf{Optimized Design}} & \multicolumn{1}{c|}{\SI{9.22e-6}} & \multicolumn{1}{c|}{\SI{4.55e-3}} & \multicolumn{1}{c|}{\SI{4.62e-5}} &  \\ \cline{1-4}
+                                                &                       &                       &                       &
+    \end{tabular}
+
+    \caption{Performance comparison of the initial and optimized designs.}
+    \label{table:2Comparisons}
+
+\end{table}
+%
+% https://www.tablesgenerator.com/
+
+\vspace{0.2cm}
 The initial parameter set chosen, see Table~\ref{table:2bParameters}, facilitated a displacement of the washing machine of \SI{4.6e-3}~~$m$ at 300 RPM, which is less than the \SI{5.0e-3}~~$m$ found for the 1 DOF system.  The force applied to the ground by the raft is less than the required 100 $N$ maximum.
 
 
@@ -552,105 +584,6 @@ ph
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%Table~\ref{table:machNumbers} lists the Mach numbers for each pipe section.  The flow rate is 0.017462 $\frac{m^3}{s}$.
-%
-%\setlength{\abovecaptionskip}{0pt}
-%\vspace{0.1cm}
-%{\renewcommand{\arraystretch}{1.5}
-%\begin{table}[h!]
-%    \begin{center}
-%        \small
-%        \begin{tabular}{ | c | c | c | }
-%            \hline
-%            \textbf{Pipe}  &  \textbf{Area [}{$\mathbf m^2$}\textbf{]}  &  \textbf{Mach Number [unitless]}  \\
-%            \hline
-%                Inlet  &  0.000507  &  -0.10047  \\
-%                \hline
-%                \rowcolor{Gray}
-%                Outlet  &  0.00811  &  -0.0062795  \\
-%            \hline
-%        \end{tabular}
-%    \end{center}
-%    \caption{Calculated Mach numbers.}
-%    \label{table:machNumbers}
-%\end{table}
-
-
-
-
-
-%\vspace{0.25cm}
-%Figure~\ref{figure:intakeSystem} shows the transmission loss profiles.
-
-
-%\newpage
-%Table~\ref{table:helmholzResonator} lists the dimensions of the lossy Helmholtz resonator for the 129 Hz notch.
-%
-%\setlength{\abovecaptionskip}{0pt}
-%\vspace{0.1cm}
-%{\renewcommand{\arraystretch}{1.5}
-%\begin{table}[h!]
-%    \begin{center}
-%        \small
-%        \begin{tabular}{ | l | c | }
-%            \hline
-%            \textbf{Item}  &  \textbf{Measure]}  \\
-%            \hline
-%                Cavity Diameter                 &  0.254 m  \\
-%                \hline
-%                \rowcolor{Gray}
-%                Neck Diameter                   &  0.0254 m  \\
-%                \hline
-%                Neck Length                     &  0.127 m  \\
-%                \hline
-%                \rowcolor{Gray}
-%                Neck Area                       &  0.5e-3 $m^2$  \\
-%                \hline
-%                Length Correction 1, $L_{o1}$   &  0.711 m  \\
-%                \hline
-%                \rowcolor{Gray}
-%                Length Correction 2, $L_{o2}$   &  0.3 m  \\
-%                \hline
-%                Cavity Volume                   &  8.0e-5 $m^3$  \\
-%                \hline
-%                \rowcolor{Gray}
-%                Q Factor   &  10  \\
-%            \hline
-%        \end{tabular}
-%    \end{center}
-%    \caption{Dimensions of the lossy Helmholtz resonator (see slide 15 of Lecture 3 notes).}
-%    \label{table:helmholzResonator}
-%\end{table}
 
 
 
