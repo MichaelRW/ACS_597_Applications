@@ -25,6 +25,12 @@ pause( 1 );
 
 
 
+%% Define Anonymous Functions
+
+h_unit_impulse = @( washing_machine_mass, wd, wo, epsilon, t )  ( 1./( washing_machine_mass.*wd) )  .*  exp( -wo.*epsilon.*t ) .* sin( wd.*t );  % mvo = 1 kg\(m s)
+
+
+
 %% Impulse Signal
 
 time_step = 1e-4;  % s
@@ -34,52 +40,43 @@ net_time = 10;  % s
 impulse = zeros( size( time_indices ) );
     impulse( 4/time_step ) = 1./time_step;
         brick_impulse = 5 .* impulse;
-        % brick_impulse = 50 .* impulse;
 
 
-% figure( 'Name', 'Unit Impulse Signal' ); ...  % Figure 1
-%     plot( time_indices, impulse );  grid on;
-%         legend( 'Unit Impulse Signal', 'Location', 'NorthEast' );
-%     xlabel( 'Time [s]' );  ylabel( 'Force [N]' );
-%     axis( [ 0 net_time  0 125 ] );
-
-% return
 
 %% 1 DOF System Impulse Function
-
-m = 5;  % kg
-
-% Initial conditions of 1 DOF system.
-xo = 0;  % m
-vo = 1 / m;  % m\s
-
 
 ks = 9810;  % N\m
     wo = sqrt( ks / 110 );  % 9.4 radians\s
         fo = wo / (2*pi);  % 1.5 Hz
 
-
 epsilon = 0.25;
     C = epsilon * 2*sqrt( ks * 110 );  % 519.4 kg\s
 
-
-% wd = 31.4;  % radians\s or 5 Hz or 300 RPM
-wd = wo * sqrt( 1 - epsilon^2 );
-
-
-h_unit_impulse = @( washing_machine_mass, wd, wo, epsilon, t )  ( 1./( washing_machine_mass.*wd) )  .*  exp( -wo.*epsilon.*t ) .* sin( wd.*t );  % mvo = 1 kg\(m s)
+wd = wo * sqrt( 1 - epsilon^2 );  % 9.1 radians\s
+    fd = wd / (2*pi);  % 1.46 Hz
 
 
 
 %% 1 DOF System Impulse Response
 
 impulse_response = h_unit_impulse( 100, wd, wo, epsilon, time_indices );
-%
-figure( 'Name', '1 DOF System Impulse Response' ); ...  % Figure 2
-    plot( time_indices, impulse_response );  grid on;
-    xlabel( 'Time [s]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    % axis( [ -0.1 3  -2.5e-4 3.0e-4 ] );
 
+impulse_response_at_4 = conv( impulse, impulse_response ) * time_step;
+    time_indices_at_4 = ( 0:1:( numel( impulse_response_at_4 ) - 1 ) ) .* time_step;
+%
+figure( 'Name', '1 DOF System Impulse Response' ); ...
+    yyaxis left; ...
+        plot( time_indices, impulse );  grid on;
+        ylabel( 'Force [N]' );
+        ylim( 'auto' );
+    yyaxis right; ...
+        plot( time_indices_at_4, impulse_response_at_4 );  hold on;
+        ylabel( 'Admittance [$\frac{m}{N}$]' );
+        ylim( 'auto' );
+    xlabel( 'Time [s]' );
+    xlim( [ 0 10 ] );
+
+return
 
 response_to_brick_perturbation = conv( brick_impulse, impulse_response ) * time_step;
     time_indices_perturbation = ( 0:1:( numel( response_to_brick_perturbation ) - 1 ) ) .* time_step;
@@ -89,7 +86,7 @@ figure( 'Name', '1 DOF Impulse Response' ); ...  % Figure 3
     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
     % axis( [ -0.1 5  -1.5e-3 1.5e-3 ] );
 
-% return
+return
 
 %% Sinusoidal Impulse Response
 

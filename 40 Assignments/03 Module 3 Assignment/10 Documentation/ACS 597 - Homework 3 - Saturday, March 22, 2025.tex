@@ -337,11 +337,11 @@ Table~\ref{table:2Comparisons} compares the admittance, displacement, and ground
 \begin{table}[htbp!]
 
     \centering
-    
+
     \small
 
     \begin{tabular}{lllll}
-    
+
         \cline{2-4}
         \multicolumn{1}{l|}{} &
           \multicolumn{1}{l|}{\textbf{Admittance {[}$\frac{m}{N}${]}}} &
@@ -518,6 +518,29 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 
 \subsection*{Part 4a}
+
+Equation~\ref{equation:4aUnitImpulseResponse} is the impulse response for a 1 DOF system.
+
+\begin{equation}
+    x(t) = \frac{1}{m \cdot w_d } \cdot e^{(-w_o \cdot \zeta \cdot t )} \cdot sin( w_d \cdot t)
+    \label{equation:4aUnitImpulseResponse}
+\end{equation}
+
+where $m$ is the mass of the washing machine, $w_d$ is the damped natural frequency, $w_o$ is the natural frequency, and $\zeta$ is the damping ratio.
+
+
+\vspace{0.25cm}
+Figure~\ref{figure:4aImpulseResponse} shows plots of a 1 kg impulse force and the corresponding response of the washing machine.
+
+\vspace{-0.25cm}
+\begin{figure}[htpb!]
+    \center
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_4a.pdf}
+    \vspace{0.25cm}
+    \caption{Washing machine impulse response.  Here $w_o$ is 9.4 $\frac{radians}{s}$, $w_d$ is 9.1 $\frac{radians}{s}$, and $\zeta$ is 0.25.}
+    \label{figure:4aImpulseResponse}
+\end{figure}
+
 
 
 
