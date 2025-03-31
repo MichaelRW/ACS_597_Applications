@@ -209,7 +209,7 @@ figure( 'Name', 'Admittance - Equations from DVA Lecture' ); ...
             'Location', 'NorthWest', 'Interpreter', 'Latex' );
     xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
 
-return
+
 
 %% Admittance Using nDOF Function
 

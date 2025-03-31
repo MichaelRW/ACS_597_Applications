@@ -14,6 +14,8 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
+set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
@@ -64,77 +66,54 @@ impulse_response = h_unit_impulse( 100, wd, wo, epsilon, time_indices );
 impulse_response_at_4 = conv( impulse, impulse_response ) * time_step;
     time_indices_at_4 = ( 0:1:( numel( impulse_response_at_4 ) - 1 ) ) .* time_step;
 %
-figure( 'Name', '1 DOF System Impulse Response' ); ...
-    yyaxis left; ...
-        plot( time_indices, impulse );  grid on;
-        ylabel( 'Force [N]' );
-        ylim( 'auto' );
-    yyaxis right; ...
-        plot( time_indices_at_4, impulse_response_at_4 );  hold on;
-        ylabel( 'Admittance [$\frac{m}{N}$]' );
-        ylim( 'auto' );
-    xlabel( 'Time [s]' );
-    xlim( [ 0 10 ] );
-
-return
-
-response_to_brick_perturbation = conv( brick_impulse, impulse_response ) * time_step;
-    time_indices_perturbation = ( 0:1:( numel( response_to_brick_perturbation ) - 1 ) ) .* time_step;
-%
-figure( 'Name', '1 DOF Impulse Response' ); ...  % Figure 3
-    plot( time_indices_perturbation, response_to_brick_perturbation );  grid on;
-    xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    % axis( [ -0.1 5  -1.5e-3 1.5e-3 ] );
-
-return
-
-%% Sinusoidal Impulse Response
-
-sinusoid_input = 493.5 * sin( 2 * pi * 5 * time_indices );
-% sinusoid_input = 1 * sin( 2 * pi * 5 * time_indices );
-% sinusoid_input = 493.5 * sin( 2 * pi * 1 * time_indices );
-    sinusoid_input( 1:1:( 1 / time_step ) ) = 0;
-    sinusoid_input( ( 8 / time_step ):1:( 10 / time_step ) ) = 0;
-%
-figure( 'Name', 'Sinusoidal Input' ); ... % Figure 4
-    plot( time_indices, sinusoid_input );  grid on;
-    xlabel( 'Time [s]' );  ylabel( 'Force [N]' );
-    % xlim( [ 0 2.5 ] );
-    ylim( [ -600 600 ] );
-
-
-response_to_sinusoidal_forcing = conv( sinusoid_input, impulse_response ) * time_step;
-    time_indices_sinusoidal_forcing = ( 0:1:( numel( response_to_sinusoidal_forcing ) - 1 ) ) .* time_step;
-%
-figure( 'Name', '1 DOF Sinusoidal Forcing Response' ); ...  % Figure 5
-    plot( time_indices_sinusoidal_forcing, response_to_sinusoidal_forcing );  grid on;
-    xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    % xlim( [ 0 2.5 ] );
+% figure( 'Name', '1 DOF System Impulse Response' ); ...
+%     yyaxis left; ...
+%         plot( time_indices, impulse );  grid on;
+%         ylabel( 'Force [N]' );
+%         ylim( 'auto' );
+%     yyaxis right; ...
+%         plot( time_indices_at_4, impulse_response_at_4 );  hold on;
+%         ylabel( 'Admittance [$\frac{m}{N}$]' );
+%         ylim( 'auto' );
+%     xlabel( 'Time [s]' );
+%     xlim( [ 0 10 ] );
 
 
 
 %% Combined Response
 
+sinusoid_input = 493.5 * sin( 2 * pi * 5 * time_indices );
+    sinusoid_input( 1:1:( 1 / time_step ) ) = 0;
+    sinusoid_input( ( 8 / time_step ):1:( 10 / time_step ) ) = 0;
+
+
 joint_signal = sinusoid_input + brick_impulse;
-% %
-% figure( 'Name', 'Combined Signal' ); ... % Figure 6
-%     plot( time_indices, joint_signal );  hold on;
-%     plot( time_indices, sinusoid_input, 'LineStyle', '--' );
-%     plot( time_indices, impulse, 'LineStyle', '--' );
-%     xlabel( 'Time [s]' );  ylabel( 'Force [N]' );
-%     % xlim( [ 0 2.5 ] );
-%     % ylim( [ -600 600 ] );
 
 
 response_to_combined_forcing = conv( impulse_response, joint_signal ) .* time_step;
-    time_indices_sinusoidal_forcing = ( 0:1:( numel( response_to_brick_perturbation ) - 1 ) ) .* time_step;
+    time_indices_sinusoidal_forcing = ( 0:1:( numel( response_to_combined_forcing ) - 1 ) ) .* time_step;
 %
-figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
-    plot( time_indices_sinusoidal_forcing, response_to_combined_forcing );  grid on;
+figure( 'Name', '1 DOF Combined Forcing Response' ); ...
+    h1 = plot( time_indices_sinusoidal_forcing, response_to_combined_forcing );  hold on;
+    %
+    h2 = line( [ 1 1 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
+    
+    h3 = line( [ 4 4 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
+    h4 = line( [ 6.3 6.3 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '--' );
+    % 
+    h5 = line( [ 8 8 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '-.' );  grid on;
+
+    h6 = line( [4 8 ], [ 5.42e-3 5.42e-3 ], 'LineStyle', ':', 'Color', 'k' );
+        
+        legend( [ h1 h2 h3 h4 h5 h6 ], 'Response', 'Start Sinusoidal Forcing', ...
+            'Brick Inserted', 'End of Brick Response', ...
+            'Stop Sinusoidal Forcing', 'Impulse Response Measure', ...
+            'Location', 'NorthEast', 'Interpreter', 'Latex' );
+
     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    % xlim( [ 0 2.5 ] );
+    axis( [ 0 12    -2e-2 2e-2  ] );
 
-
+return
 
 %% Acceleration
 
