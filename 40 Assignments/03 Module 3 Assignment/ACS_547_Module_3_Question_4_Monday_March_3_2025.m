@@ -53,8 +53,6 @@ m = 5;  % kg
 xo = 0;  % m
 vo = 1 / m;  % m\s
 
-wd = 31.4;  % radians\s or 5 Hz or 300 RPM
-
 
 ks = 9810;  % N\m
     wo = sqrt( ks / 110 );  % 9.4 radians\s
@@ -63,6 +61,10 @@ ks = 9810;  % N\m
 
 epsilon = 0.25;
     C = epsilon * 2*sqrt( ks * 110 );  % 519.4 kg\s
+
+
+% wd = 31.4;  % radians\s or 5 Hz or 300 RPM
+wd = wo * sqrt( 1 - epsilon^2 );
 
 
 h_unit_impulse = @( washing_machine_mass, wd, wo, epsilon, t )  ( 1./( washing_machine_mass.*wd) )  .*  exp( -wo.*epsilon.*t ) .* sin( wd.*t );  % mvo = 1 kg\(m s)
@@ -76,7 +78,7 @@ impulse_response = h_unit_impulse( 100, wd, wo, epsilon, time_indices );
 figure( 'Name', '1 DOF System Impulse Response' ); ...  % Figure 2
     plot( time_indices, impulse_response );  grid on;
     xlabel( 'Time [s]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    axis( [ -0.1 3  -2.5e-4 3.0e-4 ] );
+    % axis( [ -0.1 3  -2.5e-4 3.0e-4 ] );
 
 
 response_to_brick_perturbation = conv( brick_impulse, impulse_response ) * time_step;
@@ -85,14 +87,14 @@ response_to_brick_perturbation = conv( brick_impulse, impulse_response ) * time_
 figure( 'Name', '1 DOF Impulse Response' ); ...  % Figure 3
     plot( time_indices_perturbation, response_to_brick_perturbation );  grid on;
     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    axis( [ -0.1 5  -1.5e-3 1.5e-3 ] );
+    % axis( [ -0.1 5  -1.5e-3 1.5e-3 ] );
 
-
+% return
 
 %% Sinusoidal Impulse Response
 
-% sinusoid_input = 493.5 * sin( 2 * pi * 5 * time_indices );
-sinusoid_input = 1 * sin( 2 * pi * 5 * time_indices );
+sinusoid_input = 493.5 * sin( 2 * pi * 5 * time_indices );
+% sinusoid_input = 1 * sin( 2 * pi * 5 * time_indices );
 % sinusoid_input = 493.5 * sin( 2 * pi * 1 * time_indices );
     sinusoid_input( 1:1:( 1 / time_step ) ) = 0;
     sinusoid_input( ( 8 / time_step ):1:( 10 / time_step ) ) = 0;
@@ -117,14 +119,14 @@ figure( 'Name', '1 DOF Sinusoidal Forcing Response' ); ...  % Figure 5
 %% Combined Response
 
 joint_signal = sinusoid_input + brick_impulse;
-%
-figure( 'Name', 'Combined Signal' ); ... % Figure 6
-    plot( time_indices, joint_signal );  hold on;
-    plot( time_indices, sinusoid_input, 'LineStyle', '--' );
-    plot( time_indices, impulse, 'LineStyle', '--' );
-    xlabel( 'Time [s]' );  ylabel( 'Force [N]' );
-    % xlim( [ 0 2.5 ] );
-    % ylim( [ -600 600 ] );
+% %
+% figure( 'Name', 'Combined Signal' ); ... % Figure 6
+%     plot( time_indices, joint_signal );  hold on;
+%     plot( time_indices, sinusoid_input, 'LineStyle', '--' );
+%     plot( time_indices, impulse, 'LineStyle', '--' );
+%     xlabel( 'Time [s]' );  ylabel( 'Force [N]' );
+%     % xlim( [ 0 2.5 ] );
+%     % ylim( [ -600 600 ] );
 
 
 response_to_combined_forcing = conv( impulse_response, joint_signal ) .* time_step;
@@ -137,12 +139,18 @@ figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
 
 
 
+%% Accelaration
+
+
+
+
+
 %% Plot Difference
 
-figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
-    plot( time_indices_sinusoidal_forcing, response_to_combined_forcing - response_to_sinusoidal_forcing );  grid on;
-    xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    % xlim( [ 0 2.5 ] );
+% figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
+%     plot( time_indices_sinusoidal_forcing, response_to_combined_forcing - response_to_sinusoidal_forcing );  grid on;
+%     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
+%     % xlim( [ 0 2.5 ] );
 
 
 

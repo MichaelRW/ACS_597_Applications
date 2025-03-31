@@ -67,7 +67,7 @@ fo = 5;  % Hz
     wo = 2*pi*fo;  % 31.4 radians\s
 
 
-switch ( 2 )
+switch ( 1 )
 
     case 1  % Initial design parameters.
 
