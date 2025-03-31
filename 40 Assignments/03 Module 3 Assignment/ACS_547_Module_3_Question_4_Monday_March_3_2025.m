@@ -14,7 +14,7 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -66,17 +66,17 @@ impulse_response = h_unit_impulse( 100, wd, wo, epsilon, time_indices );
 impulse_response_at_4 = conv( impulse, impulse_response ) * time_step;
     time_indices_at_4 = ( 0:1:( numel( impulse_response_at_4 ) - 1 ) ) .* time_step;
 %
-% figure( 'Name', '1 DOF System Impulse Response' ); ...
-%     yyaxis left; ...
-%         plot( time_indices, impulse );  grid on;
-%         ylabel( 'Force [N]' );
-%         ylim( 'auto' );
-%     yyaxis right; ...
-%         plot( time_indices_at_4, impulse_response_at_4 );  hold on;
-%         ylabel( 'Admittance [$\frac{m}{N}$]' );
-%         ylim( 'auto' );
-%     xlabel( 'Time [s]' );
-%     xlim( [ 0 10 ] );
+figure( 'Name', '1 DOF System Impulse Response' ); ...
+    yyaxis left; ...
+        plot( time_indices, impulse );  grid on;
+        ylabel( 'Force [N]' );
+        ylim( 'auto' );
+    yyaxis right; ...
+        plot( time_indices_at_4, impulse_response_at_4 );  hold on;
+        ylabel( 'Admittance [$\frac{m}{N}$]' );
+        ylim( 'auto' );
+    xlabel( 'Time [s]' );
+    xlim( [ 0 10 ] );
 
 
 
@@ -97,14 +97,14 @@ figure( 'Name', '1 DOF Combined Forcing Response' ); ...
     h1 = plot( time_indices_sinusoidal_forcing, response_to_combined_forcing );  hold on;
     %
     h2 = line( [ 1 1 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
-    
+
     h3 = line( [ 4 4 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
     h4 = line( [ 6.3 6.3 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '--' );
     % 
     h5 = line( [ 8 8 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '-.' );  grid on;
 
     h6 = line( [4 8 ], [ 5.42e-3 5.42e-3 ], 'LineStyle', ':', 'Color', 'k' );
-        
+
         legend( [ h1 h2 h3 h4 h5 h6 ], 'Response', 'Start Sinusoidal Forcing', ...
             'Brick Inserted', 'End of Brick Response', ...
             'Stop Sinusoidal Forcing', 'Impulse Response Measure', ...
@@ -113,55 +113,26 @@ figure( 'Name', '1 DOF Combined Forcing Response' ); ...
     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
     axis( [ 0 12    -2e-2 2e-2  ] );
 
-return
+
 
 %% Acceleration
 
-velocity = movingslope( response_to_combined_forcing );
-velocity2 = gradient( response_to_combined_forcing );
+velocity = diff( response_to_combined_forcing ) ./ time_step;
 %
 figure( 'Name', 'Velocity' ); ...
-    plot( time_indices_sinusoidal_forcing, velocity );  hold on;
-    plot( time_indices_sinusoidal_forcing, velocity2, 'LineStyle', '--' );  grid on;
+    plot( time_indices_sinusoidal_forcing(1:1:(end - 1)), velocity );  grid on;
+    legend( 'Velocity' );
     xlabel( 'Time [s]' );  ylabel( 'Velocity [$\frac{m}{s}$]' );
-    % xlim( [ 0 2.5 ] );
+    axis( [ 0 12    -0.25 0.25  ] );
 
 
-acceleration = movingslope( velocity );
-acceleration2 = gradient( velocity2 );
+acceleration = diff( velocity ) ./ time_step;
 %
 figure( 'Name', 'Acceleration' ); ...
-    plot( time_indices_sinusoidal_forcing, acceleration );  hold on;
-    plot( time_indices_sinusoidal_forcing, acceleration2, 'LineStyle', '--' );  grid on;
+    plot( time_indices_sinusoidal_forcing(1:1:(end - 2)), acceleration );  grid on;
+    legend( 'Acceleration' );
     xlabel( 'Time [s]' );  ylabel( 'Acceleration [$\frac{m}{s^2}$]' );
-    % xlim( [ 0 2.5 ] );
-
-
-
-%% Verify
-
-close all;
-
-t = time_indices_sinusoidal_forcing;
-    x = sin( 2 * pi * 5 * t );
-
-time_step_verify = t(2) - t(1);
-
-figure( ); ...
-    plot( t, x );  hold on;
-    % plot( t(1:1:end-1), diff( x ) / time_step_verify );
-    plot( t, gradient( x ) / time_step_verify );
-    grid on;
-    % axis( [ 0 1  -1.2 1.2 ] );
-
-
-
-%% Plot Difference
-
-% figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
-%     plot( time_indices_sinusoidal_forcing, response_to_combined_forcing - response_to_sinusoidal_forcing );  grid on;
-%     xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-%     % xlim( [ 0 2.5 ] );
+    axis( [ 0 12    -10 525 ] );
 
 
 

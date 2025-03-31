@@ -43,7 +43,7 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -305,7 +305,7 @@ figure( 'Name', 'Ground Force' ); ...
     axis( [ 2e1 MAXIMUM_RPM  1e-5 1e3 ] );
 
 
-temp2 = abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).'*k2;
+% temp2 = abs( FRF( :, 1, 1 ) ).*h_force( dynamic_force.mass, w, dynamic_force.radius ).'*k2;
     % round( temp2( 3001 ), 3, 'significant' )
 
 

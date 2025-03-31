@@ -27,7 +27,7 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -226,7 +226,7 @@ figure( 'Name', 'Admittance' ); ...
     axis( [ 6 400  1e-8 1e1 ] );
 
 
-round( washing_machine.admittance( 3001 ), 3, 'significant' )
+% round( washing_machine.admittance( 3001 ), 3, 'significant' )
 
 
 
@@ -246,8 +246,8 @@ figure( 'Name', 'Displacement' ); ...
     axis( [ 6 400  1e-6 1 ] );
 
 
-temp = washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-    round( temp( 3001 ), 3, 'significant' )
+% temp = washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
+%     round( temp( 3001 ), 3, 'significant' )
 
 % temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
 %     round( temp( 3001 ), 3, 'significant' )
@@ -276,18 +276,16 @@ figure( 'Name', 'Force Applied to Ground by Raft' ); ...
     axis( [ 6 400  1e-3 1e3 ] );
 
 
-temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).'*k2;
-    round( temp( 3001 ), 3, 'significant' )
+% temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).'*k2;
+%     round( temp( 3001 ), 3, 'significant' )
 
 
 
 %% Problem 2f
 
-% return
+% See report.
 
-%% Problem 2g
 
-% return
 
 %% Clean-up
 

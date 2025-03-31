@@ -14,6 +14,8 @@ close all; clear; clc;
 
 addpath( genpath( '../00 Support' ), '-begin' );
 
+% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
@@ -179,8 +181,8 @@ figure( 'Name', 'Displacement' ); ...
     axis( [ -10 355  1e-7 2e-2 ] );
 
 
-temp2 = abs( displacement );
-    round( temp2( 301 ), 3, 'significant' )
+% temp2 = abs( displacement );
+%     round( temp2( 301 ), 3, 'significant' )
 
 
 
