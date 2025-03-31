@@ -1,12 +1,5 @@
 
 
-% To do:
-
-% remove comment statements
-
-% verify indices for required values
-
-
 
 %% Synopsis
 
