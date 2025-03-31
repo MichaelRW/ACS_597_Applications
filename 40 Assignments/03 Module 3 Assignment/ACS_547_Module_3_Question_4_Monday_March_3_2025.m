@@ -139,9 +139,44 @@ figure( 'Name', '1 DOF Combined Forcing Response' ); ...  % Figure 7
 
 
 
-%% Accelaration
+%% Acceleration
+
+velocity = movingslope( response_to_combined_forcing );
+velocity2 = gradient( response_to_combined_forcing );
+%
+figure( 'Name', 'Velocity' ); ...
+    plot( time_indices_sinusoidal_forcing, velocity );  hold on;
+    plot( time_indices_sinusoidal_forcing, velocity2, 'LineStyle', '--' );  grid on;
+    xlabel( 'Time [s]' );  ylabel( 'Velocity [$\frac{m}{s}$]' );
+    % xlim( [ 0 2.5 ] );
 
 
+acceleration = movingslope( velocity );
+acceleration2 = gradient( velocity2 );
+%
+figure( 'Name', 'Acceleration' ); ...
+    plot( time_indices_sinusoidal_forcing, acceleration );  hold on;
+    plot( time_indices_sinusoidal_forcing, acceleration2, 'LineStyle', '--' );  grid on;
+    xlabel( 'Time [s]' );  ylabel( 'Acceleration [$\frac{m}{s^2}$]' );
+    % xlim( [ 0 2.5 ] );
+
+
+
+%% Verify
+
+close all;
+
+t = time_indices_sinusoidal_forcing;
+    x = sin( 2 * pi * 5 * t );
+
+time_step_verify = t(2) - t(1);
+
+figure( ); ...
+    plot( t, x );  hold on;
+    % plot( t(1:1:end-1), diff( x ) / time_step_verify );
+    plot( t, gradient( x ) / time_step_verify );
+    grid on;
+    % axis( [ 0 1  -1.2 1.2 ] );
 
 
 
