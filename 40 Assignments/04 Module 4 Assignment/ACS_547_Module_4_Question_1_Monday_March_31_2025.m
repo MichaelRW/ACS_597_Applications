@@ -3,7 +3,7 @@
 
 %% Synopsis
 
-% Problem 1 - Washing Machine Mount Design - 1 Degree of Freedom (DOF)
+% Problem 2 - Simulation of Sources from Monopoles
 
 
 
@@ -12,9 +12,9 @@
 close all; clear; clc;
 % restoredefaultpath;
 
-addpath( genpath( '../00 Support' ), '-begin' );
+addpath( genpath( './00 Support' ), '-begin' );
 
-% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -29,160 +29,58 @@ pause( 1 );
 
 %% Anonymous Function Definitions
 
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
-
-h_transmissibility = @( epsilon, r )  sqrt( ( 1 + (2.*epsilon.*r).^2 ) ./ ( ( 1 - r.^2 ).^2 + ( 2.*epsilon.*r ).^2 ) );
-
-rpm_conversion_to_radians_per_second = 0.10472;
 
 
+%% Strikeforce
 
-%% Washing Machine Information
+c = 343;  % m\s
+rho0 = 1.21;  % kg/m^3
 
-machine.mass = 100;  % kg
-machine.rotation_speed = 31.4;  % radians\s or 300 rotations per minute (RPM)
-machine.load_mass = 10;  % kg
-machine.static_displacement = 1e-2;  % m
+f = 1e3;
+    lambda = c / f;  % 0.343 m
+
+fractions = [ 0.5  0.75  1 1.25  1.5  2  2.5  3  3.5  5  10 ];
 
 
 
-%% Load Force Information
-
-dynamic_force.mass = 1;  % kg
-dynamic_force.radius = 0.5;  % m
-
-force_frequency = 300 * rpm_conversion_to_radians_per_second / ( 2 * pi );  % 5 Hz
-
-% Maximum force applied to foundation is 100 N.
+xyz_sources = [ 0, 0, 0 ];
+Q_sources = 1 + 1i*1;
 
 
 
-%% Part 1a
+%% Problem 2a
 
-rpm = 0:1:350;
-    angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
+x = lambda .* fractions;
+    xyz_receivers = [ x.'  zeros( numel(x) , 1 )  zeros( numel(x) , 1 ) ];
 
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );
 
-figure( 'Name', 'Problem 1a - Load Force Versus Angular Velocity' ); ...
-    plot( rpm, h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );  hold on;
-    plot( 300, 494, 'Marker', '.', 'MarkerSize', 20 );
-    line( [ 300, 300 ], [ 400 600 ], 'Color', 'r' );
-    text( 305, 494, '493.5 N' );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Load Force [N]' );
-    axis( [ -10 355  -5 705 ] );
+% figure( ); ...
+%     loglog( x, abs(p) );  grid on;
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure [dB]' );
 
 
 
-%% Part 1b
+%% Problem 2b
 
-maximum_allowable_displacement = 1e-2;  % m
-    ks = ( machine.load_mass * 9.81) / maximum_allowable_displacement;  % 9,810 N\m
+% Concentric Circle 1
+N = 180;
+    n = 0:1:N;
 
+temp = exp( 1i.*(2*pi)/N*n);
 
-total_mass = machine.mass + machine.load_mass;  % 110 kg
-    wo = sqrt( ks / total_mass );  % 9.4 radians\s
-        fo = wo / (2*pi);  % 1.5 Hz - Natural frequency of the mount.
-
-
-
-%% Part 1c
-
-frequency_set = 0.1:0.01:1e3;
-    r = frequency_set ./ fo;
-
-damping_ratio = logspace( log10(0.001), log10(1), 6 );
-
-
-figure( 'Name', 'Problem 1c - Transmission Loss' ); ...
-    hold on;
-    %
-    for index = 1:1:numel( damping_ratio )
-        plot( r, 10*log10( h_transmissibility( damping_ratio( index ), r ) ) );
-    end
-    %
-    xlabel( 'Frequency Ratio, $\frac{f}{fo}$ [unitless]' );  ylabel( 'Tranmission Loss [dB]' );
-        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'NorthEast' );
-    axis( [ 0.1 665  -60 25 ] );
-    grid on;  box on;
-    set( gca, 'XScale', 'log' );
+    
+temp2 = temp * fractions( 1 );
+polarplot( angle(temp2), abs(temp2) );
+hold on;
+for index = 2:1:numel( fractions )
+    temp2 = temp * fractions( index );
+    polarplot( angle(temp2), abs(temp2), 'Color', 'k' );
+end
+grid on;
 
 
-
-%% Part 1d
-
-rpm = 0:1:350;  % rotations per minute
-    rpm_conversion_to_radians_per_second = 0.10472;  % radians\s
-        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
-
-frequency_set = angular_velocity / (2*pi);
-    r = frequency_set ./ fo;
-
-
-figure( 'Name', 'Problem 1d - Applied Force to Foundation' ); ...
-    hold on;
-    %
-    for index = 1:1:numel( damping_ratio )
-        plot( rpm, h_transmissibility( damping_ratio( index ), r ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ) );
-    end
-    %
-    line( [ 300, 300 ], [ 2 1e4 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 2, '300 RPM' );  grid on;
-    line( [ 0 350 ], [ 100 100 ], 'Color', 'r', 'LineStyle', '--' );
-        text( 0, 150, '100 N' );  grid on;    
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Force Applied to Foundation [N]' );
-        legend( '0.001', '0.004', '0.015', '0.063', '0.25', '1', 'Location', 'South' );
-    axis( [ -10 355  1 2e4 ] );
-    grid on;  box on;
-    set( gca, 'YScale', 'log' );
-
-
-
-%% Part 1e
-
-% The best damping ratio is 0.25.
-
-C = 0.25 * 2*sqrt( ks * total_mass );  % 519.4 kg\s
-
-% The units of a viscous damping coefficient are Newton-seconds per meter (Ns/m) or kilograms per second (kg/s).
-
-
-m = total_mass;
-k = [ ks  0 ];
-dampings = [ C  0 ];
-    admittance = nDOF_direct_solution( m, k, dampings, frequency_set, 'admittance' );
-
-
-figure( 'Name', 'Problem 1e - Admittance' ); ...
-    semilogy( rpm, abs( admittance ) );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    set( gca, 'YScale', 'log' );
-    %
-    line( [ 300, 300 ], [ 7e-6 2e-5 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 2e-5, '300 RPM' );  grid on;
-    axis( [ -10 355  6e-6 2.5e-4 ] );
-
-
-% temp2 = abs( admittance );
-%     round( temp2( 301 ), 3, 'significant' )
-
-
-
-%% Part 1f
-
-displacement = abs( admittance ) .* h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-
-
-figure( 'Name', 'Displacement' ); ...
-    plot( rpm, displacement );  grid on;
-    xlabel( 'Angular Speed [RPM]' );  ylabel( 'Displacement [m]' );
-    line( [ 300, 300 ], [ 1e-3 1e-2 ], 'Color', 'k', 'LineStyle', '--' );
-        text( 305, 1e-3, '300 RPM' );  grid on;
-    set( gca, 'YScale', 'log' );
-    axis( [ -10 355  1e-7 2e-2 ] );
-
-
-% temp2 = abs( displacement );
-%     round( temp2( 301 ), 3, 'significant' )
+polarplot3d
 
 
 
