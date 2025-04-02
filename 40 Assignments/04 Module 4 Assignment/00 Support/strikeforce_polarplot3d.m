@@ -6,21 +6,20 @@
 close all;  clear;  clc;
 % restoredefaultpath
 
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
 
 
 %%
 
-[t,r] = meshgrid(linspace(0,2*pi,361),linspace(-4,4,101));
-
-[x,y] = pol2cart(t,r);
+[ t, r ] = meshgrid( linspace(0, 2*pi, 361), linspace( -4, 4, 101) );
+    [ x, y ] = pol2cart( t, r );
 
 P = peaks(x,y);
 
 
-t2 = [30 270]*pi/180;
-
-r2 = [.8 4];
-    r3 = fliplr(r2);
+anglesDisplayed = [ 30 270 ]*pi/180;  % Angles displayed.
+radiiDisplayed = [ 4 0.8 ];
 
 
 axprop = {'DataAspectRatio',[1 1 8],'View', [-12 38],...
@@ -28,11 +27,8 @@ axprop = {'DataAspectRatio',[1 1 8],'View', [-12 38],...
           'XTick',[-4 -2 0 2 4],    'YTick',[-4 -2 0 2 4]};
 
 
-
-%% Mesh plot with contours, overlay 8 by 8 polar grid
-
 figure( 'color', 'white' ); ...
-    polarplot3d( P, 'plottype', 'meshc', 'angularrange', t2, 'radialrange', r3, 'meshscale', 2, 'polargrid',{8 8} );
+    polarplot3d( P, 'plottype', 'meshc', 'angularrange', anglesDisplayed, 'radialrange', radiiDisplayed, 'meshscale', 2, 'polargrid',{8 8} );
     set( gca, axprop{:} );
 
 
