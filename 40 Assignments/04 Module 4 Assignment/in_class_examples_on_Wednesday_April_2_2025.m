@@ -1,0 +1,314 @@
+
+
+
+%% Synopsis
+
+% Problem 1 - Simulation of Sources from Monopoles
+
+
+
+%% Note(s)
+
+% Distance (source and receivers) are in units of meters.
+
+% Source can be real valued or complex valued.  Complex valued sources have magnitude and phase information.
+
+% Complex pressures are in units of Pascals.
+
+
+
+%% Environment
+
+close all; clear; clc;
+% restoredefaultpath;
+
+addpath( genpath( './00 Support' ), '-begin' );
+
+set( groot, 'DefaultFigurePosition', [ 100  450    750  500 ] );  % x, y, width, height
+
+set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
+set( 0, 'DefaultFigureWindowStyle', 'normal' );
+set( 0, 'DefaultLineLineWidth', 0.8 );
+set( 0, 'DefaultTextInterpreter', 'Latex' );
+
+format ShortG;
+
+pause( 1 );
+
+
+
+%% Two Sources, One Receiver - From Class on Wednesday, April 2, 2025
+
+rho0 = 1.21;  % kg\m^3
+c = 343;  % m\s
+f = 100;  % Hz
+
+xyz_sources = [ ...
+    1, 0, 0; ...
+    -1, 0, 0 ; ...
+    ];
+
+Q_sources = [ 1  1 ];
+
+
+xyz_receivers = [ ...
+    5, 6, 9 ];
+
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );  % 0.96694 - 7.2428i
+
+% return
+
+%% One Source, Multiple Receivers - From Class on Wednesday, April 2, 2025
+
+% Monopole distance dependence.  Decay is 6 dB per double of distance.
+
+rho0 = 1.21;  % kg\m^3
+c = 343;  % m\s
+f = 100;  % Hz
+
+xyz_sources = [ ...
+    0, 0, 0; ...
+    ];
+Q_sources = [ 1 ];
+
+
+x = 0.01:0.01:10;
+    y = zeros( length( x ), 1 );  z = zeros( length( x ), 1 );
+        xyz_receivers = [ x(:) y(:) z(:) ];
+
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );  % 1,000-by-1
+    L = 10*log10( abs(p).^2 );
+
+% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+%     semilogx( x, L );  grid on;
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+
+% return
+
+%% Two Real Sources, Receivers in Circle of 3 m Radius - From Class on Wednesday, April 2, 2025
+
+rho0 = 1.21;  % kg\m^3
+c = 343;  % m\s
+f = 100;  % Hz
+
+xyz_sources = [ ... 
+    1e-2, 0, 0; ...
+    -1e-2, 0, 0; ...
+    ];
+
+Q_sources = [ 1  -1 ];
+
+
+r = 3;
+theta = 0:0.01:2*pi;
+    x = r*cos( theta );
+    y = r*sin( theta );
+    z = zeros( size( x ) );
+        xyz_receivers = [ x(:) y(:) z(:) ];
+
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );  % 629-by-1
+    p2 = abs(p).^2;
+        L = 10*log10( p2 / 20e-6 );
+            p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
+
+% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+%     subplot( 1, 2, 1 ); ...
+%         plot( theta, L );  hold on;
+%         plot( theta, p_dB_SPL_verify );  grid on;
+%         xlabel( 'Angle [radians]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+%     subplot( 1, 2, 2 ); ...
+%         polarplot( theta, L );  hold on;
+%         polarplot( theta, p_dB_SPL_verify );  grid on;
+
+% return
+
+%% Two Complex Sources, Receivers in Circle of 3 m Radius - From Class on Wednesday, April 2, 2025
+
+rho0 = 1.21;  % kg\m^3
+c = 343;  % m\s
+f = 100;  % Hz
+
+xyz_sources = [ ... 
+    1e-2, 0, 0; ...
+    -1e-2, 0, 0; ...
+    ];
+
+Q_sources = [ 1  -1 ];
+% Q_sources = [ 1  2.*(0.9+1j*0.7) ];
+    abs( Q_sources )
+
+
+r = 3;
+theta = 0:0.01:2*pi;
+    x = r*cos( theta );
+    y = r*sin( theta );
+    z = zeros( size( x ) );
+        xyz_receivers = [ x(:) y(:) z(:) ];
+
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );  % 629-by-1
+    p2 = abs(p).^2;
+        L = 10*log10( p2 / 20e-6 );
+            p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
+
+% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+%     subplot( 1, 2, 1 ); ...
+%         plot( theta, L );  hold on;
+%         plot( theta, p_dB_SPL_verify );  grid on;
+%         xlabel( 'Angle [radians]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+%     subplot( 1, 2, 2 ); ...
+%         polarplot( theta, L );  hold on;
+%         polarplot( theta, p_dB_SPL_verify );  grid on;
+
+% return
+
+%% Strikeforce
+
+c = 343;  % m\s
+rho0 = 1.21;  % kg/m^3
+
+f = 1e3;
+    lambda = c / f;  % 0.343 m
+
+fractions = [ 0.5  0.75  1 1.25  1.5  2  2.5  3  3.5  5  10 ];
+
+xyz_sources = [ 0, 0, 0 ];
+Q_sources = 1 + 1i*1;
+
+
+
+%% Problem 2a - Pressure Versus Distance for Monopole
+
+x = lambda .* fractions;
+    xyz_receivers = [ x.'  zeros( numel(x) , 1 )  zeros( numel(x) , 1 ) ];
+
+p_monopole = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f, rho0, c );
+
+% figure( 'Name', 'Monopole - Pressure Versus Distance' ); ...
+%     loglog( x, abs(p_monopole) );  grid on;
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure [dB]' );
+
+% return
+
+%% Problem 2b - Directivity Patterns
+
+N = 128;
+    n = 0:1:N;
+        temp = exp( 1i.*(2*pi)/N*n);
+
+% Set of unit magnitude points around the origin.
+x = real( temp ).';  y = imag( temp ).';
+    xy_unit_set = [ x, y ];
+        xyz_unit_set = [ xy_unit_set  zeros( size( xy_unit_set, 1 ), 1 ) ];
+
+% Scale by fractions.
+
+
+source_1 = [ 0, 0, 0 ];
+source_2 = [ 5*lambda, 0, 0 ];
+% source_2 = [ 0.6*lambda, 0, 0 ];
+% source_2 = [ 0.1*lambda, 0, 0 ];
+    dipole_xyz_sources = [ source_1;  source_2 ];
+
+
+k = (2*pi) / lambda;
+    d = 1 / k
+
+    aValue = 6e-1;
+
+    dipole_xyz_sources = [ ...
+        aValue  aValue  0; ...
+        aValue  -aValue  0; ...
+        -aValue  aValue  0; ...
+        -aValue  -aValue  0 ];  % Lateral Quadrupole
+
+% dipole_Q_sources = repmat( Q_sources, 2, 1 );
+% dipole_Q_sources = [ Q_sources;  0.5.*Q_sources ];
+
+     dipole_Q_sources = [ ...
+         1 + 1i; ...
+         1 - 1i; ...
+         1 + 1i; ...
+         1 - 1i ];
+
+
+% figure; ...
+%     polarplot( nan, nan );  hold on;
+% 
+% 
+% for fraction_index = 1:1:numel( fractions )
+% 
+%     for xy_index = 1:1:size( xy_unit_set, 1 )
+% 
+%         % p_monopole = sum_of_monopoles( xyz_sources, Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
+%         % p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
+%         p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set, f, rho0, c );
+%             temp = xy_unit_set(:, 1) + 1i*xy_unit_set(:, 2 );
+%                 polarplot( angle(temp), abs(p_monopole)./1e3 );
+% 
+%         % keyboard
+% 
+%     end
+% 
+%     % keyboard;
+% 
+% end
+% 
+% figure
+
+
+% return
+
+
+
+% Monopole
+% figure( 'Name', 'Monopole - Directivity' ); ...
+%     temp2 = temp * fractions( 1 );
+%     polarplot( angle(temp2), abs(temp2) );
+%     hold on;
+%     for index = 2:1:numel( fractions )
+%         temp2 = temp * fractions( index );
+%         polarplot( angle(temp2), abs(temp2), 'Color', [ 0.00, 0.45, 0.74 ] );
+%     end
+%     grid on;
+
+
+% Dipole - Equal Strength, In-phase Sources
+% source_1 = [ 0, 0, 0 ];
+% source_2 = [ lambda, 0, 0 ];
+%     dipole_xyz_sources = [ source_1;  source_2 ];
+% 
+% dipole_Q_sources = repmat( Q_sources, 2, 1 );
+% 
+% p_monopole = sum_of_monopoles( dipole_xyz_sources, Q_sources, xyz_receivers, f, rho0, c );
+
+
+    
+%% Clean-up
+
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 3, 4, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 2 );
+        end
+end
+
+fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
+
+
+
+%% Reference(s)
+
+p = 10 + 1i*5;  % Pascals;  sinusoid
+
+p_mag = abs( p )  % 11.18 Pascals
+
+p_rms = p_mag / sqrt(2)  % 7.91 Pascals RMS
+
+p_dB_SPL = 20*log10( p_rms / 20e-6 )  % 111.94 dB SPL Z
+
+
+p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p )
+
+
