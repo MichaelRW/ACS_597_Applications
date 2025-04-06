@@ -7,6 +7,14 @@
 
 
 
+%% To Do
+
+% Confirm relationship of pressure dependence on distance for a given frequency.
+
+% 
+
+
+
 %% Note(s)
 
 % Distance (source and receivers) are in units of meters.
@@ -49,7 +57,7 @@ k = (2*pi*f) ./ c;
 
 radius_fractions = linspace( 0.1, 10, 8 );
 
-% return
+
 
 %% Problem 2a - Pressure Versus Distance for Monopole
 
@@ -73,12 +81,12 @@ for index = 1:1:numel( f )
 end
 
 
-% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-%     semilogx( x, L );  grid on;
-%         legend( f_set, 'Location', 'NorthEast' );
-%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+    semilogx( x, L );  grid on;
+        legend( f_set, 'Location', 'NorthEast' );
+    xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
 
-
+return
 
 %% Problem 2b - Monopole Directivity Pattern
 
