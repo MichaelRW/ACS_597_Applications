@@ -55,7 +55,7 @@ f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
 
 k = (2*pi*f) ./ c;      
 
-radius_fractions = linspace( 0.1, 10, 8 );
+radius_fractions = 0.1:1:4;
 
 
 
@@ -81,12 +81,12 @@ for index = 1:1:numel( f )
 end
 
 
-figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-    semilogx( x, L );  grid on;
-        legend( f_set, 'Location', 'NorthEast' );
-    xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+%     semilogx( x, L );  grid on;
+%         legend( f_set, 'Location', 'NorthEast' );
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
 
-return
+% return
 
 %% Problem 2b - Monopole Directivity Pattern
 
@@ -97,11 +97,73 @@ xyz_sources = [ ...
 Q_sources = 1;
 
 
-r = radius_fractions;
+r = radius_fractions;  % m
 
 theta = 0:0.01:2*pi;
 
-figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+xyz_receivers = nan( numel( r ), numel( theta), 3 );
+
+for radius_index = 1:1:numel( r )
+
+    x = r( radius_index )*cos( theta );  y = r( radius_index )*sin( theta );  z = zeros( size( x ) );
+        xyz_receivers( radius_index, :, :, : ) = [ x(:) y(:) z(:) ];
+
+end
+
+
+% color_maps = { 'Gray', 'Bone', 'Copper' };
+color_maps = { 'Blues', 'Greens', 'Oranges' };
+        
+
+
+
+    for frequency_index = 1:1:numel( f )
+    % for frequency_index = 1
+
+        h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
+
+        OFFSET = 3;
+            cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+                cmap(1:OFFSET, :) = [];
+
+        tick_marks = [ ];
+
+        for radius_index = 1:1:numel( r )
+    
+            p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+                L = 10*log10( abs(p).^2 );
+                    polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
+                        tick_marks = [ L(1) tick_marks ];
+
+        end
+
+
+        colormap( gca( h ), cmap );
+            h_colorbar = colorbar( );
+                h_colorbar.Ticks = linspace( 0, 1, 4 );
+                h_colorbar.TickLabels = num2cell( round( tick_marks ) );
+
+                keyboard
+            %
+            h_colorbar.Label.String = 'Sound Pressure [dB]';
+
+        rlim( [ 0, 100 ] );
+
+    end
+
+return
+                    
+
+
+
+
+
+figure
+polarplot(a, r1)
+hold on
+polarplot(a, r2)
+hold off
+
     h1 = subplot( 1, 2, 1 ); ...
         plot( nan, nan );  hold on;
         xlabel( 'Angle [radians]' );  ylabel( 'Pressure Magnitude [$dB$]' );
@@ -128,7 +190,7 @@ for index = 1:1:numel( r )
 
 end
 
-
+return
 
 %% ph
 
