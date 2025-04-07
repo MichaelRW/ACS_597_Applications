@@ -142,8 +142,20 @@ color_maps = { 'Blues', 'Greens', 'Oranges' };
             h_colorbar = colorbar( );
                 h_colorbar.Ticks = linspace( 0, 1, 4 );
                 h_colorbar.TickLabels = num2cell( round( tick_marks ) );
+                    temp = h_colorbar.TickLabels
 
-                keyboard
+                    temp_r = num2str( r ).'
+
+                    temp2 = [ round( tick_marks ).'  r.' ]
+                        temp3 = string( temp2 )
+
+            for i = 1:1:size( temp3, 1 )
+                new_labels( i, : ) = sprintf( '%i dB, %1g m', temp2( i, : ) );
+            end
+
+            h_colorbar.TickLabels = new_labels;
+
+                % keyboard
             %
             h_colorbar.Label.String = 'Sound Pressure [dB]';
 
