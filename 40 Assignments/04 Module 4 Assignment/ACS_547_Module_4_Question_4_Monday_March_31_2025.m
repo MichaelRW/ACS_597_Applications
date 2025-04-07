@@ -5,6 +5,8 @@
 
 % Problem 4 - Washing Machine Abuse Testing
 
+% See Lecture 22 on Monday, April 7, 2025
+
 
 
 %% Environment

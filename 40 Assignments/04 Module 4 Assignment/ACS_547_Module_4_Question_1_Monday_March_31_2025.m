@@ -320,3 +320,22 @@ p_dB_SPL = 20*log10( p_rms / 20e-6 )  % 111.94 dB SPL Z
 p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p )
 
 
+
+
+%% URLs
+
+% https://www.mathworks.com/matlabcentral/answers/1771015-how-to-customize-a-colormap
+
+% https://www.mathworks.com/help/matlab/ref/colororder.html#mw_a3ac0dbb-c8d8-48c9-977c-1bfa84840b08
+
+% https://www.mathworks.com/matlabcentral/answers/493751-increase-levels-on-colorbar
+
+% https://www.mathworks.com/matlabcentral/answers/216283-get-current-axes-from-multiple-figures
+
+% https://www.mathworks.com/matlabcentral/answers/288557-how-to-join-every-row-of-an-array-of-strings-in-a-single-string-for-time-plotting-purposes
+
+% https://www.mathworks.com/matlabcentral/answers/352290-set-colorbar-ticklabels-and-tickmarks
+
+% https://www.mathworks.com/matlabcentral/answers/152426-sprintf-d-x-prints-out-exponential-notation-instead-of-decimal-notation
+
+

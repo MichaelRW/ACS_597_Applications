@@ -5,6 +5,8 @@
 
 % Problem 3 - Washing Machine Dynamic Vibration Absorber (DVA) Design
 
+% See Lecture 22 on Monday, April 7, 2025
+
 
 
 %% Note(s)
