@@ -11,7 +11,8 @@
 
 % Confirm relationship of pressure dependence on distance for a given frequency.
 
-% 
+% https://www.google.com/search?q=wiki+wave+number&rlz=1C1UEAD_enCA1080CA1080&oq=wiki+wave+number&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yBwgCEAAY7wUyCggDEAAYgAQYogQyBggEEEUYPNIBCDI0NDNqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8
+% https://en.wikipedia.org/wiki/Wavenumber
 
 
 
@@ -53,7 +54,7 @@ rho0 = 1.21;  % kg/m^3
 f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
     lambda = c ./ f;  % 3.43 m, 0.343 m, and 0.0343 m
 
-k = (2*pi*f) ./ c;      
+k = (2*pi*f) ./ c;  % or 2pi / wavelength
 
 radius_fractions = 0.1:1:4;
 
