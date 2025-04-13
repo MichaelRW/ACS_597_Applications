@@ -56,7 +56,22 @@ f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
 
 k = (2*pi*f) ./ c;  % or 2pi / wavelength
 
-radius_fractions = 0.1:1:4;
+radius_fractions = 0.3:1:5;
+
+
+
+%% Color Sets
+
+color_maps = { 'Blues', 'Greens', 'Oranges' };
+
+for frequency_index = 1:1:numel( f )
+
+    OFFSET = 3;
+        cmap = slanCM( color_maps{ frequency_index }, numel( radius_fractions ) + OFFSET );
+            cmap(1:OFFSET, :) = [ ];
+                cmap_vectors( frequency_index, 1, :, : ) = flipud( cmap );
+
+end
 
 
 
@@ -76,16 +91,28 @@ x = 0.01:0.01:10;
         xyz_receivers = [ x(:) y(:) z(:) ];
 
 
-for index = 1:1:numel( f )
-    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
-        L( index, : ) = 10*log10( abs(p).^2 );
-end
+color_set = [ ...
+    0.031373  0.18824  0.41961; ...
+    0  0.26667  0.10588; ...
+    0.49804  0.15294  0.015686 ];
 
+h = [ ];
 
 figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-    semilogx( x, L );  grid on;
-        legend( f_set, 'Location', 'NorthEast' );
+    plot( nan, nan );  hold on;
+    %
+    for index = 1:1:numel( f )
+        p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
+            L( index, : ) = 10*log10( abs(p).^2 );
+                h_plot = plot( x, L( index, : ), 'Color', color_set( index, : ) );
+                    h = [ h h_plot ];
+    end
+    %
+    grid on;
+    %
+    legend( h, f_set, 'Location', 'NorthEast' );
     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+    set( gca, 'XScale', 'log' );
 
 
 % Note(s):
@@ -106,7 +133,7 @@ xyz_sources = [ ...
 Q_sources = 1;  % m^2/s
 
 
-r = radius_fractions;  % m
+r = radius_fractions;  % m (unity multiplier)
 
 theta = 0:0.01:2*pi;
 
@@ -120,51 +147,49 @@ for radius_index = 1:1:numel( r )
 end
 
 
-color_maps = { 'Blues', 'Greens', 'Oranges' };        
-
-
 for frequency_index = 1:1:numel( f )
 
     h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
 
     OFFSET = 3;
-    cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-    cmap(1:OFFSET, :) = [];
+        cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+            cmap(1:OFFSET, :) = [ ];
+                cmap = flipud( cmap );
 
     tick_marks = [ ];
 
     for radius_index = 1:1:numel( r )
 
         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-        L = 10*log10( abs(p).^2 );
-        polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
-        tick_marks = [ L(1) tick_marks ];
+            L = 10*log10( abs(p).^2 );
+
+        polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
+            tick_marks = [ L(1) tick_marks ];
 
     end
 
 
-    colormap( gca( h ), cmap );
+    colormap( gca( h ), flipud( cmap ) );
+
     h_colorbar = colorbar( );
-    h_colorbar.Ticks = linspace( 0, 1, 4 );
-    h_colorbar.TickLabels = num2cell( round( tick_marks ) );
-    temp = h_colorbar.TickLabels;
+        h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
+        h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
 
-    % temp_r = num2str( r ).'
-
-    temp2 = [ round( tick_marks ).'  r.' ];
+    temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
         temp3 = string( temp2 );
 
     for i = 1:1:size( temp3, 1 )
         new_labels( i, : ) = sprintf( '%i dB, %1g m', temp2( i, : ) );
     end
 
-    h_colorbar.TickLabels = new_labels;
-
-    % keyboard
-
+    h_colorbar.TickLabels = flipud( new_labels );
     h_colorbar.Label.String = 'Sound Pressure [dB]';
 
-    rlim( [ 0, 100 ] );
+    rlim( [ 0, 1.2*max( r ) ] );
+    %
+    rticks( r );
+        rticklabels( { 'r = 0.3', 'r = 1.3', 'r = 2.3', 'r = 3.3', 'r = 4.3', 'r = 5.3' } );
+            set( gca, 'RTickLabelRotation', 45 );
 
 end
 
@@ -312,14 +337,14 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 p = 10 + 1i*5;  % Pascals;  sinusoid
 
-p_mag = abs( p )  % 11.18 Pascals
+p_mag = abs( p );  % 11.18 Pascals
 
-p_rms = p_mag / sqrt(2)  % 7.91 Pascals RMS
+p_rms = p_mag / sqrt(2);  % 7.91 Pascals RMS
 
-p_dB_SPL = 20*log10( p_rms / 20e-6 )  % 111.94 dB SPL Z
+p_dB_SPL = 20*log10( p_rms / 20e-6 );  % 111.94 dB SPL Z
 
 
-p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p )
+p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
 
 
 
