@@ -20,7 +20,7 @@
 
 % Distance (source and receivers) are in units of meters.
 
-% Source can be real valued or complex valued.  Complex valued sources have magnitude and phase information.
+% Source can be real-valued or complex-valued.  Complex valued sources have magnitude and phase information.
 
 % Complex pressures are in units of Pascals.
 
@@ -48,7 +48,7 @@ pause( 1 );
 
 %% Parameters
 
-c = 343;  % m\s
+c = 343;  % m/s
 rho0 = 1.21;  % kg/m^3
 
 f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
@@ -68,7 +68,7 @@ xyz_sources = [ ...
     0, 0, 0; ...
     ];
 %
-Q_sources = 1;
+Q_sources = 1;  % m^3/s
 
 
 x = 0.01:0.01:10;
@@ -77,15 +77,23 @@ x = 0.01:0.01:10;
 
 
 for index = 1:1:numel( f )
-    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
         L( index, : ) = 10*log10( abs(p).^2 );
 end
 
 
-% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-%     semilogx( x, L );  grid on;
-%         legend( f_set, 'Location', 'NorthEast' );
-%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+    semilogx( x, L );  grid on;
+        legend( f_set, 'Location', 'NorthEast' );
+    xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+
+
+% Note(s):
+%
+%   With a higher frequency, "k", the wave number, will be larger.
+%   Pressure will be higher for the same distance.
+
+%   For a doubling in frequency, the pressure will be 20 dB larger.
 
 % return
 
@@ -93,16 +101,16 @@ end
 
 xyz_sources = [ ... 
     0, 0, 0; ...
-    ];
+    ];  % m
 %
-Q_sources = 1;
+Q_sources = 1;  % m^2/s
 
 
 r = radius_fractions;  % m
 
 theta = 0:0.01:2*pi;
 
-xyz_receivers = nan( numel( r ), numel( theta), 3 );
+xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
 
 for radius_index = 1:1:numel( r )
 
@@ -112,169 +120,162 @@ for radius_index = 1:1:numel( r )
 end
 
 
-% color_maps = { 'Gray', 'Bone', 'Copper' };
-color_maps = { 'Blues', 'Greens', 'Oranges' };
-        
+color_maps = { 'Blues', 'Greens', 'Oranges' };        
 
 
+for frequency_index = 1:1:numel( f )
 
-    for frequency_index = 1:1:numel( f )
-    % for frequency_index = 1
+    h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
 
-        h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
+    OFFSET = 3;
+    cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+    cmap(1:OFFSET, :) = [];
 
-        OFFSET = 3;
-            cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-                cmap(1:OFFSET, :) = [];
+    tick_marks = [ ];
 
-        tick_marks = [ ];
+    for radius_index = 1:1:numel( r )
 
-        for radius_index = 1:1:numel( r )
-    
-            p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-                L = 10*log10( abs(p).^2 );
-                    polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
-                        tick_marks = [ L(1) tick_marks ];
-
-        end
-
-
-        colormap( gca( h ), cmap );
-            h_colorbar = colorbar( );
-                h_colorbar.Ticks = linspace( 0, 1, 4 );
-                h_colorbar.TickLabels = num2cell( round( tick_marks ) );
-                    temp = h_colorbar.TickLabels
-
-                    temp_r = num2str( r ).'
-
-                    temp2 = [ round( tick_marks ).'  r.' ]
-                        temp3 = string( temp2 )
-
-            for i = 1:1:size( temp3, 1 )
-                new_labels( i, : ) = sprintf( '%i dB, %1g m', temp2( i, : ) );
-            end
-
-            h_colorbar.TickLabels = new_labels;
-
-                % keyboard
-            %
-            h_colorbar.Label.String = 'Sound Pressure [dB]';
-
-        rlim( [ 0, 100 ] );
+        p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+        L = 10*log10( abs(p).^2 );
+        polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
+        tick_marks = [ L(1) tick_marks ];
 
     end
 
-return
-                    
 
+    colormap( gca( h ), cmap );
+    h_colorbar = colorbar( );
+    h_colorbar.Ticks = linspace( 0, 1, 4 );
+    h_colorbar.TickLabels = num2cell( round( tick_marks ) );
+    temp = h_colorbar.TickLabels;
 
+    % temp_r = num2str( r ).'
 
+    temp2 = [ round( tick_marks ).'  r.' ];
+        temp3 = string( temp2 );
 
+    for i = 1:1:size( temp3, 1 )
+        new_labels( i, : ) = sprintf( '%i dB, %1g m', temp2( i, : ) );
+    end
 
-figure
-polarplot(a, r1)
-hold on
-polarplot(a, r2)
-hold off
+    h_colorbar.TickLabels = new_labels;
 
-    h1 = subplot( 1, 2, 1 ); ...
-        plot( nan, nan );  hold on;
-        xlabel( 'Angle [radians]' );  ylabel( 'Pressure Magnitude [$dB$]' );
-    subplot( 1, 2, 2 ); ...
-        h2 = polarplot( nan, nan );  hold on;
+    % keyboard
 
+    h_colorbar.Label.String = 'Sound Pressure [dB]';
 
-for index = 1:1:numel( r )
-
-    x = r( index )*cos( theta );
-    y = r( index )*sin( theta );
-    z = zeros( size( x ) );
-        xyz_receivers = [ x(:) y(:) z(:) ];
-
-    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f(1), rho0, c );
-    p2 = abs(p).^2;
-        L = 10*log10( p2 );
-
-    subplot( h1 ); ...
-        plot( theta, L.' );  grid on;
-
-    % polarplot( h2 ); ...
-        polarplot( theta, L );  grid on;
+    rlim( [ 0, 100 ] );
 
 end
 
-return
+% return
 
 %% ph
 
-return
+% figure
+% polarplot(a, r1)
+% hold on
+% polarplot(a, r2)
+% hold off
+% 
+%     h1 = subplot( 1, 2, 1 ); ...
+%         plot( nan, nan );  hold on;
+%         xlabel( 'Angle [radians]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+%     subplot( 1, 2, 2 ); ...
+%         h2 = polarplot( nan, nan );  hold on;
+% 
+% 
+% for index = 1:1:numel( r )
+% 
+%     x = r( index )*cos( theta );
+%     y = r( index )*sin( theta );
+%     z = zeros( size( x ) );
+%         xyz_receivers = [ x(:) y(:) z(:) ];
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f(1), rho0, c );
+%     p2 = abs(p).^2;
+%         L = 10*log10( p2 );
+% 
+%     subplot( h1 ); ...
+%         plot( theta, L.' );  grid on;
+% 
+%     % polarplot( h2 ); ...
+%         polarplot( theta, L );  grid on;
+% 
+% end
+% 
+% return
 
-N = 128;
-    n = 0:1:N;
-        temp = exp( 1i.*(2*pi)/N*n);
+%% ph
 
-% Set of unit magnitude points around the origin.
-x = real( temp ).';  y = imag( temp ).';
-    xy_unit_set = [ x, y ];
-        xyz_unit_set = [ xy_unit_set  zeros( size( xy_unit_set, 1 ), 1 ) ];
-
-% Scale by fractions.
-
-
-source_1 = [ 0, 0, 0 ];
-source_2 = [ 5*lambda, 0, 0 ];
-% source_2 = [ 0.6*lambda, 0, 0 ];
-% source_2 = [ 0.1*lambda, 0, 0 ];
-    dipole_xyz_sources = [ source_1;  source_2 ];
-
-
-k = (2*pi) / lambda;
-    d = 1 / k
-
-    aValue = 6e-1;
-
-    dipole_xyz_sources = [ ...
-        aValue  aValue  0; ...
-        aValue  -aValue  0; ...
-        -aValue  aValue  0; ...
-        -aValue  -aValue  0 ];  % Lateral Quadrupole
-
-% dipole_Q_sources = repmat( Q_sources, 2, 1 );
-% dipole_Q_sources = [ Q_sources;  0.5.*Q_sources ];
-
-     dipole_Q_sources = [ ...
-         1 + 1i; ...
-         1 - 1i; ...
-         1 + 1i; ...
-         1 - 1i ];
-
-
-figure; ...
-    polarplot( nan, nan );  hold on;
-
-
-for fraction_index = 1:1:numel( fractions )
-
-    for xy_index = 1:1:size( xy_unit_set, 1 )
-
-        % p_monopole = sum_of_monopoles( xyz_sources, Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
-        % p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
-        p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set, f, rho0, c );
-            temp = xy_unit_set(:, 1) + 1i*xy_unit_set(:, 2 );
-                polarplot( angle(temp), abs(p_monopole)./1e3 );
-
-        % keyboard
-
-    end
-
-    % keyboard;
-
-end
-
-figure
-
-
-return
+% return
+% 
+% N = 128;
+%     n = 0:1:N;
+%         temp = exp( 1i.*(2*pi)/N*n);
+% 
+% % Set of unit magnitude points around the origin.
+% x = real( temp ).';  y = imag( temp ).';
+%     xy_unit_set = [ x, y ];
+%         xyz_unit_set = [ xy_unit_set  zeros( size( xy_unit_set, 1 ), 1 ) ];
+% 
+% % Scale by fractions.
+% 
+% 
+% source_1 = [ 0, 0, 0 ];
+% source_2 = [ 5*lambda, 0, 0 ];
+% % source_2 = [ 0.6*lambda, 0, 0 ];
+% % source_2 = [ 0.1*lambda, 0, 0 ];
+%     dipole_xyz_sources = [ source_1;  source_2 ];
+% 
+% 
+% k = (2*pi) / lambda;
+%     d = 1 / k
+% 
+%     aValue = 6e-1;
+% 
+%     dipole_xyz_sources = [ ...
+%         aValue  aValue  0; ...
+%         aValue  -aValue  0; ...
+%         -aValue  aValue  0; ...
+%         -aValue  -aValue  0 ];  % Lateral Quadrupole
+% 
+% % dipole_Q_sources = repmat( Q_sources, 2, 1 );
+% % dipole_Q_sources = [ Q_sources;  0.5.*Q_sources ];
+% 
+%      dipole_Q_sources = [ ...
+%          1 + 1i; ...
+%          1 - 1i; ...
+%          1 + 1i; ...
+%          1 - 1i ];
+% 
+% 
+% figure; ...
+%     polarplot( nan, nan );  hold on;
+% 
+% 
+% for fraction_index = 1:1:numel( fractions )
+% 
+%     for xy_index = 1:1:size( xy_unit_set, 1 )
+% 
+%         % p_monopole = sum_of_monopoles( xyz_sources, Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
+%         % p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set.*fractions( fraction_index ), f, rho0, c );
+%         p_monopole = sum_of_monopoles( dipole_xyz_sources, dipole_Q_sources, xyz_unit_set, f, rho0, c );
+%             temp = xy_unit_set(:, 1) + 1i*xy_unit_set(:, 2 );
+%                 polarplot( angle(temp), abs(p_monopole)./1e3 );
+% 
+%         % keyboard
+% 
+%     end
+% 
+%     % keyboard;
+% 
+% end
+% 
+% figure
+% 
+% 
+% return
 
 
 
