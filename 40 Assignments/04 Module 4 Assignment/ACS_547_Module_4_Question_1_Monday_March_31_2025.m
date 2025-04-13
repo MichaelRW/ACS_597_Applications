@@ -56,7 +56,7 @@ f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
 
 k = (2*pi*f) ./ c;  % or 2pi / wavelength
 
-radius_fractions = 0.3:1:5;
+radius_fractions = [ 0.5  2.4  4.8  9.6 ];
 
 
 
@@ -96,23 +96,24 @@ color_set = [ ...
     0  0.26667  0.10588; ...
     0.49804  0.15294  0.015686 ];
 
-h = [ ];
 
-figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-    plot( nan, nan );  hold on;
-    %
-    for index = 1:1:numel( f )
-        p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
-            L( index, : ) = 10*log10( abs(p).^2 );
-                h_plot = plot( x, L( index, : ), 'Color', color_set( index, : ) );
-                    h = [ h h_plot ];
-    end
-    %
-    grid on;
-    %
-    legend( h, f_set, 'Location', 'NorthEast' );
-    xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
-    set( gca, 'XScale', 'log' );
+% h = [ ];
+% 
+% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
+%     plot( nan, nan );  hold on;
+%     %
+%     for index = 1:1:numel( f )
+%         p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
+%             L.monopole( index, : ) = 10*log10( abs(p).^2 );
+%                 h_plot = plot( x, L.monopole( index, : ), 'Color', color_set( index, : ) );
+%                     h = [ h h_plot ];
+%     end
+%     %
+%     grid on;
+%     %
+%     legend( h, f_set, 'Location', 'NorthEast' );
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+%     set( gca, 'XScale', 'log' );
 
 
 % Note(s):
@@ -122,7 +123,7 @@ figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
 
 %   For a doubling in frequency, the pressure will be 20 dB larger.
 
-% return
+
 
 %% Problem 2b - Monopole Directivity Pattern
 
@@ -140,58 +141,150 @@ theta = 0:0.01:2*pi;
 xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
 
 for radius_index = 1:1:numel( r )
-
     x = r( radius_index )*cos( theta );  y = r( radius_index )*sin( theta );  z = zeros( size( x ) );
         xyz_receivers( radius_index, :, :, : ) = [ x(:) y(:) z(:) ];
-
 end
 
 
-for frequency_index = 1:1:numel( f )
+% for frequency_index = 1:1:numel( f )
+% 
+%     h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
+% 
+%     OFFSET = 3;
+%         cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+%             cmap(1:OFFSET, :) = [ ];
+%                 cmap = flipud( cmap );
+% 
+%     tick_marks = [ ];
+% 
+%     for radius_index = 1:1:numel( r )
+% 
+%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+%             L( frequency_index, : ) = 10*log10( abs(p).^2 );
+% 
+%         polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
+%             tick_marks = [ L( frequency_index, 1 ) tick_marks ];
+% 
+%     end    
+% 
+% 
+%     colormap( gca( h ), flipud( cmap ) );
+% 
+%     h_colorbar = colorbar( );
+%         h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
+%         h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
+% 
+%     temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
+%         temp3 = string( temp2 );
+% 
+%     for i = 1:1:size( temp3, 1 )
+%         new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
+%     end
+% 
+%     h_colorbar.TickLabels = flipud( new_labels );
+%     h_colorbar.Label.String = 'Sound Pressure [dB]';
+% 
+%     rlim( [ 0, 1.2*max( r ) ] );
+%     %
+%     rticks( r );
+%         rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
+%             set( gca, 'RTickLabelRotation', 45 );
+% 
+% end
 
-    h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
+
+% h = [ ];
+% 
+% figure( 'Name', 'Monople - Pressure Versus Angle' ); ...
+%     plot( nan, nan );  hold on;
+%     %
+%     for index = 1:1:numel( f )
+%         h_plot = plot( theta.*180./pi, L( index, : ), 'Color', color_set( index, : ) );  grid on;
+%                     h = [ h h_plot ];
+%     end
+%     %
+%     legend( h, f_set, 'Location', 'EastOutside' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 9.6 m [$dB$]' );
+%     axis( [ -10 370  0 60 ] );
+
+% return
+
+%% Problem 2b - Dipole Directivity Pattern
+
+close all;
+
+xyz_sources = [ ... 
+    0, 0, 0; ...
+    0.1715, 0, 0; ...
+    ];  % m
+%
+Q_sources = [ ...
+    1 + 1i; ...
+    -1 - 1i; ...
+    ];  % m^3/s
+
+
+for frequency_index = 2  % 1 kHz
+
+    h = figure( 'Name', 'Dipole - Spherical Spreading' ); ...
 
     OFFSET = 3;
-        cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-            cmap(1:OFFSET, :) = [ ];
-                cmap = flipud( cmap );
+    cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+    cmap(1:OFFSET, :) = [ ];
+    cmap = flipud( cmap );
 
     tick_marks = [ ];
 
-    for radius_index = 1:1:numel( r )
+    for radius_index = 4
 
         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-            L = 10*log10( abs(p).^2 );
+        L = 10*log10( abs(p).^2 );
 
-        polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
-            tick_marks = [ L(1) tick_marks ];
+        % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
+        polarplot( theta, L ); hold on;
+        tick_marks = [ L(1) tick_marks ];
 
     end
 
 
-    colormap( gca( h ), flipud( cmap ) );
-
-    h_colorbar = colorbar( );
-        h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
-        h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-
-    temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
-        temp3 = string( temp2 );
-
-    for i = 1:1:size( temp3, 1 )
-        new_labels( i, : ) = sprintf( '%i dB, %1g m', temp2( i, : ) );
-    end
-
-    h_colorbar.TickLabels = flipud( new_labels );
-    h_colorbar.Label.String = 'Sound Pressure [dB]';
-
-    rlim( [ 0, 1.2*max( r ) ] );
+    % colormap( gca( h ), flipud( cmap ) );
     %
-    rticks( r );
-        rticklabels( { 'r = 0.3', 'r = 1.3', 'r = 2.3', 'r = 3.3', 'r = 4.3', 'r = 5.3' } );
-            set( gca, 'RTickLabelRotation', 45 );
+    % h_colorbar = colorbar( );
+    %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
+    %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
+    %
+    % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
+    %     temp3 = string( temp2 );
+    %
+    % for i = 1:1:size( temp3, 1 )
+    %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
+    % end
+    %
+    % h_colorbar.TickLabels = flipud( new_labels );
+    % h_colorbar.Label.String = 'Sound Pressure [dB]';
+
+    % rlim( [ 0, 1.2*max( r ) ] );
+    % %
+    % rticks( r );
+    %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
+    %         set( gca, 'RTickLabelRotation', 45 );
 
 end
+
+
+% h = [ ];
+% 
+% figure( 'Name', 'Dipole - Pressure Versus Angle' ); ...
+%     plot( nan, nan );  hold on;
+%     %
+%     for index = 1:1:numel( f )
+%         h_plot = plot( theta.*180./pi, L( index, : ), 'Color', color_set( index, : ) );  grid on;
+%                     h = [ h h_plot ];
+%     end
+%     %
+%     % legend( h, f_set, 'Location', 'EastOutside' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 9.6 m [$dB$]' );
+%     % axis( [ -10 370  0 60 ] );
 
 % return
 
@@ -364,5 +457,37 @@ p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
 % https://www.mathworks.com/matlabcentral/answers/352290-set-colorbar-ticklabels-and-tickmarks
 
 % https://www.mathworks.com/matlabcentral/answers/152426-sprintf-d-x-prints-out-exponential-notation-instead-of-decimal-notation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
