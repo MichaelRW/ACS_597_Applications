@@ -20,7 +20,9 @@
 
 % Distance (source and receivers) are in units of meters.
 
-% Source can be real-valued or complex-valued.  Complex valued sources have magnitude and phase information.
+% Source can be real-valued or complex-valued.  Complex-valued sources have magnitude and phase information.
+
+% Sources have units of volume velocity, m^3/s.
 
 % Complex pressures are in units of Pascals.
 
@@ -36,7 +38,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 set( groot, 'DefaultFigurePosition', [ 100  450    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultFigureWindowStyle', 'norma' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -146,54 +148,54 @@ for radius_index = 1:1:numel( r )
 end
 
 
-% for frequency_index = 1:1:numel( f )
-for frequency_index = 2
 
-    h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
-
-    OFFSET = 3;
-        cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-            cmap(1:OFFSET, :) = [ ];
-                cmap = flipud( cmap );
-
-    tick_marks = [ ];
-
-    % for radius_index = 1:1:numel( r )
-    for radius_index = 4
-
-        p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-            L( frequency_index, : ) = 10*log10( abs(p).^2 );
-
-        % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
-        polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
-            tick_marks = [ L( frequency_index, 1 ) tick_marks ];
-
-    end    
-
-
-    % colormap( gca( h ), flipud( cmap ) );
-    % 
-    % h_colorbar = colorbar( );
-    %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
-    %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-    % 
-    % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
-    %     temp3 = string( temp2 );
-    % 
-    % for i = 1:1:size( temp3, 1 )
-    %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
-    % end
-    % 
-    % h_colorbar.TickLabels = flipud( new_labels );
-    % h_colorbar.Label.String = 'Sound Pressure [dB]';
-
-    % rlim( [ 0, 1.2*max( r ) ] );
-    % %
-    % rticks( r );
-    %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
-    %         set( gca, 'RTickLabelRotation', 45 );
-
-end
+% for frequency_index = 2
+% 
+%     h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
+% 
+%     OFFSET = 3;
+%         cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+%             cmap(1:OFFSET, :) = [ ];
+%                 cmap = flipud( cmap );
+% 
+%     tick_marks = [ ];
+% 
+%     % for radius_index = 1:1:numel( r )
+%     for radius_index = 4
+% 
+%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+%             L( frequency_index, : ) = 10*log10( abs(p).^2 );
+% 
+%         % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
+%         polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
+%             tick_marks = [ L( frequency_index, 1 ) tick_marks ];
+% 
+%     end    
+% 
+% 
+%     % colormap( gca( h ), flipud( cmap ) );
+%     % 
+%     % h_colorbar = colorbar( );
+%     %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
+%     %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
+%     % 
+%     % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
+%     %     temp3 = string( temp2 );
+%     % 
+%     % for i = 1:1:size( temp3, 1 )
+%     %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
+%     % end
+%     % 
+%     % h_colorbar.TickLabels = flipud( new_labels );
+%     % h_colorbar.Label.String = 'Sound Pressure [dB]';
+% 
+%     % rlim( [ 0, 1.2*max( r ) ] );
+%     % %
+%     % rticks( r );
+%     %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
+%     %         set( gca, 'RTickLabelRotation', 45 );
+% 
+% end
 
 
 % h = [ ];
@@ -225,52 +227,52 @@ Q_sources = [ ...
     ];  % m^3/s
 
 
-for frequency_index = 2  % 1 kHz
-
-    h = figure( 'Name', 'Dipole - Spherical Spreading' ); ...
-
-    OFFSET = 3;
-    cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-    cmap(1:OFFSET, :) = [ ];
-    cmap = flipud( cmap );
-
-    tick_marks = [ ];
-
-    for radius_index = 4
-
-        p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-        L = 10*log10( abs(p).^2 );
-
-        % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
-        polarplot( theta, L ); hold on;
-        tick_marks = [ L(1) tick_marks ];
-
-    end
-
-
-    % colormap( gca( h ), flipud( cmap ) );
-    %
-    % h_colorbar = colorbar( );
-    %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
-    %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-    %
-    % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
-    %     temp3 = string( temp2 );
-    %
-    % for i = 1:1:size( temp3, 1 )
-    %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
-    % end
-    %
-    % h_colorbar.TickLabels = flipud( new_labels );
-    % h_colorbar.Label.String = 'Sound Pressure [dB]';
-
-    % rlim( [ 0, 1.2*max( r ) ] );
-    % %
-    % rticks( r );
-    %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
-    %         set( gca, 'RTickLabelRotation', 45 );
-
-end
+% for frequency_index = 2  % 1 kHz
+% 
+%     h = figure( 'Name', 'Dipole - Spherical Spreading' ); ...
+% 
+%     OFFSET = 3;
+%     cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+%     cmap(1:OFFSET, :) = [ ];
+%     cmap = flipud( cmap );
+% 
+%     tick_marks = [ ];
+% 
+%     for radius_index = 4
+% 
+%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+%         L = 10*log10( abs(p).^2 );
+% 
+%         % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
+%         polarplot( theta, L ); hold on;
+%         tick_marks = [ L(1) tick_marks ];
+% 
+%     end
+% 
+% 
+%     % colormap( gca( h ), flipud( cmap ) );
+%     %
+%     % h_colorbar = colorbar( );
+%     %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
+%     %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
+%     %
+%     % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
+%     %     temp3 = string( temp2 );
+%     %
+%     % for i = 1:1:size( temp3, 1 )
+%     %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
+%     % end
+%     %
+%     % h_colorbar.TickLabels = flipud( new_labels );
+%     % h_colorbar.Label.String = 'Sound Pressure [dB]';
+% 
+%     % rlim( [ 0, 1.2*max( r ) ] );
+%     % %
+%     % rticks( r );
+%     %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
+%     %         set( gca, 'RTickLabelRotation', 45 );
+% 
+% end
 
 
 % h = [ ];
@@ -289,7 +291,7 @@ end
 
 % return
 
-%% Problem 2c - Lateral Quadrupole Directivity Pattern
+%% Problem 2b - Lateral Quadrupole Directivity Pattern
 
 d = 1e-1;
 
@@ -308,32 +310,32 @@ Q_sources = [ ...
     ];  % m^3/s
 
 
-for frequency_index = 2  % 1 kHz
-
-        h = figure( 'Name', 'Lateral Quadrupole Directivity Pattern' ); ...
-
-        OFFSET = 3;
-        cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-        cmap(1:OFFSET, :) = [ ];
-        cmap = flipud( cmap );
-
-        tick_marks = [ ];
-
-        for radius_index = 4
-
-            p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-            L = 10*log10( abs(p).^2 );
-
-            polarplot( theta, L ); hold on;
-            tick_marks = [ L(1) tick_marks ];
-
-        end
-
-end
+% for frequency_index = 2  % 1 kHz
+% 
+%         h = figure( 'Name', 'Lateral Quadrupole Directivity Pattern' ); ...
+% 
+%         OFFSET = 3;
+%         cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+%         cmap(1:OFFSET, :) = [ ];
+%         cmap = flipud( cmap );
+% 
+%         tick_marks = [ ];
+% 
+%         for radius_index = 4
+% 
+%             p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+%             L = 10*log10( abs(p).^2 );
+% 
+%             polarplot( theta, L ); hold on;
+%             tick_marks = [ L(1) tick_marks ];
+% 
+%         end
+% 
+% end
 
 % return
 
-%% Problem 2d - Linear Quadrupole Directivity Pattern
+%% Problem 2b - Linear Quadrupole Directivity Pattern
 
 d = 1e-1;
 
@@ -350,28 +352,78 @@ Q_sources = [ ...
     ];  % m^3/s
 
 
-for frequency_index = 2  % 1 kHz
+% for frequency_index = 2  % 1 kHz
+% 
+%     h = figure( 'Name', 'Linear Quadrupole Directivity Pattern' ); ...
+% 
+%     OFFSET = 3;
+%     cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
+%     cmap(1:OFFSET, :) = [ ];
+%     cmap = flipud( cmap );
+% 
+%     tick_marks = [ ];
+% 
+%     for radius_index = 4
+% 
+%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+%         L = 10*log10( abs(p).^2 );
+% 
+%         polarplot( theta, L ); hold on;
+%         tick_marks = [ L(1) tick_marks ];
+% 
+%     end
+% 
+% end
 
-    h = figure( 'Name', 'Linear Quadrupole Directivity Pattern' ); ...
+% return
 
-    OFFSET = 3;
-    cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-    cmap(1:OFFSET, :) = [ ];
-    cmap = flipud( cmap );
+%% Problem 2c - Finite Line Source - 4 Sources Uniformly Separation - Smaller than a Wavelength
 
-    tick_marks = [ ];
+% See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
 
-    for radius_index = 4
 
-        p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
+frequency = 1e3;  % Hz
+    k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
+        wavelength = c / frequency;  % 0.343 m
+
+
+d = 3*0.343;  % Source separation distance.
+% d = 0.343 / ( 8 - 1 );  % Source separation distance.
+
+xyz_sources = [ ... 
+    0, 0, 0; ...
+    1*d, 0, 0; ...
+    2*d, 0, 0; ...
+    3*d, 0, 0; ...
+    4*d, 0, 0; ...
+    5*d, 0, 0; ...
+    6*d, 0, 0; ...
+    7*d, 0, 0; ...
+    ];  % m
+%
+Q_sources = [ ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    +1 + 1i*0; ...
+    ];  % m^3/s
+
+
+array_length = ( size( xyz_sources, 1 ) - 1 )*d  % 0.7 m;  greater than 0.343 m.
+
+k*array_length  % 12.8
+
+
+h = figure( 'Name', 'Finite Line Source - 4 Sources Uniformly Spaced - kL = 5.49' ); ...
+
+    p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( 4, :, : ) ), f( 2 ), rho0, c );
         L = 10*log10( abs(p).^2 );
 
-        polarplot( theta, L ); hold on;
-        tick_marks = [ L(1) tick_marks ];
-
-    end
-
-end
+    polarplot( theta, L ); hold on;
 
 % return
     
