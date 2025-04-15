@@ -35,7 +35,7 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 100  450    750  500 ] );  % x, y, width, height
+set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'norma' );
@@ -48,38 +48,41 @@ pause( 1 );
 
 
 
-%% Parameters
+%% Constants and Parameters
 
 c = 343;  % m/s
 rho0 = 1.21;  % kg/m^3
 
-f = [ 1e2  1e3  1e4 ].';  f_set = { '100 Hz', '1 kHz', '10 kHz' };
-    lambda = c ./ f;  % 3.43 m, 0.343 m, and 0.0343 m
+frequency = 1e3;  % Hz
+    wavelength = c / frequency;  % 0.343 m
 
-k = (2*pi*f) ./ c;  % or 2pi / wavelength
-
+k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
+        
 radius_fractions = [ 0.5  2.4  4.8  9.6 ];
 
 
+r = radius_fractions;  % m (unity multiplier)
 
-%% Color Sets
+theta = ( 0:0.01:2*pi ).';
 
-color_maps = { 'Blues', 'Greens', 'Oranges' };
+xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
 
-for frequency_index = 1:1:numel( f )
-
-    OFFSET = 3;
-        cmap = slanCM( color_maps{ frequency_index }, numel( radius_fractions ) + OFFSET );
-            cmap(1:OFFSET, :) = [ ];
-                cmap_vectors( frequency_index, 1, :, : ) = flipud( cmap );
-
+for radius_index = 1:1:numel( r )
+    x = r( radius_index )*cos( theta );  y = r( radius_index )*sin( theta );  z = zeros( size( x ) );
+        xyz_receivers( radius_index, :, :, : ) = [ x(:) y(:) z(:) ];
 end
 
 
+OFFSET = 3;
+            cmap = slanCM( 'Purples', numel( r ) + OFFSET );
+                cmap(1:OFFSET, :) = [ ];
+                    cmap = flipud( cmap );
 
-%% Problem 2a - Pressure Versus Distance for Monopole
 
-% Monopole distance dependence.  Decay is 6 dB per double of distance.
+
+%% Problem 2a - Pressure Versus Distance for a Monopole Source
+
+% Monopole sound pressure verus distance has a decay of 6 dB per doubling of distance.
 
 xyz_sources = [ ...
     0, 0, 0; ...
@@ -93,126 +96,68 @@ x = 0.01:0.01:10;
         xyz_receivers = [ x(:) y(:) z(:) ];
 
 
-color_set = [ ...
-    0.031373  0.18824  0.41961; ...
-    0  0.26667  0.10588; ...
-    0.49804  0.15294  0.015686 ];
-
-
-% h = [ ];
+% figure( 'Name', 'Monople Source - Pressure Magnitude Versus Distance' ); ...
 % 
-% figure( 'Name', 'Monople - Pressure Magnitude Versus Distance' ); ...
-%     plot( nan, nan );  hold on;
-%     %
-%     for index = 1:1:numel( f )
-%         p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, f( index ), rho0, c );  % Complex-valued Pascals.
-%             L.monopole( index, : ) = 10*log10( abs(p).^2 );
-%                 h_plot = plot( x, L.monopole( index, : ), 'Color', color_set( index, : ) );
-%                     h = [ h h_plot ];
-%     end
-%     %
-%     grid on;
-%     %
-%     legend( h, f_set, 'Location', 'NorthEast' );
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%                 plot( x, L, 'Color', 'b' );  grid on;
+%     legend( '1 kHz', 'Location', 'NorthEast' );
 %     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
 %     set( gca, 'XScale', 'log' );
 
 
 % Note(s):
-%
-%   With a higher frequency, "k", the wave number, will be larger.
-%   Pressure will be higher for the same distance.
 
+%   With a higher frequency, the wave number, "k" will be larger.  Pressure will be higher at the same distance.
 %   For a doubling in frequency, the pressure will be 20 dB larger.
 
 
 
-%% Problem 2b - Monopole Directivity Pattern
+%% Problem 2b - Directivity Pattern for a Monopole Source
 
 xyz_sources = [ ... 
     0, 0, 0; ...
     ];  % m
 %
-Q_sources = 1.414;  % m^2/s
+Q_sources = 1.4;  % m^3/s
 
 
-r = radius_fractions;  % m (unity multiplier)
+xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
 
-theta = 0:0.01:2*pi;
+h = figure( 'Name', 'Monople Source - Directivity Pattern' ); ...
 
-xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        monopole.L = 10*log10( abs(p).^2 );
 
-for radius_index = 1:1:numel( r )
-    x = r( radius_index )*cos( theta );  y = r( radius_index )*sin( theta );  z = zeros( size( x ) );
-        xyz_receivers( radius_index, :, :, : ) = [ x(:) y(:) z(:) ];
-end
-
+    polarplot( theta, monopole.L, 'Color', cmap( 1, : ) );
+        tick_marks = monopole.L( 1 );
 
 
-% for frequency_index = 2
-% 
-%     h = figure( 'Name', 'Monople - Spherical Spreading' ); ...
-% 
-%     OFFSET = 3;
-%         cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-%             cmap(1:OFFSET, :) = [ ];
-%                 cmap = flipud( cmap );
-% 
-%     tick_marks = [ ];
-% 
-%     % for radius_index = 1:1:numel( r )
-%     for radius_index = 4
-% 
-%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-%             L( frequency_index, : ) = 10*log10( abs(p).^2 );
-% 
-%         % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
-%         polarplot( theta, L, 'Color', cmap( radius_index, : ) ); hold on;
-%             tick_marks = [ L( frequency_index, 1 ) tick_marks ];
-% 
-%     end    
-% 
-% 
-%     % colormap( gca( h ), flipud( cmap ) );
-%     % 
-%     % h_colorbar = colorbar( );
-%     %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
-%     %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-%     % 
-%     % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
-%     %     temp3 = string( temp2 );
-%     % 
-%     % for i = 1:1:size( temp3, 1 )
-%     %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
-%     % end
-%     % 
-%     % h_colorbar.TickLabels = flipud( new_labels );
-%     % h_colorbar.Label.String = 'Sound Pressure [dB]';
-% 
-%     % rlim( [ 0, 1.2*max( r ) ] );
-%     % %
-%     % rticks( r );
-%     %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
-%     %         set( gca, 'RTickLabelRotation', 45 );
-% 
-% end
+    colormap( gca( h ), flipud( cmap ) );
+    % 
+    h_colorbar = colorbar( );
+        h_colorbar.Ticks = linspace( 0, 1, 4 );
+        h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
+
+    temp2 = [ round( tick_marks, 1 )  1 ];
+        temp3 = string( temp2 );
+
+    monopole.label = sprintf( '%1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) );
+
+    h_colorbar.TickLabels = flipud( monopole.label );
+    h_colorbar.Label.String = 'Sound Pressure [dB]';
+
+    rlim( [ 0  80 ] );
 
 
-% h = [ ];
-% 
-% figure( 'Name', 'Monople - Pressure Versus Angle' ); ...
-%     plot( nan, nan );  hold on;
-%     %
-%     for index = 1:1:numel( f )
-%         h_plot = plot( theta.*180./pi, L( index, : ), 'Color', color_set( index, : ) );  grid on;
-%                     h = [ h h_plot ];
-%     end
-%     %
-%     legend( h, f_set, 'Location', 'EastOutside' );
-%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 9.6 m [$dB$]' );
-%     axis( [ -10 370  0 60 ] );
+figure( 'Name', 'Monople Source - Pressure Versus Angle' ); ...
+    
+    plot( theta.*180./pi, monopole.L, 'Color', cmap( 1, : ) );  grid on;
+    legend( '1 kHz Monopole, Q = 1.4 $\frac{m^3}{s}$', 'Location', 'East', 'Interpreter', 'Latex' );
+    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+    axis( [ -10 370  0 80 ] );
 
-% return
+return
 
 %% Problem 2b - Dipole Directivity Pattern
 
@@ -375,18 +320,13 @@ Q_sources = [ ...
 % 
 % end
 
-% return
+
 
 %% Problem 2c - Finite Line Source - 4 Sources Uniformly Separation - Smaller than a Wavelength
 
 % See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
 
 
-% frequency = 1e3;  % Hz
-%     k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
-%         wavelength = c / frequency;  % 0.343 m
-% 
-% 
 % d = 0.343 / ( 8 - 1 );  % Source separation distance.
 % 
 % xyz_sources = [ ... 
@@ -430,11 +370,6 @@ Q_sources = [ ...
 % See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
 
 
-% frequency = 1e3;  % Hz
-%     k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
-%         wavelength = c / frequency;  % 0.343 m
-% 
-% 
 % d = 0.343;  % Source separation distance.
 % 
 % xyz_sources = [ ... 
@@ -469,14 +404,9 @@ Q_sources = [ ...
 
 
     
-%% Problem 2d - 
+%% Problem 2d - Baffled Piston
 
 % See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
-
-
-frequency = 1e3;  % Hz
-    k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
-        wavelength = c / frequency;  % 0.343 m
 
 
 d = 0.343;  % Source separation distance.
