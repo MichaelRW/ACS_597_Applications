@@ -73,10 +73,7 @@ for radius_index = 1:1:numel( r )
 end
 
 
-OFFSET = 3;
-            cmap = slanCM( 'Purples', numel( r ) + OFFSET );
-                cmap(1:OFFSET, :) = [ ];
-                    cmap = flipud( cmap );
+color_map = slanCM( 'ColorBlind', 4 );
 
 
 
@@ -96,14 +93,14 @@ x = 0.01:0.01:10;
         xyz_receivers = [ x(:) y(:) z(:) ];
 
 
-% figure( 'Name', 'Monople Source - Pressure Magnitude Versus Distance' ); ...
-% 
-%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
-%         L = 10*log10( abs(p).^2 );
-%                 plot( x, L, 'Color', 'b' );  grid on;
-%     legend( '1 kHz', 'Location', 'NorthEast' );
-%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
-%     set( gca, 'XScale', 'log' );
+figure( 'Name', 'Monopole Source - Pressure Magnitude Versus Distance' ); ...
+
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        L = 10*log10( abs(p).^2 );
+                plot( x, L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
+    legend( '1 kHz', 'Location', 'NorthEast' );
+    xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+    set( gca, 'XScale', 'log' );
 
 
 % Note(s):
@@ -124,121 +121,75 @@ Q_sources = 1.4;  % m^3/s
 
 xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
 
-h = figure( 'Name', 'Monople Source - Directivity Pattern' ); ...
+figure( 'Name', 'Monopole Source - Directivity Pattern' ); ...
 
     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
         monopole.L = 10*log10( abs(p).^2 );
 
-    polarplot( theta, monopole.L, 'Color', cmap( 1, : ) );
+    polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );
         tick_marks = monopole.L( 1 );
 
+    monopole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
 
-    colormap( gca( h ), flipud( cmap ) );
-    % 
-    h_colorbar = colorbar( );
-        h_colorbar.Ticks = linspace( 0, 1, 4 );
-        h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-
-    temp2 = [ round( tick_marks, 1 )  1 ];
-        temp3 = string( temp2 );
-
-    monopole.label = sprintf( '%1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) );
-
-    h_colorbar.TickLabels = flipud( monopole.label );
-    h_colorbar.Label.String = 'Sound Pressure [dB]';
-
-    rlim( [ 0  80 ] );
+    rlim( [ 0  1e2 ] );
+        rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+        rticks( tick_marks );
 
 
-figure( 'Name', 'Monople Source - Pressure Versus Angle' ); ...
-    
-    plot( theta.*180./pi, monopole.L, 'Color', cmap( 1, : ) );  grid on;
-    legend( '1 kHz Monopole, Q = 1.4 $\frac{m^3}{s}$', 'Location', 'East', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 80 ] );
+% figure( 'Name', 'Monopole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
+%     legend( monopole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
 
-return
 
-%% Problem 2b - Dipole Directivity Pattern
+
+%% Problem 2b - Directivity Pattern for a Dipole Source
+
+d = wavelength / 8;  % 0.043 m
+    k*d;  % 0.79
 
 xyz_sources = [ ... 
-    0, 0, 0; ...
-    0.1715, 0, 0; ...
+    -d, 0, 0; ...
+    +d, 0, 0; ...
     ];  % m
 %
 Q_sources = [ ...
-    1 + 1i; ...
-    -1 - 1i; ...
+    +1.4; ...
+    -1.4; ...
     ];  % m^3/s
 
 
-% for frequency_index = 2  % 1 kHz
-% 
-%     h = figure( 'Name', 'Dipole - Spherical Spreading' ); ...
-% 
-%     OFFSET = 3;
-%     cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-%     cmap(1:OFFSET, :) = [ ];
-%     cmap = flipud( cmap );
-% 
-%     tick_marks = [ ];
-% 
-%     for radius_index = 4
-% 
-%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-%         L = 10*log10( abs(p).^2 );
-% 
-%         % polarplot( theta, r( radius_index ).*ones( size( theta ) ), 'Color', cmap( radius_index, : ) ); hold on;
-%         polarplot( theta, L ); hold on;
-%         tick_marks = [ L(1) tick_marks ];
-% 
-%     end
-% 
-% 
-%     % colormap( gca( h ), flipud( cmap ) );
-%     %
-%     % h_colorbar = colorbar( );
-%     %     h_colorbar.Ticks = linspace( 0, 1, numel( r ) );
-%     %     h_colorbar.TickLabels = num2cell( round( fliplr( tick_marks ) ) );
-%     %
-%     % temp2 = [ round( fliplr( tick_marks ) ).'  r.' ];
-%     %     temp3 = string( temp2 );
-%     %
-%     % for i = 1:1:size( temp3, 1 )
-%     %     new_labels( i, : ) = sprintf( '%1g m, %i dB', fliplr( temp2( i, : ) ) );
-%     % end
-%     %
-%     % h_colorbar.TickLabels = flipud( new_labels );
-%     % h_colorbar.Label.String = 'Sound Pressure [dB]';
-% 
-%     % rlim( [ 0, 1.2*max( r ) ] );
-%     % %
-%     % rticks( r );
-%     %     rticklabels( { 'r = 0.5', 'r = 2.4', 'r = 4.8', 'r = 9.6' } );
-%     %         set( gca, 'RTickLabelRotation', 45 );
-% 
-% end
+xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+
+figure( 'Name', 'Dipole Source - Directivity Pattern' ); ...
+
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        dipole.L = 10*log10( abs(p).^2 );
+
+    polarplot( theta, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+        tick_marks = max( dipole.L );
+
+    dipole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+
+    rlim( [ 0  80 ] );
+        rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+        rticks( tick_marks );
 
 
-% h = [ ];
+% figure( 'Name', 'Dipole Source - Pressure Versus Angle' ); ...
 % 
-% figure( 'Name', 'Dipole - Pressure Versus Angle' ); ...
-%     plot( nan, nan );  hold on;
-%     %
-%     for index = 1:1:numel( f )
-%         h_plot = plot( theta.*180./pi, L( index, : ), 'Color', color_set( index, : ) );  grid on;
-%                     h = [ h h_plot ];
-%     end
-%     %
-%     % legend( h, f_set, 'Location', 'EastOutside' );
-%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 9.6 m [$dB$]' );
-%     % axis( [ -10 370  0 60 ] );
+%     plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );  grid on;
+%     legend( dipole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
 
-% return
+
 
 %% Problem 2b - Lateral Quadrupole Directivity Pattern
 
-d = 1e-1;
+d = 1e-1;  % m
 
 xyz_sources = [ ... 
     +d, +d, 0; ...
@@ -248,41 +199,43 @@ xyz_sources = [ ...
     ];  % m
 %
 Q_sources = [ ...
-    +1; ...
-    -1; ...
-    +1; ...
-    -1; ...
+    +1.4; ...
+    -1.4; ...
+    +1.4; ...
+    -1.4; ...
     ];  % m^3/s
 
 
-% for frequency_index = 2  % 1 kHz
-% 
-%         h = figure( 'Name', 'Lateral Quadrupole Directivity Pattern' ); ...
-% 
-%         OFFSET = 3;
-%         cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-%         cmap(1:OFFSET, :) = [ ];
-%         cmap = flipud( cmap );
-% 
-%         tick_marks = [ ];
-% 
-%         for radius_index = 4
-% 
-%             p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-%             L = 10*log10( abs(p).^2 );
-% 
-%             polarplot( theta, L ); hold on;
-%             tick_marks = [ L(1) tick_marks ];
-% 
-%         end
-% 
-% end
+xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
 
-% return
+figure( 'Name', 'Lateral Quadrupole Source - Directivity Pattern' ); ...
+
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        lateral_quadrupole.L = 10*log10( abs(p).^2 );
+
+    polarplot( theta, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+        tick_marks = max( lateral_quadrupole.L );
+
+    lateral_quadrupole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+
+    rlim( [ 0  80 ] );
+        rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+        rticks( tick_marks );
+
+
+% figure( 'Name', 'Lateral Quadrupole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );  grid on;
+%     legend( lateral_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
+
+
 
 %% Problem 2b - Linear Quadrupole Directivity Pattern
 
-d = 1e-1;
+d = 1e-1;  % m
+d = wavelength / 8;
 
 xyz_sources = [ ... 
     +d, 0, 0; ...
@@ -291,34 +244,60 @@ xyz_sources = [ ...
     ];  % m
 %
 Q_sources = [ ...
-    -1; ...
-    +2; ...
-    -1; ...
+    -1.4; ...
+    +2.8; ...
+    -1.4; ...
     ];  % m^3/s
 
 
-% for frequency_index = 2  % 1 kHz
+xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+
+figure( 'Name', 'Linear Quadrupole Source - Directivity Pattern' ); ...
+
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        linear_quadrupole.L = 10*log10( abs(p).^2 );
+
+    polarplot( theta, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );
+        tick_marks = max( linear_quadrupole.L );
+
+    linear_quadrupole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+
+    rlim( [ 0  80 ] );
+        rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+        rticks( tick_marks );
+
+
+% figure( 'Name', 'Linear Quadrupole Source - Pressure Versus Angle' ); ...
 % 
-%     h = figure( 'Name', 'Linear Quadrupole Directivity Pattern' ); ...
-% 
-%     OFFSET = 3;
-%     cmap = slanCM( color_maps{ frequency_index }, numel( r ) + OFFSET );
-%     cmap(1:OFFSET, :) = [ ];
-%     cmap = flipud( cmap );
-% 
-%     tick_marks = [ ];
-% 
-%     for radius_index = 4
-% 
-%         p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( radius_index, :, : ) ), f( frequency_index ), rho0, c );
-%         L = 10*log10( abs(p).^2 );
-% 
-%         polarplot( theta, L ); hold on;
-%         tick_marks = [ L(1) tick_marks ];
-% 
-%     end
-% 
-% end
+%     plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+%     legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
+
+
+
+%% Problem 2b - Combined Plot
+
+figure( 'Name', 'Combined Directivity Patterns - Polar Plot' ); ...
+
+    h_1 = polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+    h_2 = polarplot( theta, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+    h_3 = polarplot( theta, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+    h_4 = polarplot( theta, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );
+        legend( [ h_1, h_2, h_3, h_4 ], { 'Monopole', 'Dipole', 'Lateral Quadrupole', 'Linear Quadrupole' }, 'Location', 'EastOutside' );
+    %
+    rlim( [ 0  80 ] );
+
+
+figure( 'Name', 'Combined Directivity Patterns - Pressure Versus Angle' ); ...
+
+    h_1 = plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+    h_2 = plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+    h_3 = plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+    h_4 = plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+         legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+    axis( [ -10 370  0 90 ] );
 
 
 
@@ -409,37 +388,37 @@ Q_sources = [ ...
 % See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
 
 
-d = 0.343;  % Source separation distance.
-
-xyz_sources = [ ... 
-    -3*d, 0, 0; ...
-    -2*d, 0, 0; ...
-    -1*d, 0, 0; ...
-    0, 0, 0; ...
-    1*d, 0, 0; ...
-    2*d, 0, 0; ...
-    3*d, 0, 0; ...
-    ];  % m
-%
-Q_sources = [ ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    +1 + 1i*0; ...
-    ];  % m^3/s
-
-
-array_length = ( size( xyz_sources, 1 ) - 1 )*d;
-
-h = figure( 'Name', sprintf( 'Finite Line Source - 4 Sources Uniformly Spaced - kL = %2.1f, L = %2.1f', k*array_length, array_length ) ); ...
-
-    p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( 4, :, : ) ), f( 2 ), rho0, c );
-        L = 10*log10( abs(p).^2 );
-
-    polarplot( theta, L ); hold on;
+% d = 0.343;  % Source separation distance.
+% 
+% xyz_sources = [ ... 
+%     -3*d, 0, 0; ...
+%     -2*d, 0, 0; ...
+%     -1*d, 0, 0; ...
+%     0, 0, 0; ...
+%     1*d, 0, 0; ...
+%     2*d, 0, 0; ...
+%     3*d, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     ];  % m^3/s
+% 
+% 
+% array_length = ( size( xyz_sources, 1 ) - 1 )*d;
+% 
+% h = figure( 'Name', sprintf( 'Finite Line Source - 4 Sources Uniformly Spaced - kL = %2.1f, L = %2.1f', k*array_length, array_length ) ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, squeeze( xyz_receivers( 4, :, : ) ), f( 2 ), rho0, c );
+%         L = 10*log10( abs(p).^2 );
+% 
+%     polarplot( theta, L ); hold on;
 
 
     
