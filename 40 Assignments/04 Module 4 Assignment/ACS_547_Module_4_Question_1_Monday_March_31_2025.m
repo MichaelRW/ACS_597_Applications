@@ -431,14 +431,20 @@ r_n = a.*( sqrt( n./N ) );
 
 x_n = r_n.*cos(theta_n);  y_n = r_n.*sin(theta_n);
     xyz_sources = [ x_n(:)  y_n(:)  zeros( N, 1 ) ];
+    %
+    % figure( 'Name', 'Distribution of Sources on Baffled Piston' ); ...
+    %     scatter( x_n, y_n, 40.*ones( size(x_n) ), 'Marker', '*' );  grid on;
+    %     xlabel( 'X-axis [m]' );  ylabel( 'Y-axis [m]' );
+    %     daspect( [ 1 1 1 ] );
 %
 Q_sources = ones( size( xyz_sources, 1 ), 1 );
 
 z_start = a/10;
-    z_receivers = linspace( z_start, 8*wavelength, N );
-        xyz_receivers = [ zeros( numel( z_receivers ), 1 )  zeros( numel( z_receivers ), 1 )  z_receivers(:) ];
+    z_receivers = linspace( z_start, 6.25*wavelength, 1e2 );
+        z_receivers( 96:end ) = [ ];
+            xyz_receivers = [ zeros( numel( z_receivers ), 1 )  zeros( numel( z_receivers ), 1 )  z_receivers(:) ];
 
-% a/wavelength = 6.7    
+% a/wavelength = 6.7
 
 
 figure( 'Name', 'Baffled Piston - ka = 8' ); ...
@@ -446,17 +452,23 @@ figure( 'Name', 'Baffled Piston - ka = 8' ); ...
     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
         L = 10*log10( abs(p).^2 );
 
-    % plot( theta_n, L ); grid on;
-    plot( z_receivers, L ); grid on;
+    plot( L, z_receivers );  grid on;
 
 
-
-m = 1:1:( a / wavelength );
-    r_null = ( (a/wavelength)^2 - m.^2) ./ (2*m/wavelength);
-
-figure( 'Name', 'Nulls' ); ...
-    stem( m, r_null );  grid on;
+figure( ); ...
+    [ X, Y, Z ] = cylinder( L );
+        surfc( X, Y, Z );
+        daspect( [ 100 100 1 ] );
+        xlabel( 'x [m]' );  ylabel( 'y [m]' );  zlabel( 'z [m]' );  
     
+
+
+
+% m = 1:1:( a / wavelength );
+%     r_null = ( (a/wavelength)^2 - m.^2) ./ (2*m/wavelength);
+% 
+% figure( 'Name', 'Nulls' ); ...
+%     stem( m, r_null );  grid on;
 
 
     
