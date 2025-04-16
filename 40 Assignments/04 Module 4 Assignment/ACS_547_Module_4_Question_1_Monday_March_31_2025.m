@@ -445,30 +445,22 @@ z_start = a/10;
             xyz_receivers = [ zeros( numel( z_receivers ), 1 )  zeros( numel( z_receivers ), 1 )  z_receivers(:) ];
 
 
-
+m = 1:1:( a / wavelength );
+    r_null = ( (a/wavelength)^2 - m.^2) ./ (2*m/wavelength);
 
 figure( 'Name', 'Baffled Piston - ka = 8' ); ...
 
     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
         L = 10*log10( abs(p).^2 );
 
-    plot( L, z_receivers );  grid on;
-
-
-figure( ); ...
-    [ X, Y, Z ] = cylinder( L );
-        surfc( X, Y, Z );
-        daspect( [ 100 100 1 ] );
-        xlabel( 'x [m]' );  ylabel( 'y [m]' );  zlabel( 'z [m]' );  
-    
-
-
-
-% m = 1:1:( a / wavelength );
-%     r_null = ( (a/wavelength)^2 - m.^2) ./ (2*m/wavelength);
-% 
-% figure( 'Name', 'Nulls' ); ...
-%     stem( m, r_null );  grid on;
+    h1 = plot( z_receivers, L );  hold on;
+    h2 = line( [ r_null(1) r_null(1) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(2) r_null(2) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(3) r_null(3) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(4) r_null(4) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );  grid on;
+        legend( [ h1 h2 ], { 'Sound Pressure on Z-axis', 'Theoretical Null Locations' }, 'Location', 'South' );
+    axis( [ 0 4.5  15 78 ] );
+    xlabel( 'Distance above the XY-plane [m]' );  ylabel( 'Sound Pressure [dB]' );
 
 
     

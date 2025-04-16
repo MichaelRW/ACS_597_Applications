@@ -3,22 +3,31 @@
 
 %% Synopsis
 
-% Problem 2 - Washing Machine Two-stage Mount Design
+% Problem 2 - Active Control of Enclosure Opening
 
-% See Lecture 22 on Monday, April 7, 2025.
+% See Lecture 22
+%   ""D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\22 Monday, April 7, 2025\Lecture 22 - Coherence effects - filled.pptx""
+
+
+
+%% To Do
+
+% Confirm relationship of pressure dependence on distance for a given frequency.
+
+% https://www.google.com/search?q=wiki+wave+number&rlz=1C1UEAD_enCA1080CA1080&oq=wiki+wave+number&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yBwgCEAAY7wUyCggDEAAYgAQYogQyBggEEEUYPNIBCDI0NDNqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8
+% https://en.wikipedia.org/wiki/Wavenumber
 
 
 
 %% Note(s)
 
-% A 2 degree-of-freedom (DOF) system will provide isolation performance 1 DOF system.
+% Distance (source and receivers) are in units of meters.
 
-% Allowing the top and bottom masses, the washing machine and the raft,
-% respectively, to each be attached to ground independently.
+% Source can be real-valued or complex-valued.  Complex-valued sources have magnitude and phase information.
 
-% With the force applied to the washing machine and the displacement of the
-% washing machine, use FSF( :, 1, 1 ).  However, if the force is applied elsewhere,
-% than FSF( :, 2, 2, ) must be used.
+% Sources have units of volume velocity, m^3/s.
+
+% Complex pressures are in units of Pascals.
 
 
 
@@ -29,10 +38,10 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-% set( groot, 'DefaultFigurePosition', [ 100  750    750  500 ] );  % x, y, width, height
+set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
+set( 0, 'DefaultFigureWindowStyle', 'norma' );
 set( 0, 'DefaultLineLineWidth', 0.8 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -42,253 +51,419 @@ pause( 1 );
 
 
 
-%% Define Anonymous Functions
+%% Constants and Parameters
 
-h_f_to_rpm = @( f )  ( f*2*pi ) / 0.10471;
+c = 343;  % m/s
+rho0 = 1.21;  % kg/m^3
 
-h_w_to_rpm = @( w )  h_f_to_rpm( w*2*pi);
-h_w_to_f = @( w )  w/(2*pi);
+frequency = 1e3;  % Hz
+    wavelength = c / frequency;  % 0.343 m
 
-h_rpm_to_f = @( rpm )  ( rpm * 0.10471 ) / ( 2 * pi );
-
-
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
-
-
-
-%% Problem 2a
-
-% See report.
-
-
-
-%% Problem 2b - Blocked Frequencies of Resonance
-
-% The frequency of the forcing function is 5 Hz and the amplitude is 493.5 N.
-fo = 5;  % Hz
-    wo = 2*pi*fo;  % 31.4 radians\s
-
-
-switch ( 1 )
-
-    case 1  % Initial design parameters.
-
-        m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
-            k1 = 1e2;  % N\m
-            c1 = 5;
+k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
         
-        m2 = 100;  % kg - UPPER LIMIT OF 100 kg
-            k2 = 1e2;  % N\m
-            c2 = 5;
-        
-        k3 = 1e3;  % N\m -> Larger values produce stronger coupling (higher w+).
+radius_fractions = [ 0.5  2.4  4.8  9.6 ];
 
 
-    case 2  % Optimized design parameters.
+r = radius_fractions;  % m (unity multiplier)
 
-        m1 = 100 + 10;  % kg - Total mass of the washing machine and the load.
-            k1 = 1e2;  % N\m
-            c1 = 5;
-        
-        m2 = 100;  % kg - UPPER LIMIT OF 100 kg
-            k2 = 1e2;  % N\m
-            c2 = 5;
-        
-        k3 = 1e1;  % N\m -> Larger values produce stronger coupling (higher w+).
+theta = ( 0:0.01:2*pi ).';
 
+xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
+
+for radius_index = 1:1:numel( r )
+    x = r( radius_index )*cos( theta );  y = r( radius_index )*sin( theta );  z = zeros( size( x ) );
+        xyz_receivers( radius_index, :, :, : ) = [ x(:) y(:) z(:) ];
 end
 
 
-w1 = sqrt( ( k1 + k3 ) / m1 );  % 3.2 radians\s;  washing machine
-    f1 = w1 / (2*pi);  % 0.5 Hz
-        rpm1 = f1*(2*pi)/0.10471;  % 30.1 RPM
-
-w2 = sqrt( ( k2 + k3 ) / m2 );  % 3.3 radians\s;  raft
-    f2 = w2 / (2*pi);  % 0.53 Hz
-        rpm2 = f2*(2*pi)/0.10471;  % 31.7 RPM
-
-% Note:  If k3 is set to zero, then these frequencies represent the
-% resonance frequencies for each mass on their own.
+color_map = slanCM( 'ColorBlind', 4 );
 
 
 
-%% Problem 2b - Coupled Frequencies
+%% Problem 2a - Pressure Versus Distance for a Monopole Source
 
-mu_4 = ( k3^2 / (m1*m2) );  % 90.9 (radians\s)^4
-    mu = ( mu_4 )^0.25;  % 3.1 radians\s
+% Monopole sound pressure verus distance has a decay of 6 dB per doubling of distance.
 
-w(1) = 0.5*( ( w1^2 + w2^2 )  +  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
-w(2) = 0.5*( ( w1^2 + w2^2 )  -  sqrt( ( w1^2 - w2^2 )^2 + 4*mu_4 ) );
-    w = sqrt( w );
-
-
-w_minus = w(2);  %  0.97 radians\s  (lower than w1, 1, and w2, 1.05 radians\s)
-    f_minus = w(2)/(2*pi);  %  0.1545 Hz
-        rpm_minus = h_f_to_rpm( f_minus );  % 9.3 RPM
-%
-w_plus = w(1);  %  4.5 radians\s  (higher than w1, 1, and w2, 1.05 radians\s)
-    f_plus = w(1)/(2*pi);  %  0.71 Hz
-        rpm_plus = h_f_to_rpm( f_plus );  % 42.8 RPM
-%
-% Note(s):
-%
-%   The blocked frequencies, w1 and w2, are always between these two frequencies.
-
-clear w mu_4;
-
-
-
-%% Problem 2b - Mode Shapes
-
-phi_plus = [ ...
-    1; ...
-    -(1/mu^2)*sqrt(m1/m2)*(w_plus^2 - w1^2), ...
-    ];
-%
-%   1
-%   -1.10
-
-phi_minus = [ ...
-    1; ...
-    (1/mu^2)*sqrt(m1/m2)*(w1^2 - w_minus^2), ...
-    ];
-%
-%   1
-%   0.99
+% xyz_sources = [ ...
+%     0, 0, 0; ...
+%     ];
+% %
+% Q_sources = 1;  % m^3/s
+% 
+% 
+% x = 0.01:0.01:10;
+%     y = zeros( length( x ), 1 );  z = zeros( length( x ), 1 );
+%         xyz_receivers = [ x(:) y(:) z(:) ];
+% 
+% 
+% figure( 'Name', 'Monopole Source - Pressure Magnitude Versus Distance' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%                 plot( x, L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
+%     legend( '1 kHz', 'Location', 'NorthEast' );
+%     xlabel( 'Distance [m]' );  ylabel( 'Pressure Magnitude [$dB$]' );
+%     set( gca, 'XScale', 'log' );
 
 
 % Note(s):
+
+%   With a higher frequency, the wave number, "k" will be larger.  Pressure will be higher at the same distance.
+%   For a doubling in frequency, the pressure will be 20 dB larger.
+
+
+
+%% Problem 2b - Directivity Pattern for a Monopole Source
+
+% xyz_sources = [ ... 
+%     0, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = 1.4;  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% figure( 'Name', 'Monopole Source - Directivity Pattern' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         monopole.L = 10*log10( abs(p).^2 );
+% 
+%     polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );
+%         tick_marks = monopole.L( 1 );
+% 
+%     monopole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+% 
+%     rlim( [ 0  1e2 ] );
+%         rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+%         rticks( tick_marks );
+
+
+% figure( 'Name', 'Monopole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
+%     legend( monopole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
+
+
+
+%% Problem 2b - Directivity Pattern for a Dipole Source
+
+% d = wavelength / 8;  % 0.043 m
+%     k*d;  % 0.79
+% 
+% xyz_sources = [ ... 
+%     -d, 0, 0; ...
+%     +d, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     +1.4; ...
+%     -1.4; ...
+%     ];  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% figure( 'Name', 'Dipole Source - Directivity Pattern' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         dipole.L = 10*log10( abs(p).^2 );
+% 
+%     polarplot( theta, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+%         tick_marks = max( dipole.L );
+% 
+%     dipole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+% 
+%     rlim( [ 0  80 ] );
+%         rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+%         rticks( tick_marks );
+
+
+% figure( 'Name', 'Dipole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );  grid on;
+%     legend( dipole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
+
+
+
+%% Problem 2b - Lateral Quadrupole Directivity Pattern
+
+% d = 1e-1;  % m
+% 
+% xyz_sources = [ ... 
+%     +d, +d, 0; ...
+%     -d, +d, 0; ...
+%     -d, -d, 0; ...
+%     +d, -d, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     +1.4; ...
+%     -1.4; ...
+%     +1.4; ...
+%     -1.4; ...
+%     ];  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% figure( 'Name', 'Lateral Quadrupole Source - Directivity Pattern' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         lateral_quadrupole.L = 10*log10( abs(p).^2 );
+% 
+%     polarplot( theta, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+%         tick_marks = max( lateral_quadrupole.L );
+% 
+%     lateral_quadrupole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+% 
+%     rlim( [ 0  80 ] );
+%         rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+%         rticks( tick_marks );
+
+
+% figure( 'Name', 'Lateral Quadrupole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );  grid on;
+%     legend( lateral_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
+
+
+
+%% Problem 2b - Linear Quadrupole Directivity Pattern
+
+% d = wavelength / 8;  % m
+% 
+% xyz_sources = [ ... 
+%     +d, 0, 0; ...
+%     0, 0, 0; ...
+%     -d, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     -1.4; ...
+%     +2.8; ...
+%     -1.4; ...
+%     ];  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% figure( 'Name', 'Linear Quadrupole Source - Directivity Pattern' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+%         linear_quadrupole.L = 10*log10( abs(p).^2 );
+% 
+%     polarplot( theta, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );
+%         tick_marks = max( linear_quadrupole.L );
+% 
+%     linear_quadrupole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+% 
+%     rlim( [ 0  80 ] );
+%         rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
+%         rticks( tick_marks );
+
+
+% figure( 'Name', 'Linear Quadrupole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+%     legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
+
+
+
+%% Problem 2b - Combined Plot
+
+% figure( 'Name', 'Combined Directivity Patterns - Polar Plot' ); ...
+% 
+%     h_1 = polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+%     h_2 = polarplot( theta, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+%     h_3 = polarplot( theta, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+%     h_4 = polarplot( theta, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );
+%         legend( [ h_1, h_2, h_3, h_4 ], { 'Monopole', 'Dipole', 'Lateral Quadrupole', 'Linear Quadrupole' }, 'Location', 'EastOutside' );
+%     %
+%     rlim( [ 0  80 ] );
+
+
+% figure( 'Name', 'Combined Directivity Patterns - Pressure Versus Angle' ); ...
+% 
+%     h_1 = plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+%     h_2 = plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+%     h_3 = plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+%     h_4 = plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+%          legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 90 ] );
+
+
+
+%% Problem 2c - Finite Line Source - 4 Sources Uniformly Separation - Smaller than a Wavelength
+
+% See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
+
+
+% d = wavelength / 8;  % Source separation distance.
+% 
+% xyz_sources = [ ... 
+%     -4*d, 0, 0; ...
+%     -3*d, 0, 0; ...
+%     -2*d, 0, 0; ...
+%     -1*d, 0, 0; ...
+%     0, 0, 0; ...
+%     1*d, 0, 0; ...
+%     2*d, 0, 0; ...
+%     3*d, 0, 0; ...
+%     4*d, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     +1.4 + 1i*0; ...
+%     ];  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% array_length = ( size( xyz_sources, 1 ) - 1 )*d;
+% 
+% 
+% figure( 'Name', 'Finite Line Source - 4 Sources Uniformly Spaced' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 1e2, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 1, : ) 0.8 ] ); hold on;
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 2e3, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 2, : ) 0.8 ] );
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 5e3, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 3, : ) 0.8 ] ); grid on;
+% 
+%     legend( sprintf( 'kL = %3.1f', (2*pi*1e2)/c*array_length ), sprintf( 'kL = %3.1f', (2*pi*2e3)/c*array_length ), sprintf( 'kL = %3.1f', (2*pi*5e3)/c*array_length ), 'Location', 'EastOutside' );
+%     rlim( [ 0  1e2 ] );
+
+
+
+%% Problem 2c - Finite Line Source - 4 Sources Uniformly Separation - Greater than a Wavelength
+
+% See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
+
+
+% d = wavelength;
+% 
+% xyz_sources = [ ... 
+%     -3*d, 0, 0; ...
+%     -2*d, 0, 0; ...
+%     -1*d, 0, 0; ...
+%     0, 0, 0; ...
+%     1*d, 0, 0; ...
+%     2*d, 0, 0; ...
+%     3*d, 0, 0; ...
+%     ];  % m
+% %
+% Q_sources = [ ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     +1 + 1i*0; ...
+%     ];  % m^3/s
+% 
+% 
+% xyz_receivers = [ cos( theta )  sin( theta )  zeros( size( cos( theta ) ) ) ];
+% 
+% array_length = ( size( xyz_sources, 1 ) - 1 )*d;
+% 
+% 
+% figure( 'Name', 'Finite Line Source - 4 Sources Uniformly Spaced' ); ...
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 1e2, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 1, : ) 0.8 ] ); hold on;
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 2e3, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 2, : ) 0.8 ] );
+% 
+%     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, 5e3, rho0, c );
+%         L = 10*log10( abs(p).^2 );
+%             polarplot( theta, L, 'Color', [ color_map( 3, : ) 0.8 ] ); grid on;
+% 
+%     legend( sprintf( 'kL = %3.1f', (2*pi*1e2)/c*array_length ), sprintf( 'kL = %3.1f', (2*pi*2e3)/c*array_length ), sprintf( 'kL = %3.1f', (2*pi*5e3)/c*array_length ), 'Location', 'EastOutside' );
+%     rlim( [ 0  1e2 ] );
+
+
+    
+%% Problem 2d - Baffled Piston
+
+% See Lecture 21 - Distributed Sources (D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\21 Wednesday, April 2, 2025)
+
+% See:  https://demonstrations.wolfram.com/SunflowerSeedArrangements/
+
+
+a = 5*wavelength;
+
+
+N = 1e2;
+    n = 0:1:( N - 1 );
+
+phi = ( 1 + sqrt(5) ) / 2;
+
+theta_n = (2*pi)/(phi^2) .* n;
+r_n = a.*( sqrt( n./N ) );
+
+x_n = r_n.*cos(theta_n);  y_n = r_n.*sin(theta_n);
+    xyz_sources = [ x_n(:)  y_n(:)  zeros( N, 1 ) ];
+    %
+    % figure( 'Name', 'Distribution of Sources on Baffled Piston' ); ...
+    %     scatter( x_n, y_n, 40.*ones( size(x_n) ), 'Marker', '*' );  grid on;
+    %     xlabel( 'X-axis [m]' );  ylabel( 'Y-axis [m]' );
+    %     daspect( [ 1 1 1 ] );
 %
-% When m1 = m2 and k1 = k3,
-%
-%   a.)  At w_minus, m1 and m2 move the same amount and are in-phase.
-%   b.)  At w_plus, m1 and m2 move the same amount, but are out-of-phase.
+Q_sources = ones( size( xyz_sources, 1 ), 1 );
 
-% In general, for a 2 DOF system there will be 2 modes (in-phase and out-of-phase).
-
-% With different initial conditions (no forcing), the behaviour is a weighted sum of the two modes.
+z_start = a/10;
+    z_receivers = linspace( 0.1, 20.25*wavelength, 1e2 );
+        z_receivers( 60:end ) = [ ];
+            xyz_receivers = [ zeros( numel( z_receivers ), 1 )  zeros( numel( z_receivers ), 1 )  z_receivers(:) ];
 
 
+m = 1:1:( a / wavelength );
+    r_null = ( (a/wavelength)^2 - m.^2) ./ (2*m/wavelength);
 
-%% Problem 2c
+figure( 'Name', 'Baffled Piston - ka = 8' ); ...
 
-masses = [ m1 m2 ];
-stiffnesses = [ k1  k3  k2 ];
-dampings = [ c1  0  c2 ];
+    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
+        L = 10*log10( abs(p).^2 );
 
-
-rpm = 0:0.1:500;  % rotations per minute
-    rpm_conversion_to_radians_per_second = 0.10472;
-        angular_velocity = rpm .* rpm_conversion_to_radians_per_second;  % radians\s
-            frequencies = angular_velocity / (2*pi);  % Hz
-
-FRF = nDOF_direct_solution( masses, stiffnesses, dampings, frequencies, 'admittance' );
-
-
-admittance = zeros( numel( frequencies ), 1 );
-
-for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 1, 1 ) ) );  % Check indexing to ensure force on washing machine.
-        admittance( index ) = abs( temp );
-end
-%
-clear temp temp2;
-
-washing_machine.admittance = admittance;
+    h1 = plot( z_receivers, L );  hold on;
+    h2 = line( [ r_null(1) r_null(1) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(2) r_null(2) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(3) r_null(3) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );
+    line( [ r_null(4) r_null(4) ], [ 25 75 ], 'Color', [ 1, 0, 0, 0.5 ] );  grid on;
+        legend( [ h1 h2 ], { 'Sound Pressure on Z-axis', 'Theoretical Null Locations' }, 'Location', 'South' );
+    axis( [ 0 4.5  15 78 ] );
+    xlabel( 'Distance above the XY-plane [m]' );  ylabel( 'Sound Pressure [dB]' );
 
 
-admittance = zeros( numel( frequencies ), 1 );
-
-for index = 1:1:numel( frequencies )
-    temp = diag( squeeze( FRF( index, 1, 2 ) ) );  % Check indexing to ensure force on washing machine.
-        admittance( index ) = abs( temp );
-end
-%
-clear temp temp2;
-
-raft.admittance = admittance;
-
-
-figure( 'Name', 'Admittance' ); ...
-    h1 = loglog( rpm, washing_machine.admittance, 'Color', 'r', 'LineWidth', 0.8 );  hold on;
-    h2 = loglog( rpm, raft.admittance, 'Color', 'b', 'LineWidth', 0.8 );
-    h3 = line( [ 300 300 ], [ 1e-6 1e-4 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        text( 220, 2e-4, '300 RPM' );
-    %
-    h4 = line( [ rpm_minus rpm_minus], [ 1e-8 1e1 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-.' );
-    %
-    h5 = line( [ rpm1 rpm1 ], [ 1e-8 1e1 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
-    h6 = line( [ rpm2 rpm2 ], [ 1e-8 1e1 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-' );
-    %
-        h7 = line( [ rpm_plus rpm_plus ], [ 1e-8 1e1 ], 'Color', [ 0.72, 0.27, 1.00 ], 'LineStyle', '-' );
-    %
-    legend( [ h1 h2 h3 h4 h5 h6 h7 ], 'Washing Machine', 'Raft', 'Load Frequency', 'w-', 'w1', 'w2', 'w+', 'Location', 'NorthEast' );
-    %
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Admittance [$\frac{m}{N}$]' );
-    axis( [ 6 400  1e-8 1e1 ] );
-
-
-% round( washing_machine.admittance( 3001 ), 3, 'significant' )
-
-
-
-%% Problem 2d
-
-dynamic_force.mass = 1;  % kg
-dynamic_force.radius = 0.5;  % m
-
-
-figure( 'Name', 'Displacement' ); ...
-    h1 = loglog( rpm, washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).', 'Color', 'r' );  hold on;
-    h2 = loglog( rpm, raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).', 'Color', 'b' );
-    h3 = line( [ 300 300 ], [ 1e-5 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-        text( 220, 0.21, '300 RPM' );
-        legend( [ h1 h2 h3 ], 'Washing Machine', 'Raft', 'Load Frequency', 'Location', 'South' );
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Displacment [m]' );
-    axis( [ 6 400  1e-6 1 ] );
-
-
-% temp = washing_machine.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-%     round( temp( 3001 ), 3, 'significant' )
-
-% temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-%     round( temp( 3001 ), 3, 'significant' )
-
-
-
-%% Problem 2e
-
-% Displacement of the raft multiplied by the K2 spring constant.
-
-dynamic_force.mass = 1;  % kg
-dynamic_force.radius = 0.5;  % m
-
-h_force = @( force_mass, rotation_speed, load_distance  )  force_mass .* rotation_speed.^2 .* load_distance;
-
-temp = h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).';
-
-
-figure( 'Name', 'Force Applied to Ground by Raft' ); ...
-    h1 = loglog( rpm, raft.admittance.*temp*k2, 'Color', 'b' );  hold on;
-    h2 = line( [ 300 300 ], [ 2e-3 1e-1 ], 'Color', 'k', 'LineStyle', '--' );  grid on;
-    h3 = line( [ 6 400 ], [ 100 100 ], 'Color', 'r' );
-        text( 220, 2e-1, '300 RPM' );
-        legend( [ h1 h2 h3 ], 'Raft Force', 'Load Frequency', 'Maximum Floor Load', 'Location', 'South' );
-    xlabel( 'Rotation [RPM]' );  ylabel( 'Force Applied to Ground [N]' );
-    axis( [ 6 400  1e-3 1e3 ] );
-
-
-% temp = raft.admittance.*h_force( dynamic_force.mass, angular_velocity, dynamic_force.radius ).'*k2;
-%     round( temp( 3001 ), 3, 'significant' )
-
-
-
-%% Problem 2f
-
-% See report.
-
-
-
+    
 %% Clean-up
 
 if ( ~isempty( findobj( 'Type', 'figure' ) ) )
@@ -306,44 +481,34 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 %% Reference(s)
 
+p = 10 + 1i*5;  % Pascals;  sinusoid
+
+p_mag = abs( p );  % 11.18 Pascals
+
+p_rms = p_mag / sqrt(2);  % 7.91 Pascals RMS
+
+p_dB_SPL = 20*log10( p_rms / 20e-6 );  % 111.94 dB SPL Z
 
 
-%% Comment(s)
+p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
 
 
 
-%% Regions of Interest
 
-% 5 regions of interest:
+%% URLs
 
-% 1.)  Low frequency:  w < w_minus:
-%
-%   Stiffness controlled;  two masses moving together;  strong coupling (k3 high).
+% https://www.mathworks.com/matlabcentral/answers/1771015-how-to-customize-a-colormap
 
+% https://www.mathworks.com/help/matlab/ref/colororder.html#mw_a3ac0dbb-c8d8-48c9-977c-1bfa84840b08
 
-% 2.)  Force at a resonance frequency:  w = w_minus (lowest resonance frequency):
-%
-%   At lowest resonance frequency;  at w_minus mode, masses moving in same direction (in-phase) with same high amplitude
+% https://www.mathworks.com/matlabcentral/answers/493751-increase-levels-on-colorbar
 
+% https://www.mathworks.com/matlabcentral/answers/216283-get-current-axes-from-multiple-figures
 
-% 3.) Forcing frequency between w_minus and w2
+% https://www.mathworks.com/matlabcentral/answers/288557-how-to-join-every-row-of-an-array-of-strings-in-a-single-string-for-time-plotting-purposes
 
+% https://www.mathworks.com/matlabcentral/answers/352290-set-colorbar-ticklabels-and-tickmarks
 
-% 4.)  Forcing frequency w = w2
-
-
-% 5.)  Forcing frequency w < w < w+
-%
-%   No a special frequency.
-
-
-% 6.)  Forcing frequency w = w+
-%
-% At highest resonance frequency;  at w_plus mode, masses moving in opposite directions (out-of-phase) with same high amplitude
-
-
-% 7.)  Forcing frequency w+ < w
-%
-% Mass controlled region;  mass 1 (washing machine) moves more than mass 2 (raft);
+% https://www.mathworks.com/matlabcentral/answers/152426-sprintf-d-x-prints-out-exponential-notation-instead-of-decimal-notation
 
 
