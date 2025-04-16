@@ -1,4 +1,10 @@
-%% Radiation pattern of a baffled circular piston in an infinite baffle
+
+
+
+%% Synopsis
+
+% Radiation pattern of a baffled circular piston in an infinite baffle.
+
 % This script will plot the beam pattern of a baffled circular piston 
 %
 % References for this work are:
@@ -10,49 +16,52 @@
 % Kinsler et al. (1999)
 %
 % Carl Howard, 27 November 2012
-%
-% Filename: |radiation_pattern_baffled_piston.m|
-
-%% Define properties of air
-c_speed_air=343;        % [m/s] speed of sound
-rho_dens_air=1.21;      % [kg/m^3] density of air
-
-%% Define dimensions of piston
-% The piston radius is arbitrarily defined $a=0.1$m
-%a_piston_radius=0.1;    % [m] radius of the piston
-
-a_piston_radius=0.01;    % [m] radius of the piston
-
-
-%% Define the analysis frequency range
-% Figure 7.4.5, p183 Kinsler et al. has the frequency
-% defined as $ka=10$. Hence $k = 10 / a$
-k_wavenum = 10 / (a_piston_radius);     % wavenumber
 
 
 
-%%
-% Calculating alternative representations of frequency
-%
-% $$\omega = k c $$
-%
-omega = k_wavenum*c_speed_air;  % [rad/s] frequency
+%% Environment
 
-%%
-% and also
-%
-% $$ f = \omega / (2 \pi) $$
-%
-freq = omega / (2*pi);          % [Hz] frequency
+close all; clear; clc;
+% restoredefaultpath;
 
-%%
+addpath( genpath( './00 Support' ), '-begin' );
+
+set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
+
+set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
+set( 0, 'DefaultFigureWindowStyle', 'norma' );
+set( 0, 'DefaultLineLineWidth', 0.8 );
+set( 0, 'DefaultTextInterpreter', 'Latex' );
+
+format ShortG;
+
+pause( 1 );
+
+
+
+%% Constants and Parameters
+
+c_speed_air = 343;  % m/s
+rho_dens_air = 1.21;  % kg/m^3
+
+
+a_piston_radius=0.01;  % m
+
+
+% Define the analysis frequency range.
+k_wavenum = 10 / (a_piston_radius);  % 1,000 1/m
+    w = k_wavenum*c_speed_air;  % radians/s
+        frequency = w / (2*pi);  % Hz
+
+
 % The maximum velocity of the piston is arbitrarily defined here as
-%U_max_vel = 1e-3*2*pi*freq;     % [m/s] maximum velocity of the piston
-
+% U_max_vel = 1e-3*2*pi*frequency;  % m/s;  the maximum velocity of the piston
 U_max_vel = 1;
 
+
  
-%% Calculate the pressure distribution
+%% Calculate the Pressure Distribution
+
 % The pressure is given by Eq.(7.4.17) in Kinsler et al.
 %
 % $$ p(r,\theta,t) = \frac{j}{2} \rho_0 c U_0 \frac{a}{r} k a 
@@ -69,41 +78,40 @@ U_max_vel = 1;
 %
 % The workaround is to make sure that $x \neq 0$.
 
-%%
-% Define the range of angles $\theta$ for the beam pattern
-theta1 = [-pi/2:0.001:0.001];  % [radians]
-theta2 = [0.001:0.001:pi/2];   % [radians]
 
-%%
+
+%% Define the range of angles $\theta$ for the beam pattern
+
+theta1 = -pi/2:0.001:0.001;  % radians
+theta2 = 0.001:0.001:pi/2;  % radians
+
 % Note that if $\theta=0$, will cause problems
 % when trying to evaluate the beam pattern as the denominator contains
 % the term $\sin(\theta)=\sin(0)=0$, hence $1/\sin(0) =\infty=$|NaN|.
 
-%%
-% Define an arbitrary radius
-r_radius = 1;               % [m] distance from front of piston
 
-%%
-% Define a shorthand variable for $ka$
+
+%% Define an Arbitrary Radius
+
+r_radius = 1;  % m;  the distance from front of piston
+
+
+
+%% Define a shorthand variable for ka
+
 ka = k_wavenum*a_piston_radius;
 
-%%
-% The pressure variation with angle is given by
-pressure1 = (1i/2)*rho_dens_air * c_speed_air * U_max_vel    ...
-            *(a_piston_radius/r_radius)*(ka)    ...
-            *(                                  ...
-                2*besselj(1,ka*sin(theta1)) ./  ...
-                (ka * sin(theta1))              ...
-            );
-pressure2 = (1i/2)*rho_dens_air * c_speed_air * U_max_vel    ...
-            *(a_piston_radius/r_radius)*(ka)    ...
-            *(                                  ...
-                2*besselj(1,ka*sin(theta2)) ./  ...
-                (ka * sin(theta2))              ...
-            );
-        
-%%        
-% Calculate the pressure at $\theta=0$ 
+
+
+%% Calculate the Pressure Variation with Angle
+
+pressure1 = (1i/2)*rho_dens_air * c_speed_air * U_max_vel * (a_piston_radius/r_radius)*(ka) * ( 2*besselj(1,ka*sin(theta1)) ./ (ka * sin(theta1) ) );
+
+pressure2 = (1i/2)*rho_dens_air * c_speed_air * U_max_vel * (a_piston_radius/r_radius)*(ka) * ( 2*besselj(1,ka*sin(theta2)) ./ (ka * sin(theta2) ) );
+
+
+
+%% Calculate the pressure at $\theta=0$ 
 % noting that $[2 J_1(0)/0]=1$,
 p_0 = (1i/2)*rho_dens_air * c_speed_air * U_max_vel    ...
             *(a_piston_radius/r_radius)*(ka)    ...

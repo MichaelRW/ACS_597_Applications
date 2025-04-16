@@ -418,8 +418,8 @@ color_map = slanCM( 'ColorBlind', 4 );
 % See:  https://demonstrations.wolfram.com/SunflowerSeedArrangements/
 
 
-k = ( 2*pi*frequency ) / c;  % 18.318 1/m for 1 kHz
-    a = k / 8;  % 2.29 m for ka = 8
+a = 5*wavelength;
+
 
 N = 1e2;
     n = 0:1:( N - 1 );
@@ -440,11 +440,11 @@ x_n = r_n.*cos(theta_n);  y_n = r_n.*sin(theta_n);
 Q_sources = ones( size( xyz_sources, 1 ), 1 );
 
 z_start = a/10;
-    z_receivers = linspace( z_start, 6.25*wavelength, 1e2 );
-        z_receivers( 96:end ) = [ ];
+    z_receivers = linspace( 0.1, 20.25*wavelength, 1e2 );
+        z_receivers( 60:end ) = [ ];
             xyz_receivers = [ zeros( numel( z_receivers ), 1 )  zeros( numel( z_receivers ), 1 )  z_receivers(:) ];
 
-% a/wavelength = 6.7
+
 
 
 figure( 'Name', 'Baffled Piston - ka = 8' ); ...
