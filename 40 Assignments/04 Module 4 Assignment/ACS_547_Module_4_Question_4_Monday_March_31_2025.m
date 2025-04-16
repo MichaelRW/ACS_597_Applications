@@ -8,6 +8,25 @@
 % See Lecture 22 on Monday, April 7, 2025
 
 
+% For question 4, can we assume the SPL of 86 dB is 1 meter from a single, discrete source and thus contributions from other sources (cars) in the line can be ignored in determining the overall strength of characteristic source?
+% 
+% Collapse discussion thread from Ian Christopher Boilard
+% Hide 1 Reply
+% Hide 1 Reply
+% Reply to post from Ian Christopher BoilardReply
+% Mark as UnreadMark as Unread
+% TD
+% Tyler Patrick Dare
+% AuthorTeacher
+% Apr 15 7:26pm
+% 
+% Reply from Tyler Patrick Dare
+% Yes, the idea was that the 86 dB is from one source. I think if you assume that it's from a line of sources, it won't make too much difference, since you will be very close to one source compared to the others.
+% 
+% Reply to post from Tyler Patrick DareReply
+% Mark as UnreadMark as Unread
+
+
 
 %% Environment
 

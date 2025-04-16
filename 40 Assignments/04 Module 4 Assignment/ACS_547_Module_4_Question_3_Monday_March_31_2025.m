@@ -86,9 +86,9 @@ xyz_sources = [ ...
     ];  % m
 %
 Q_sources = [ ...
-    +volume_velocity_1_0_watts; ...
-    -volume_velocity_0_5_watts; ...
-    +volume_velocity_1_0_watts; ...
+    +volume_velocity_0_5_watts; ...
+    -volume_velocity_1_0_watts; ...
+    +volume_velocity_0_5_watts; ...
     ];  % m^3/s
 
 
@@ -100,25 +100,28 @@ xyz_receiver = [ 20  0  tand(30)*20 ];
 
 %% Problem 2b
 
-% Define the desired magnitude
-magnitude = 2;
+num_numbers = 3;
+    rng(20);
+        % phases = 2*pi * rand(1, num_numbers);
+        phases = 2*pi * [ 0  0.33  0.66  ];
 
-% Number of complex numbers to generate
-num_numbers = 10;
+sources = [ volume_velocity_0_5_watts  volume_velocity_1_0_watts  volume_velocity_0_5_watts ] .* exp(1i * phases);
+    % abs( sources )
 
-% Generate random phases (angles)
-phases = 2*pi * rand(1, num_numbers);
+% z = exp(1i * linspace(eps, 2*pi, 3))
 
-% Create complex numbers
-complex_numbers = magnitude * exp(1i * phases);
+figure( ); ...
+    plot( real(sources(1)), imag(sources(1)), 'Marker', '*' );  hold on;
+    plot( real(sources(2)), imag(sources(2)), 'Marker', '*' );
+    plot( real(sources(2)), imag(sources(3)), 'Marker', '*' );  grid on;
+    daspect( [ 1 1 1 ] );
 
-% Display the generated complex numbers (optional)
-disp(complex_numbers);
+    % return
 
 Q_sources = [ ...
-    +volume_velocity_1_0_watts; ...
-    -volume_velocity_0_5_watts; ...
-    +volume_velocity_1_0_watts; ...
+    +sources(1); ...
+    +sources(2); ...
+    +sources(3); ...
     ];  % m^3/s
 
 p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
