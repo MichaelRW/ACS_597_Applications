@@ -76,7 +76,7 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 \subsection*{Problem 1a}
 
 \vspace{-0.3cm}
-Figure~\ref{figure:1aMonopoleSphericalSpreading} shows the sound pressure level as a function of distance for a monopole source at 1 kHz.
+Figure~\ref{figure:1aMonopoleSphericalSpreading} shows the sound pressure level as a function of distance for a 1 kHz monopole source.
 
 \vspace{-0.25cm}
 \begin{figure}[htb!]
@@ -86,7 +86,7 @@ Figure~\ref{figure:1aMonopoleSphericalSpreading} shows the sound pressure level 
     \label{figure:1aMonopoleSphericalSpreading}
 \end{figure}
 
-The pressure drop is proportional to $\frac{1}{r}$;  doubling the distance yields a 6 dB of decay (see data points).
+The pressure drop is proportional to $\frac{1}{r}$;  doubling the distance yields -6 dB of level change (see data points).
 
 
 
@@ -94,13 +94,13 @@ The pressure drop is proportional to $\frac{1}{r}$;  doubling the distance yield
 \subsection*{Problem 1b}
 
 \vspace{-0.25cm}
-Figure~\ref{figure:1bDirectivityPatterns} shows Directivity patterns for a monopole, a dipole, a lateral quadrupole, and a longitudinal (linear) quadrupole at 100 Hz, 1 kHz, and 10 kHz.
+Figure~\ref{figure:1bDirectivityPatterns} shows the directivity patterns for a monopole, dipole, lateral quadrupole, and a linear quadrupole for 1 kHz at a 1 meter distance from the sources.  The receivers are placed at a 1 $m$ distance around the sources.
 
 \vspace{-0.3cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.625, keepaspectratio]{Homework_4_Part_1a.pdf}
-    \caption{Directivity patterns for a monopole, a dipole, a lateral quadrupole, and a longitudinal (linear) quadrupole.}
+        \includegraphics[scale = 0.625, keepaspectratio]{Homework_4_Part_1b.pdf}
+    \caption{Source directivity patterns for a monopole, dipole, lateral quadrupole, and a linear quadrupole.}
     \label{figure:1bDirectivityPatterns}
 \end{figure}
 
@@ -109,29 +109,40 @@ Figure~\ref{figure:1bDirectivityPatterns} shows Directivity patterns for a monop
 \newpage
 \subsection*{Problem 1c}
 
-Figure~\ref{figure:1cTransmissionLoss} shows the transmission loss of the system for a set of damping ratios ranging from 0.001 to 1.
+Figure~\ref{figure:1cLineSourceSmallSeparation} shows the directivity patterns for a line source with 9 sources separated by 0.043 $m$ centered at the origin along the x-axis for 100 Hz, 2 kHz, and 5 kHz.  The receivers are placed at a 1 $m$ distance around the sources.
 
-%\vspace{-0.25cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio]{Homework_3_Part_1c.pdf}
-%    \caption{Transmission loss as a function of damping ratio.  The natural frequency, $f_o$, is 1.5 $Hz$.}
-%    \label{figure:1cTransmissionLoss}
-%\end{figure}
-
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.68, keepaspectratio]{Homework_4_Part_1c.pdf}
+    \caption{Line source directivity patterns for frequencies of 100 Hz, 2 kHz, and 5 kHz with small source separation.}
+    \label{figure:1cLineSourceSmallSeparation}
+\end{figure}
 
 
+Figure~\ref{figure:1cLineSourceLargeSeparation} shows the directivity patterns for a line source with 9 sources separated by 0.343 $m$ centered at the origin along the x-axis for 100 Hz, 2 kHz, and 5 kHz.  The receivers are placed at a 1 $m$ distance around the sources.
+
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.68, keepaspectratio]{Homework_4_Part_1c2.pdf}
+    \caption{Line source directivity patterns for frequencies of 100 Hz, 2 kHz, and 5 kHz with large source separation.}
+    \label{figure:1cLineSourceLargeSeparation}
+\end{figure}
+
+
+
+
+
+\newpage
 \subsection*{Problem 1d}
 
-Figure~\ref{figure:1dAppliedForce} shows the force applied to the foundation.
+Figure~\ref{figure:1dBaffledPiston} shows the force applied to the foundation.
 
-%\vspace{-0.45cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio]{Homework_3_Part_1d.pdf}
-%    \caption{Force applied to the foundation as a function of damping ratio.}
-%    \label{figure:1dAppliedForce}
-%\end{figure}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.675, keepaspectratio]{Homework_4_Part_1c.pdf}
+    \caption{Force applied to the foundation as a function of damping ratio.}
+    \label{figure:1dBaffledPiston}
+\end{figure}
 
 No damping ratio makes the applied force less than 100 N across the 0 to 350 RPM operating range.
 
@@ -139,7 +150,9 @@ The best damping ratio is $\zeta = 0.25$.  The force applied to the foundation s
 
 
 
-\vspace{-0.1cm}
+
+
+\newpage
 \subsection*{Problem 1e}
 
 \vspace{-0.1cm}
