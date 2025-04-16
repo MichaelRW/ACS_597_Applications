@@ -154,53 +154,6 @@ Figure~\ref{figure:1dBaffledPistonDirectivity} shows the monopole source locatio
     \label{figure:1dBaffledPistonDirectivity}
 \end{figure}
 
-ph
-
-
-
-
-
-\newpage
-\subsection*{Problem 1e}
-
-\vspace{-0.1cm}
-The viscous damping coefficient is 519.4 $\frac{kg}{s}$ based on a total mass of 110 $kg$.
-
-Figure~\ref{figure:1eAdmittance} shows the admittance.
-
-%\vspace{-0.45cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.67, keepaspectratio]{Homework_3_Part_1e.pdf}
-%    \caption{Admittance versus RPM.}
-%    \label{figure:1eAdmittance}
-%\end{figure}
-
-The admittance at 300 RPM is 1e-5 $\frac{m}{N}$.
-
-
-
-\vspace{-0.3cm}
-\subsection*{Problem 1f}
-
-\vspace{-0.1cm}
-Figure~\ref{figure:1fDisplacement} shows the displacement of the washing machine.
-
-%\vspace{-0.45cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.67, keepaspectratio]{Homework_3_Part_1f.pdf}
-%    \vspace{-0.2cm}
-%    \caption{Displacement versus RPM.}
-%    \label{figure:1fDisplacement}
-%\end{figure}
-
-The displacement of the washing machine at 300 RPM is approximately \SI{4.9e-3}~~$m$.  The washing machine undergoes larger momentary displacements as it spins up to 300 RPM, in particular around 100 RPM.
-
-The maximum displacement is \SI{9.4e-3}~~$m$, which is very large for prolonged operation.
-
-
-
 
 
 
@@ -208,7 +161,7 @@ The maximum displacement is \SI{9.4e-3}~~$m$, which is very large for prolonged 
 
 
 \newpage
-\section*{Problem 2 - Washing Machine Mount Design (2 DOF)}
+\section*{Problem 2 - Active Control of Enclosure Opening}
 \setcounter{figure}{0}
 \setcounter{table}{0}
 \setcounter{footnote}{0}
@@ -219,176 +172,35 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
 \subsection*{Problem 2a}
 
-Figure~\ref{figure:2aDiagramTwoStageMount} illustrates the two-stage vibration mount showing the washing machine and the ``raft''.
+Figure~\ref{figure:2aSoundPowerLevelReduction} shows the sound power level reduction versus octave band frequency for the linear quadrupole system.
 
-%\vspace{-0.25cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{ACS 547 - Homework 3, Problem 2.pdf}
-%    \vspace{-0.2cm}
-%    \caption{Two-stage vibration mount system for the washing machine.}
-%    \label{figure:2aDiagramTwoStageMount}
-%\end{figure}
+\vspace{-0.25cm}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_2a.pdf}
+    \vspace{-0.2cm}
+    \caption{Sound power level reduction as a function of octave band center frequency.}
+    \label{figure:2aSoundPowerLevelReduction}
+\end{figure}
+
+add intuitive description of what is happening
 
 
 
 \subsection*{Problem 2b}
 
-Table~\ref{table:2Parameters} lists the initial stiffness and damping coefficients for the system.
+Figure~\ref{figure:2aSoundPowerLevelReductionVersusTheta} shows the sound power level reduction versus octave band frequency for the linear quadrupole system.
 
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{1.5pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[htpb!]
+\vspace{-0.25cm}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_2b.pdf}
+    \vspace{-0.2cm}
+    \caption{Sound power level reduction as a function of octave band center frequency.}
+    \label{figure:2aSoundPowerLevelReductionVersusTheta}
+\end{figure}
 
-    \footnotesize
-
-    \centering
-
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M1}  &  110  &  $kg$   \\
-        \hline
-        \textbf{K1}  &  100  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C1}  &  5  &  $\frac{kg}{s}$\tablefootnote{Element of damping vector.}  \\
-        \hline
-        \end{tabular}
-        \hfill
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M2}  &  100  &  $kg$   \\
-        \hline
-        \textbf{K2}  &  100  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C2}  &  5  &  $\frac{kg}{s}$\tablefootnote{Element of damping vector.}  \\
-        \hline
-        \end{tabular}
-        \hfill
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M3}  &  0  &  $kg$   \\
-        \hline
-        \textbf{K3}  &  1,000  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C3}  &  0  &  $\frac{kg}{s}$\tablefootnote{Element of damping vector.}  \\
-        \hline
-        \end{tabular}
-
-        \vspace{0.5cm}
-        \caption{Initial values of stiffness and damping coefficients.}
-        \label{table:2Parameters}
-
-\end{table}
-
-Damping was implemented using the damping vector\footnote{Not equivalent to using a complex-valued stiffness vector;  the imaginary part is the damping for the respective spring}.
-
-
-
-\newpage
-\subsection*{Problem 2c}
-
-\vspace{0.25cm}
-Figure~\ref{figure:2cAdmittance} shows the admittance of the washing machine and the raft.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2c.pdf}
-%    \vspace{0.25cm}
-%    \caption{Admittance of the washing machine and the raft with a force on the washing machine.}
-%    \label{figure:2cAdmittance}
-%\end{figure}
-
-\vspace{0.25cm}
-The admittance of the washing machine is \SI{9.31e-6}~~$\frac{m}{N}$ at 300 RPM.
-
-
-
-\subsection*{Problem 2d}
-
-\vspace{0.25cm}
-Figure~\ref{figure:2dDisplacement} show the displacement of the washing machine and the raft.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2d.pdf}
-%    \vspace{0.25cm}
-%    \caption{Displacement of the washing machine and the raft with a force on the washing machine.}
-%    \label{figure:2dDisplacement}
-%\end{figure}
-
-\vspace{0.25cm}
-At 300 RPM, the washing machine displacement  is \SI{4.6e-3}~~$m$, less than \SI{5.0e-3}~~$m$ for the first-order system.  The displacement of the raft is \SI{4.7e-5}~~$m$, which is 200 times less than the 1 DOF system.
-
-
-
-\subsection*{Problem 2e}
-
-Figure~\ref{figure:2eLoadForce} shows the force applied to the ground by the raft.
-
-The force is is calculated by multiplying the displacement of the raft by the K2 spring constant.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_2e.pdf}
-%    \vspace{0.25cm}
-%    \caption{Force applied to the ground by the raft.}
-%    \label{figure:2eLoadForce}
-%\end{figure}
-
-The ground force at 300 RPM is \SI{4.7e-3}~~$N$.  The force on the ground is always less than 100 $N$.
-
-
-
-\subsection*{Problem 2f}
-
-The performance of this system was improved by \textit{lowering the stiffness of the coupling spring, $k_3$}.  Lowering $k_3$ decreases the separation of the two resonance peaks and shifts them to lower frequencies.  This results in lower admittances for the washing machine and the raft at 300 RPM.  However, due to the quadratic characteristic of the load force with RPM and the second-order roll-off of the admittance curve for the washing machine, optimization is restricted.
-
-In Figure~\ref{figure:2dDisplacement}, displacement of the washing machine after the second resonance frequency ``plateaus'' with much less roll-off relative to the raft displacement.  This limits optimization.
-
-
-
-\newpage
-\subsection*{Problem 2g}
-
-Table~\ref{table:2Comparisons} compares the admittance, displacement, and ground force for the initial and optimized systems.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{1.5pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[htbp!]
-
-    \centering
-
-    \small
-
-    \begin{tabular}{lllll}
-
-        \cline{2-4}
-        \multicolumn{1}{l|}{} &
-          \multicolumn{1}{l|}{\textbf{Admittance {[}\boldmath{$\frac{m}{N}$}{]}}} &
-          \multicolumn{1}{l|}{\textbf{Displacement {[}m{]}}} &
-          \multicolumn{1}{l|}{\textbf{Ground Force {[}N{]}}} &
-           \\ \cline{1-4}
-        \multicolumn{1}{|l|}{\textbf{Initial Design}}   & \multicolumn{1}{c|}{\SI{9.31e-3}} & \multicolumn{1}{c|}{\SI{4.59e-3}} & \multicolumn{1}{c|}{\SI{4.7e-3}} &  \\ \cline{1-4}
-        \multicolumn{1}{|l|}{\textbf{Optimized Design}} & \multicolumn{1}{c|}{\SI{9.22e-6}} & \multicolumn{1}{c|}{\SI{4.55e-3}} & \multicolumn{1}{c|}{\SI{4.62e-5}} &  \\ \cline{1-4}
-                                                &                       &                       &                       &
-    \end{tabular}
-
-    \caption{Performance comparison of the initial and optimized designs.}
-    \label{table:2Comparisons}
-
-\end{table}
-%
-% https://www.tablesgenerator.com/
-
-\vspace{0.2cm}
-It is apparent that the optimized design greatly reduces the admittance and the ground force.  However, the change in displacement is small in comparison.
+add intuitive description of what is happening
 
 
 
@@ -551,141 +363,6 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 
 \subsection*{Part 4a}
-
-Equation~\ref{equation:4aUnitImpulseResponse} is the impulse response for a 1 DOF system.
-
-\begin{equation}
-    x(t) = \frac{1}{m \cdot w_d } \cdot e^{(-w_o \cdot \zeta \cdot t )} \cdot sin( w_d \cdot t)
-    \label{equation:4aUnitImpulseResponse}
-\end{equation}
-
-where $m$ is the mass of the washing machine, $w_d$ is the damped natural frequency, $w_o$ is the natural frequency, and $\zeta$ is the damping ratio.
-
-
-\vspace{0.25cm}
-Figure~\ref{figure:4aImpulseResponse} shows plots of a 1 kg impulse force and the corresponding response of the washing machine.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_4a.pdf}
-%    \vspace{0.25cm}
-%    \caption{Washing machine impulse response.  $w_o$ is 9.4 $\frac{radians}{s}$, $w_d$ is 9.1 $\frac{radians}{s}$, and $\zeta$ is 0.25.}
-%    \label{figure:4aImpulseResponse}
-%\end{figure}
-
-
-
-\subsection*{Part 4b}
-
-A operational sequence for the washing machine created using a sinusoidal forcing function and the impulsive loading with the 5 $kg$ brick.  The sequence is as follows,
-
-\begin{enumerate}[itemsep=-0.15cm]
-    \item Washing machine is off.
-    \item Sinusoidal loading starts at 1 second.
-    \item 5 kg brick is inserted at 4 seconds.
-    \item Sinusoidal loading ends at 8 seconds.
-\end{enumerate}
-
-
-\newpage
-Figure~\ref{figure:4bResponse} shows the response sequence of the washing machine.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.67, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_4b.pdf}
-%    \vspace{0.25cm}
-%    \caption{Washing machine displacement sequence.}
-%    \label{figure:4bResponse}
-%\end{figure}
-
-The maximum displacement of the brick response is \SI{9.2e-3}~~$m$.
-
-The steady-state displacement is \SI{5.4e-3}~~$m$}, which agrees with \SI{4.9e-3}~~$m$} found in Problem 1f.
-
-
-
-\subsection*{Part 4c}
-
-The washing machine takes about 2.3 seconds to return to a steady-state response.
-
-
-
-\subsection*{Part 4d}
-
-Figure~\ref{figure:4dVelocity} shows the velocity response of the washing machine.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.67, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_4d_Velocity.pdf}
-%    \vspace{0.25cm}
-%    \caption{Washing machine velocity response.}
-%    \label{figure:4dVelocity}
-%\end{figure}
-
-
-\newpage
-Figure~\ref{figure:4dAcceleration} shows the acceleration response of the washing machine.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_4d_Acceleration.pdf}
-%    \vspace{0.25cm}
-%    \caption{Washing machine acceleration response.}
-%    \label{figure:4dAcceleration}
-%\end{figure}
-
-The maximum acceleration associated with the brick response is \SI{500}~~$\frac{m}{s^2}$.
-
-
-
-
-
-
-
-
-
-\newpage
-\section*{Summary}
-\setcounter{figure}{0}
-\setcounter{table}{0}
-\setcounter{footnote}{0}
-
-Table~\ref{table:Summary} compares the admittance, displacement, and ground force for the three systems considered here.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{1.5pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[htbp!]
-
-    \centering
-
-    \small
-
-    \begin{tabular}{lllll}
-
-        \cline{2-4}
-        \multicolumn{1}{l|}{} &
-          \multicolumn{1}{l|}{\textbf{Admittance {[}\boldmath{$\frac{m}{N}$}{]}}} &
-          \multicolumn{1}{l|}{\textbf{Displacement {[}m{]}}} &
-          \multicolumn{1}{l|}{\textbf{Ground Force {[}N{]}}} &
-           \\ \cline{1-4}
-        \multicolumn{1}{|l|}{\textbf{1-DOF}}   & \multicolumn{1}{c|}{\SI{1e-5}} & \multicolumn{1}{c|}{\SI{4.9e-3}} & \multicolumn{1}{c|}{\SI{4.8e1}} &  \\ \cline{1-4}
-        \multicolumn{1}{|l|}{\textbf{2-DOF Optimized}} & \multicolumn{1}{c|}{\SI{9.22e-6}} & \multicolumn{1}{c|}{\SI{4.6e-3}} & \multicolumn{1}{c|}{\SI{4.6e-5}} &  \\ \cline{1-4}
-        \multicolumn{1}{|l|}{\textbf{DVA}} & \multicolumn{1}{c|}{\SI{1.2e-6}} & \multicolumn{1}{c|}{\SI{3.8e-6}} & \multicolumn{1}{c|}{\SI{3.8e-5}} &  \\ \cline{1-4}
-                                                &                       &                       &                       &
-    \end{tabular}
-
-    \caption{Performance comparison of the initial and optimized designs.}
-    \label{table:Summary}
-
-\end{table}
-%
-% https://www.tablesgenerator.com/
 
 
 

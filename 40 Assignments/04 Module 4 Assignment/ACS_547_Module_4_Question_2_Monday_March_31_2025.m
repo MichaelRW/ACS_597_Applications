@@ -52,6 +52,8 @@ pause( 1 );
 
 h_sound_power_ratio = @( k, d )  ( 4/5 ) .* ( k .* d ).^4;
 
+h_pressure_ratio = @( theta, sound_level_ratio )  5 .* cos( theta ).^4 * sound_level_ratio;
+
 
 
 %% Constants and Parameters
@@ -84,6 +86,20 @@ figure( 'Name', 'Sound Power Level Reductions' ); ...
 
 
 %% Problem 2b
+
+theta_degrees = 0:0.5:90;
+    theta_radians = theta_degrees.*pi./180;
+
+
+figure( 'Name', 'Sound Power Level Reductions Versus Theta' ); ...
+
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(1), d ) ) ) );  hold on;
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(2), d ) ) ) );
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(3), d ) ) ) );
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(4), d ) ) ) );  grid on;
+        legend( '63 Hz', '125 Hz', '250 Hz', '500 Hz', 'Location', 'SouthWest' )
+    xlabel( 'Octave Band Center Frequency [Hz]' );  ylabel( 'Sound Power Level Reduction [dB]' );
+    axis( [ -5 95 -1e2 25 ] );
 
 
     
