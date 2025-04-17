@@ -3,28 +3,24 @@
 
 %% Synopsis
 
-% Problem 4 - Washing Machine Abuse Testing
+% Problem 4 - Traffic Noise Modeling
 
 % See Lecture 22 on Monday, April 7, 2025
+%   ""D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\22 Monday, April 7, 2025\Lecture 22 - Coherence effects - filled.pptx""
 
 
-% For question 4, can we assume the SPL of 86 dB is 1 meter from a single, discrete source and thus contributions from other sources (cars) in the line can be ignored in determining the overall strength of characteristic source?
-% 
-% Collapse discussion thread from Ian Christopher Boilard
-% Hide 1 Reply
-% Hide 1 Reply
-% Reply to post from Ian Christopher BoilardReply
-% Mark as UnreadMark as Unread
-% TD
-% Tyler Patrick Dare
-% AuthorTeacher
-% Apr 15 7:26pm
-% 
-% Reply from Tyler Patrick Dare
-% Yes, the idea was that the 86 dB is from one source. I think if you assume that it's from a line of sources, it won't make too much difference, since you will be very close to one source compared to the others.
-% 
-% Reply to post from Tyler Patrick DareReply
-% Mark as UnreadMark as Unread
+
+%% Note(s)
+
+% Incoherent line source.
+
+% Distance (source and receivers) are in units of meters.
+
+% Source can be real-valued or complex-valued.  Complex-valued sources have magnitude and phase information.
+
+% Sources have units of volume velocity, m^3/s.
+
+% Complex pressures are in units of Pascals.
 
 
 
@@ -48,112 +44,28 @@ pause( 1 );
 
 
 
-%% Define Anonymous Functions
+%% Contants and Parameters
 
-h_unit_impulse = @( washing_machine_mass, wd, wo, epsilon, t )  ( 1./( washing_machine_mass.*wd) )  .*  exp( -wo.*epsilon.*t ) .* sin( wd.*t );  % mvo = 1 kg\(m s)
+source_separation_distance = 8;  % m
 
+average_A_weighted_source_pressure = 86;  % dB SPL A at 1 m
 
-
-%% Impulse Signal
-
-time_step = 1e-4;  % s
-net_time = 10;  % s
-    time_indices = 0:time_step:( net_time - time_step );
-
-impulse = zeros( size( time_indices ) );
-    impulse( 4/time_step ) = 1./time_step;
-        brick_impulse = 5 .* impulse;
+distance_to_house_from_line_source = 200;  % m
 
 
 
-%% 1 DOF System Impulse Function
+%% Part 4a
 
-ks = 9810;  % N\m
-    wo = sqrt( ks / 110 );  % 9.4 radians\s
-        fo = wo / (2*pi);  % 1.5 Hz
+L1 = average_A_weighted_source_pressure;
+    L2 = L1;
+        L3 = L1;
 
-epsilon = 0.25;
-    C = epsilon * 2*sqrt( ks * 110 );  % 519.4 kg\s
-
-wd = wo * sqrt( 1 - epsilon^2 );  % 9.1 radians\s
-    fd = wd / (2*pi);  % 1.46 Hz
+sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) + 10^(L3/10 ) )
+sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) )
 
 
 
-%% 1 DOF System Impulse Response
-
-impulse_response = h_unit_impulse( 100, wd, wo, epsilon, time_indices );
-
-impulse_response_at_4 = conv( impulse, impulse_response ) * time_step;
-    time_indices_at_4 = ( 0:1:( numel( impulse_response_at_4 ) - 1 ) ) .* time_step;
-%
-figure( 'Name', '1 DOF System Impulse Response' ); ...
-    yyaxis left; ...
-        plot( time_indices, impulse );  grid on;
-        ylabel( 'Force [N]' );
-        ylim( 'auto' );
-    yyaxis right; ...
-        plot( time_indices_at_4, impulse_response_at_4 );  hold on;
-        ylabel( 'Admittance [$\frac{m}{N}$]' );
-        ylim( 'auto' );
-    xlabel( 'Time [s]' );
-    xlim( [ 0 10 ] );
-
-
-
-%% Combined Response
-
-sinusoid_input = 493.5 * sin( 2 * pi * 5 * time_indices );
-    sinusoid_input( 1:1:( 1 / time_step ) ) = 0;
-    sinusoid_input( ( 8 / time_step ):1:( 10 / time_step ) ) = 0;
-
-
-joint_signal = sinusoid_input + brick_impulse;
-
-
-response_to_combined_forcing = conv( impulse_response, joint_signal ) .* time_step;
-    time_indices_sinusoidal_forcing = ( 0:1:( numel( response_to_combined_forcing ) - 1 ) ) .* time_step;
-%
-figure( 'Name', '1 DOF Combined Forcing Response' ); ...
-    h1 = plot( time_indices_sinusoidal_forcing, response_to_combined_forcing );  hold on;
-    %
-    h2 = line( [ 1 1 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '-.' );
-
-    h3 = line( [ 4 4 ], [ -2e-2 2e-2 ], 'Color', [ 0.47, 0.67, 0.19 ], 'LineStyle', '--' );
-    h4 = line( [ 6.3 6.3 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '--' );
-    % 
-    h5 = line( [ 8 8 ], [ -2e-2 2e-2 ], 'Color', 'r', 'LineStyle', '-.' );  grid on;
-
-    h6 = line( [4 8 ], [ 5.42e-3 5.42e-3 ], 'LineStyle', ':', 'Color', 'k' );
-
-        legend( [ h1 h2 h3 h4 h5 h6 ], 'Response', 'Start Sinusoidal Forcing', ...
-            'Brick Inserted', 'End of Brick Response', ...
-            'Stop Sinusoidal Forcing', 'Impulse Response Measure', ...
-            'Location', 'NorthEast', 'Interpreter', 'Latex' );
-
-    xlabel( 'Time [s]' );  ylabel( 'Displacement [m]' );
-    axis( [ 0 12    -2e-2 2e-2  ] );
-
-
-
-%% Acceleration
-
-velocity = diff( response_to_combined_forcing ) ./ time_step;
-%
-figure( 'Name', 'Velocity' ); ...
-    plot( time_indices_sinusoidal_forcing(1:1:(end - 1)), velocity );  grid on;
-    legend( 'Velocity' );
-    xlabel( 'Time [s]' );  ylabel( 'Velocity [$\frac{m}{s}$]' );
-    axis( [ 0 12    -0.25 0.25  ] );
-
-
-acceleration = diff( velocity ) ./ time_step;
-%
-figure( 'Name', 'Acceleration' ); ...
-    plot( time_indices_sinusoidal_forcing(1:1:(end - 2)), acceleration );  grid on;
-    legend( 'Acceleration' );
-    xlabel( 'Time [s]' );  ylabel( 'Acceleration [$\frac{m}{s^2}$]' );
-    axis( [ 0 12    -10 525 ] );
+%% Part 4b
 
 
 

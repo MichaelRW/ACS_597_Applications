@@ -5,14 +5,8 @@
 
 % Problem 3 - Coherent and Incoherent Speakers
 
-% See Lecture 22
+% See Lecture 22 on Monday, April 7, 2025
 %   ""D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\22 Monday, April 7, 2025\Lecture 22 - Coherence effects - filled.pptx""
-
-
-
-%% To Do
-
-% ph
 
 
 
@@ -65,9 +59,6 @@ frequency = 125;  % Hz
 k = (2*pi*frequency) ./ c;  % 2.29 1/m
 
 
-color_map = slanCM( 'ColorBlind', 4 );
-
-
 
 %% Problem 2a
 
@@ -91,32 +82,24 @@ Q_sources = [ ...
     +volume_velocity_0_5_watts; ...
     ];  % m^3/s
 
+xyz_receiver = [ 20  tand(30)*20  1 ];
+% xyz_receiver = [ 0  0  1 ];
 
-xyz_receiver = [ 20  0  tand(30)*20 ];
-    p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
-        L = 10*log10( abs(p).^2 )
+p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
+    L = 10*log10( abs(p).^2 )  % -17.3 dB
 
 
 
 %% Problem 2b
 
-num_numbers = 3;
-    rng(20);
-        % phases = 2*pi * rand(1, num_numbers);
-        phases = 2*pi * [ 0  0.33  0.66  ];
+sources = [ 0.07224 -   0.023583i    -0.099498 -   0.040619i     0.032882 +    0.06851i ];  % -22 dB
+    % abs( sources )  % Agrees with calculated volume velocities from given power levels.
 
-sources = [ volume_velocity_0_5_watts  volume_velocity_1_0_watts  volume_velocity_0_5_watts ] .* exp(1i * phases);
-    % abs( sources )
-
-% z = exp(1i * linspace(eps, 2*pi, 3))
-
-figure( ); ...
-    plot( real(sources(1)), imag(sources(1)), 'Marker', '*' );  hold on;
-    plot( real(sources(2)), imag(sources(2)), 'Marker', '*' );
-    plot( real(sources(2)), imag(sources(3)), 'Marker', '*' );  grid on;
-    daspect( [ 1 1 1 ] );
-
-    % return
+% figure( ); ...
+%     line( [ 0 real(sources(1)) ], [ 0 imag(sources(1)) ], 'Marker', '*', 'Color', 'r' );  hold on;
+%     line( [ 0 real(sources(2)) ], [ 0 imag(sources(2)) ], 'Marker', '*', 'Color', 'k' );
+%     line( [ 0 real(sources(3)) ], [ 0 imag(sources(3)) ], 'Marker', '*', 'Color', 'b' );  grid on;
+%     daspect( [ 1 1 1 ] );
 
 Q_sources = [ ...
     +sources(1); ...
@@ -125,7 +108,7 @@ Q_sources = [ ...
     ];  % m^3/s
 
 p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
-    L = 10*log10( abs(p).^2 )
+    L = 10*log10( abs(p).^2 )  % -22 dB
 
 
     
