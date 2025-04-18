@@ -86,25 +86,22 @@ xyz_receiver = [ 20  tand(30)*20  1 ];
 % xyz_receiver = [ 0  0  1 ];
 
 p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
-    L = 10*log10( abs(p).^2 )  % -17.3 dB
+    L = 10*log10( abs(p).^2 );  % -17.3 dB
 
 
 
 %% Problem 2b
 
-sources = [ 0.07224 -   0.023583i    -0.099498 -   0.040619i     0.032882 +    0.06851i ];  % -22 dB
-    % abs( sources )  % Agrees with calculated volume velocities from given power levels.
-
-% figure( ); ...
-%     line( [ 0 real(sources(1)) ], [ 0 imag(sources(1)) ], 'Marker', '*', 'Color', 'r' );  hold on;
-%     line( [ 0 real(sources(2)) ], [ 0 imag(sources(2)) ], 'Marker', '*', 'Color', 'k' );
-%     line( [ 0 real(sources(3)) ], [ 0 imag(sources(3)) ], 'Marker', '*', 'Color', 'b' );  grid on;
-%     daspect( [ 1 1 1 ] );
-
 Q_sources = [ ...
     +sources(1); ...
     +sources(2); ...
     +sources(3); ...
+    ];  % m^3/s
+%
+Q_sources = [ ...
+    +volume_velocity_0_5_watts; ...
+    -volume_velocity_1_0_watts; ...
+    +volume_velocity_0_5_watts; ...
     ];  % m^3/s
 
 p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );

@@ -188,7 +188,7 @@ Figure~\ref{figure:1cLineSourceLargeSeparation} shows the directivity patterns f
 
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.68, keepaspectratio]{Homework_4_Part_1c2.pdf}
+        \includegraphics[scale = 0.675, keepaspectratio]{Homework_4_Part_1c2.pdf}        
     \caption{Line source directivity patterns for frequencies of 100 Hz, 2 kHz, and 5 kHz with large source separation.}
     \label{figure:1cLineSourceLargeSeparation}
 \end{figure}
@@ -243,35 +243,66 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem2}.
 
 \subsection*{Problem 2a}
 
-Figure~\ref{figure:2aSoundPowerLevelReduction} shows the sound power level reduction versus octave band frequency for the linear quadrupole system.
+Figure~\ref{figure:2aSoundPowerLevelReduction} shows the sound pressure level reduction versus octave band frequency for the linear quadrupole.
 
 \vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
-        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_2a.pdf}
-    \vspace{-0.2cm}
-    \caption{Sound power level reduction as a function of octave band center frequency.}
+        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_2a.pdf}
+    \caption{Sound pressure level reduction as a function of octave band center frequency.}
     \label{figure:2aSoundPowerLevelReduction}
 \end{figure}
 
-add intuitive description of what is happening
+
+%\vspace{0.2cm}
+%Table~\ref{table:2aLevels} lists the sound power level reduction for the 63, 125, 250, and 500 Hz octave bands.
+%
+%\vspace{0.25cm}
+%\setlength{\abovecaptionskip}{1.5pt}
+%\vspace{0.1cm}
+%{\renewcommand{\arraystretch}{1.5}
+%\begin{table}[htpb!]
+%    \footnotesize
+%    \centering
+%        \begin{tabular}{ | c | c | }
+%        \hline
+%        \textbf{Octave Band [Hz]}  &  \textbf{Level Reduction [dB]}   \\
+%        \hline
+%        63  &  -26.0   \\
+%        \hline
+%        125  &  -14.1   \\
+%        \hline
+%        250  &  -2.1   \\
+%        \hline
+%        500  &  10.0  \\
+%        \hline
+%        \end{tabular}
+%
+%        \vspace{0.5cm}
+%        \caption{Octave band sound power level reductions.}
+%        \label{table:2aLevels}
+%
+%\end{table}
 
 
 
+
+\vspace{-0.25cm}
 \subsection*{Problem 2b}
 
-Figure~\ref{figure:2aSoundPowerLevelReductionVersusTheta} shows the sound power level reduction versus octave band frequency for the linear quadrupole system.
+Figure~\ref{figure:2aSoundPowerLevelReductionVersusTheta} shows the octave sound level reduction versus the angle, $\theta$, between the plane of the opening and a line at the center of the box opening.
 
 \vspace{-0.25cm}
 \begin{figure}[htb!]
     \center
         \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_2b.pdf}
-    \vspace{-0.2cm}
-    \caption{Sound power level reduction as a function of octave band center frequency.}
+    \caption{Octave band pressure level reduction as a function theta.}
     \label{figure:2aSoundPowerLevelReductionVersusTheta}
 \end{figure}
 
-add intuitive description of what is happening
+
+\vspace{0.25cm}
+The relative level reduction across the four octave bands is similar.  As the receiver moves from the side of the opening towards its center, the level of reduction increases, where at 90$^\circ$, a null is reached as shown in Figure~\ref{figure:1bDirectivityPatterns} for Problem 1b.
 
 
 
@@ -279,13 +310,10 @@ add intuitive description of what is happening
 
 
 
-\newpage
-\section*{Problem 3 - Washing Machine Dynamic Vibration Absorber Design}
+\section*{Problem 3 - Coherent and Incoherent Speakers}
 \setcounter{figure}{0}
 \setcounter{table}{0}
 \setcounter{footnote}{0}
-
-Part b - The three speakers have inde
 
 
 The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
@@ -293,131 +321,12 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem3}.
 
 \subsection*{Part 3a}
 
-Figure~\ref{figure:3aDiagramDVA} illustrates the dynamic vibration absorber (DVA) system.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htb!]
-%    \center
-%        \includegraphics[scale = 0.7, keepaspectratio, trim=4 4 4 4, clip]{ACS 547 - Homework 3, Problem 3 DVA.pdf}
-%    \caption{Dynamic vibration absorber system for the washing machine.}
-%    \label{figure:3aDiagramDVA}
-%\end{figure}
-
-Table~\ref{table:3Parameters} lists the stiffness and damping coefficients for the system.
-
-\vspace{0.25cm}
-\setlength{\abovecaptionskip}{1.5pt}
-\vspace{0.1cm}
-{\renewcommand{\arraystretch}{1.5}
-\begin{table}[htpb!]
-
-    \footnotesize
-
-    \centering
-
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M1}  &  15  &  $kg$   \\
-        \hline
-        \textbf{K1}  &  0  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C1}  &  0  &  $\frac{kg}{s}$  \\
-        \hline
-        \end{tabular}
-        \hfill
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M2}  &  110  &  $kg$   \\
-        \hline
-        \textbf{K2}  &  9,810  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C2}  &  1,962  &  $\frac{kg}{s}$\tablefootnote{0.2 fraction of respective spring stiffness.}  \\
-        \hline
-        \end{tabular}
-        \hfill
-        \begin{tabular}{ | c | c | c | }
-        \hline
-        \textbf{M3}  &  0  &  $kg$   \\
-        \hline
-        \textbf{K3}  &  1e5  &  $\frac{N}{m}$  \\
-        \hline
-        \textbf{C3}  &  1e4  &  $\frac{kg}{s}$\tablefootnote{0.1 fraction of respective spring stiffness.}  \\
-        \hline
-        \end{tabular}
-
-        \vspace{0.5cm}
-        \caption{Stiffness and damping coefficients for the DVA system.}
-        \label{table:3Parameters}
-
-\end{table}
+The expected sound pressure at the receive for the coherent sources is -17.3 dB.
 
 
-Damping was implemented by adding with an imaginary component to the respective spring stiffness\footnote{Not equivalent to using a damping vector in the argument to the given Matlab nDOF function script-file.}.
-
-
-
-\newpage
 \subsection*{Part 3b}
 
-Figure~\ref{figure:3aEquationsFromDvaLecture} shows the admittance response of the original system and DVA system based on the equations presented in the tutorial lecture on DVA system analysis.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3a.pdf}
-%    \caption{Admittance responses based on the equations from the DVA tutorial lecture.}
-%    \label{figure:3aEquationsFromDvaLecture}
-%\end{figure}
-
-The washing machine admittance at 300 RPM is reduced from the blue curve resonance peak to a point between the two resonances on the red curve.
-
-
-
-\subsection*{Part 3c - Admittance}
-
-Figure~\ref{figure:3bAdmittance} shows the admittance response of the DVA system using the nDOF function script-file.  The stiffness of the coupling spring, $k_3$, is set to place the null of the admittance response at the 300 RPM operating state of the washing machine.  \textit{The admittance at 300 RPM is approximately \SI{1.2e-6}~~$\frac{m}{N}$}\footnote{This is theoretical and not realistic in practical terms, but the admittance is reduced.}
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3b.pdf}
-%    \caption{Solution using nDOF script-file function.}
-%    \label{figure:3bAdmittance}
-%\end{figure}
-
-
-
-\subsection*{Part 3d - Displacement}
-
-Figure~\ref{figure:3cDisplacement} shows the displacement of the washing machine as a function of RPM.  The ramp up to 300 RPM occurs quickly so that the large displacements are transient and the maximum speed is 350 RPM (the large displacement associated with the resonance peak at higher frequencies is not reached).
-
-The displacement at 300 RPM is approximately \SI{38.2e-6}~~$m$.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3c.pdf}
-%    \vspace{0.25cm}
-%    \caption{Displacement of the washing machine.}
-%    \label{figure:3cDisplacement}
-%\end{figure}
-
-
-
-\subsection*{Part 3e}
-
-Figure~\ref{figure:3dForce} shows the force applied to the floor by the washing machine.
-
-The force applied to the floor at 300 RPM is approximately \SI{3.75e-3}~~$N$.
-
-%\vspace{-0.25cm}
-%\begin{figure}[htpb!]
-%    \center
-%        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_3_Part_3d.pdf}
-%    \vspace{0.25cm}
-%    \caption{Force applied to the floor.}
-%    \label{figure:3dForce}
-%\end{figure}
+The expected sound pressure at the receive for the incoherent sources is -17.3 dB.
 
 
 
@@ -450,28 +359,28 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 \section{Appendix - Matlab Code for Problem 1}
 \label{appendix:problem1}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_1_Monday_March_31_2025.m}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_1_Monday_March_31_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 2}
 \label{appendix:problem2}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_2_Monday_March_31_2025.m}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_2_Monday_March_31_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 3}
 \label{appendix:problem3}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_3_Monday_March_31_2025.m}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_3_Monday_March_31_2025.m}
 
 
 \newpage
 \section{Appendix - Matlab Code for Problem 4}
 \label{appendix:problem4}
 
-%\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_5_Monday_March_31_2025.m}
+\lstinputlisting[style=Matlab-editor, numbers=left, mlshowsectionrules, basicstyle=\scriptsize]{../ACS_547_Module_4_Question_4_Monday_March_31_2025.m}
 
 
 

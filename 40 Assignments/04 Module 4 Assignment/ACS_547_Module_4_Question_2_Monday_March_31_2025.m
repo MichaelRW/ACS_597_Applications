@@ -10,12 +10,6 @@
 
 
 
-%% To Do
-
-% ph
-
-
-
 %% Note(s)
 
 % Distance (source and receivers) are in units of meters.
@@ -78,7 +72,7 @@ d = 205e-3;  % m;  distance between each of the two speakers and the center of t
 
 figure( 'Name', 'Sound Power Level Reductions' ); ...
 
-    plot( frequencies, 10*log10( h_sound_power_ratio( k, d ) ) );  grid on;
+    semilogx( frequencies, 10*log10( h_sound_power_ratio( k, d ) ) );  grid on;
         xlabel( 'Octave Band Center Frequency [Hz]' );  ylabel( 'Sound Power Level Reduction [dB]' );
     xticks( [ 63, 125, 250, 500 ] );  xticklabels( { '63 Hz', '125 Hz', '250 Hz', '500 Hz' } );
     axis( [ 50 550 -30 12 ] );
@@ -93,12 +87,12 @@ theta_degrees = 0:0.5:90;
 
 figure( 'Name', 'Sound Power Level Reductions Versus Theta' ); ...
 
-    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(1), d ) ) ) );  hold on;
-    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(2), d ) ) ) );
-    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(3), d ) ) ) );
-    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(4), d ) ) ) );  grid on;
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(1), d ) ) ), 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(2), d ) ) ), 'Color', [ color_map( 2, : ) 0.8 ] );
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(3), d ) ) ), 'Color', [ color_map( 3, : ) 0.8 ] );
+    plot( theta_degrees, 10*log10( h_pressure_ratio( theta_radians, h_sound_power_ratio( k(4), d ) ) ), 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
         legend( '63 Hz', '125 Hz', '250 Hz', '500 Hz', 'Location', 'SouthWest' )
-    xlabel( 'Octave Band Center Frequency [Hz]' );  ylabel( 'Sound Power Level Reduction [dB]' );
+    xlabel( '$\theta$ [$^\circ$]' );  ylabel( 'Sound Power Level Reduction [dB]' );
     axis( [ -5 95 -1e2 25 ] );
 
 
