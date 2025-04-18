@@ -92,11 +92,11 @@ p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c )
 
 %% Problem 2b
 
-Q_sources = [ ...
-    +sources(1); ...
-    +sources(2); ...
-    +sources(3); ...
-    ];  % m^3/s
+xyz_sources = [ ... 
+    +d, 0, 0; ...
+    0, 0, 0; ...
+    -d, 0, 0; ...
+    ];  % m
 %
 Q_sources = [ ...
     +volume_velocity_0_5_watts; ...
@@ -104,8 +104,22 @@ Q_sources = [ ...
     +volume_velocity_0_5_watts; ...
     ];  % m^3/s
 
-p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receiver, frequency, rho0, c );
-    L = 10*log10( abs(p).^2 )  % -22 dB
+
+% Speaker 1
+p1 = sum_of_monopoles( xyz_sources(1, :), Q_sources(1), xyz_receiver, frequency, rho0, c );
+    L1 = 10*log10( abs( p1 ) );  % -6.0 dB
+
+% Speaker 2
+p2 = sum_of_monopoles( xyz_sources(2, :), Q_sources(2), xyz_receiver, frequency, rho0, c );
+    L2 = 10*log10( abs( p2 ) );  % -4.5 dB
+
+% Speaker 3
+p3 = sum_of_monopoles( xyz_sources(3, :), Q_sources(3), xyz_receiver, frequency, rho0, c );
+    L3 = 10*log10( abs( p3 ) );  % -6.1 dB
+
+
+L_incoherent_sources = 10*log10(  10^(L1/10) + 10^(L2/10) + 10^(L3/10 ) );  % -0.71 dB
+    
 
 
     
