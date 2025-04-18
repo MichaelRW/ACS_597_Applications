@@ -60,10 +60,16 @@ L1 = average_A_weighted_source_pressure;
     L2 = L1;
         L3 = L1;
 
-sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) + 10^(L3/10 ) )
+% sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) + 10^(L3/10 ) );
 sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) )
 
 
+data = [ L1, L2, L3 ];
+
+average_sound_level = 10*log10( mean( 10.^( data./10 ) ) )
+LA_eq = 10*log10( ( 1/numel( data ) ) * sum ( 1.*10.^( data ./ 10 )) )
+
+return
 
 %% Part 4b
 

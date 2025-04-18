@@ -10,22 +10,13 @@
 
 
 
-%% To Do
-
-% Confirm relationship of pressure dependence on distance for a given frequency.
-
-% https://www.google.com/search?q=wiki+wave+number&rlz=1C1UEAD_enCA1080CA1080&oq=wiki+wave+number&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yBwgCEAAY7wUyCggDEAAYgAQYogQyBggEEEUYPNIBCDI0NDNqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8
-% https://en.wikipedia.org/wiki/Wavenumber
-
-
-
 %% Note(s)
 
-% Distance (source and receivers) are in units of meters.
+% Distance (source and receivers) is in units of meters.
 
-% Source can be real-valued or complex-valued.  Complex-valued sources have magnitude and phase information.
+% A source can be real-valued or complex-valued.  Complex-valued sources have magnitude and phase information.
 
-% Sources have units of volume velocity, m^3/s.
+% A sources has units of volume velocity, m^3/s.
 
 % Complex pressures are in units of Pascals.
 
@@ -38,11 +29,11 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'norma' );
-set( 0, 'DefaultLineLineWidth', 0.8 );
+set( 0, 'DefaultLineLineWidth', 1.0 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -60,13 +51,11 @@ frequency = 1e3;  % Hz
     wavelength = c / frequency;  % 0.343 m
 
 k = (2*pi*frequency) ./ c;  % 18.3 1/m (alternative calculation:  2pi / wavelength)
-        
-radius_fractions = [ 0.5  2.4  4.8  9.6 ];
 
 
-r = radius_fractions;  % m (unity multiplier)
+r = [ 0.5  2.4  4.8  9.6 ];  % m;  multiplier of 1.
 
-theta = ( 0:0.01:2*pi ).';
+theta = ( 0:0.01:2*pi ).';  % radians
 
 xyz_receivers = nan( numel( r ), numel( theta), 3 );  % m
 
@@ -88,7 +77,7 @@ xyz_sources = [ ...
     0, 0, 0; ...
     ];
 %
-Q_sources = 1;  % m^3/s
+Q_sources = 1.4;  % m^3/s
 
 
 x = 0.01:0.01:10;
@@ -129,29 +118,39 @@ figure( 'Name', 'Monopole Source - Directivity Pattern' ); ...
     p = sum_of_monopoles( xyz_sources, Q_sources, xyz_receivers, frequency, rho0, c );
         monopole.L = 10*log10( abs(p).^2 );
 
-    polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );
+    polarplot( theta, monopole.L, 'Color', [ color_map( 1, : ) 0.2 ] );  hold on;
         tick_marks = monopole.L( 1 );
 
+    p2 = sum_of_monopoles( xyz_sources, Q_sources, 4.*xyz_receivers, frequency, rho0, c );
+        monopole.L2 = 10*log10( abs(p2).^2 );
+
+    polarplot( theta, monopole.L2, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+        tick_marks2 = monopole.L2( 1 );
+
     monopole.label = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 1  round( tick_marks, 1 ) ] ) );
+    monopole.label2 = sprintf( '1 kHz, Q = 1.4 %s @ %1g m, %3.1f dB', '$\frac{m^3}{s}$', string( [ 4  round( tick_marks2, 1 ) ] ) );
 
-    rlim( [ 0  1e2 ] );
-        rticklabels( sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ) );  rtickangle( 45 );
-        rticks( tick_marks );
-
-
-figure( 'Name', 'Monopole Source - Pressure Versus Angle' ); ...
-
-    plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
-    legend( monopole.label, 'Location', 'North', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 80 ] );
+    rlim( [ 0  80 ] );
+        rticklabels( ...
+            { sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 1  round( tick_marks, 1 ) ] ) ), ...
+            sprintf( '1 kHz, @ %1g m, %3.1f dB', string( [ 4  round( tick_marks2, 1 ) ] ) ) } );
+        rtickangle( 0 );
+        rticks( [ tick_marks2 tick_marks ] );
 
 
+% figure( 'Name', 'Monopole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  grid on;
+%     legend( monopole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
+
+return
 
 %% Problem 2b - Directivity Pattern for a Dipole Source
 
-d = wavelength / 8;  % 0.043 m
-    k*d;  % 0.79
+d = wavelength / 8;  % 0.043 m;  less than the wavelength of 0.343 m.
+    k*d;  % 0.79 unitless
 
 xyz_sources = [ ... 
     -d, 0, 0; ...
