@@ -70,13 +70,15 @@ Lw = 86 - 10*log10( D0 / (4*pi*1^2) );  % 94 dB
 
 %% Part 4a
 
+% SOURCE_OFFSET = 64;  % 75.74 dB
+
 % SOURCE_OFFSET = 1e0;  % 75.74 dB
 % SOURCE_OFFSET = 1e1;  % 84.07 dB
 % SOURCE_OFFSET = 1e2;  % 91.18 dB
 % SOURCE_OFFSET = 1e3;  % 94.38 dB
-% SOURCE_OFFSET = 1e4;  % 96.21 dB
+SOURCE_OFFSET = 1e4;  % 96.21 dB
 % SOURCE_OFFSET = 1e5;  % 97.50 dB
-SOURCE_OFFSET = 1e6;  % 98.49 dB
+% SOURCE_OFFSET = 1e6;  % 98.49 dB
 % SOURCE_OFFSET = 1e7;  % 99.29 dB
 % SOURCE_OFFSET = 1e8;  % 99.97 dB
 % SOURCE_OFFSET = 1e9;  % 100.56 dB
@@ -101,18 +103,28 @@ end
 
 fprintf( 1, '\n' );
 
-h_sound_pressure_net( level_set )
+% h_sound_pressure_net( level_set )
 
 
 number_of_sources = [ 1e2  1e3  1e4  1e5  1e6  1e7  1e8  1e9 ];
 estimated_levels = [ 91.18  94.38  96.21  97.50  98.49  99.29  99.97  100.56 ];
 
 figure( ); ...
-    semilogx( number_of_sources, estimated_levels );  grid on;
+    semilogx( number_of_sources, estimated_levels, 'Marker', '*' );  grid on;
+    xlabel( 'Number of Sources' );  ylabel( 'Estimate Sound Pressure Level  [dB]' );
+    xlim( [ 5e1 2e9 ] );
 
 
 
 %% Part 4b
+
+line_source_circumference = 2*pi*distance_to_house_from_line_source;
+
+number_of_sources_around_the_house = line_source_circumference / 8;  % 157
+
+single_source_pressure = h_source_pressure( Lw, 200 );  % 70.97 dB
+
+sound_pressure_net_circle  = 10*log10( number_of_sources_around_the_house * 10.^(single_source_pressure./10) );  % 93 dB
 
 
 

@@ -98,7 +98,7 @@ Figure~\ref{figure:1aMonopolePressureDrop} shows the sound pressure level as a f
     \label{figure:1aMonopolePressureDrop}
 \end{figure}
 
-The pressure drop is proportional to $\frac{1}{r}$;  doubling the distance yields -6 dB of level change (see data points).
+Doubling the distance yields a -6 dB of pressure level change (see data points).
 
 
 
@@ -334,7 +334,7 @@ The expected sound pressure at the receive for the incoherent sources is -0.71 d
 
 
 
-\vspace{4cm}
+\vspace{1cm}
 \section*{Problem 4 - Traffic Noise Modeling}
 \setcounter{figure}{0}
 \setcounter{table}{0}
@@ -346,13 +346,26 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem4}.
 
 \subsection*{Part 4a}
 
-If the line of traffic is taken as infinitely long, the estimated sound pressure level at the house is approximately 100 dB.
+If the line of traffic is infinitely long, the estimated sound pressure level at the house is approximately 100 dB.
 
+\vspace{0.25cm}
+From slide 27 of Lecture 22 (Monday, April 2, 2025), the first knee-point is $\frac{D}{3}$ is 2.67 $m$, while the second knee-point is infinite because of the assumption of an infinitely long line of traffic.  This requires that the decay per doubling of distance is -3 $dB$.
+
+\vspace{0.25cm}
+Figure~\ref{figure:4aEstimatedPressureLevels} shows the estimated sound pressure level versus number of line sources.
+
+\vspace{-0.25cm}
+\begin{figure}[htb!]
+    \center
+        \includegraphics[scale = 0.675, keepaspectratio, trim=4 4 4 4, clip]{Homework_4_Part_4a.pdf}
+    \caption{Estimated sound pressure level versus number of line sources.}
+    \label{figure:4aEstimatedPressureLevels}
+\end{figure}
 
 
 \subsection*{Part 4b}
 
-If the line of traffic is taken as infinitely long, the estimated sound pressure level at the house is approximately 100 dB.
+When the line source circles the house at a 200 $m$ radius, there will be a finite number of incoherent sources around the house.  The number of estimate sources is 157, which produces a pressure level at the house of about 93 dB.
 
 
 

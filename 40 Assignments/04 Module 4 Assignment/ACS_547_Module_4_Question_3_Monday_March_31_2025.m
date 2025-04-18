@@ -119,7 +119,6 @@ p3 = sum_of_monopoles( xyz_sources(3, :), Q_sources(3), xyz_receiver, frequency,
 
 
 L_incoherent_sources = 10*log10(  10^(L1/10) + 10^(L2/10) + 10^(L3/10 ) );  % -0.71 dB
-    
 
 
     
