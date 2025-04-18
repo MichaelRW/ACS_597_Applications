@@ -145,7 +145,7 @@ figure( 'Name', 'Monopole Source - Directivity Pattern' ); ...
 %     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
 %     axis( [ -10 370  0 80 ] );
 
-return
+
 
 %% Problem 2b - Directivity Pattern for a Dipole Source
 
@@ -180,18 +180,18 @@ figure( 'Name', 'Dipole Source - Directivity Pattern' ); ...
         rticks( tick_marks );
 
 
-figure( 'Name', 'Dipole Source - Pressure Versus Angle' ); ...
-
-    plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );  grid on;
-    legend( dipole.label, 'Location', 'North', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 80 ] );
+% figure( 'Name', 'Dipole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );  grid on;
+%     legend( dipole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 80 ] );
 
 
 
 %% Problem 2b - Lateral Quadrupole Directivity Pattern
 
-d = 1e-1;  % m
+d = ( wavelength / 8 ) / 2;  % 0.043 m;  less than the wavelength of 0.343 m.
 
 xyz_sources = [ ... 
     +d, +d, 0; ...
@@ -225,12 +225,12 @@ figure( 'Name', 'Lateral Quadrupole Source - Directivity Pattern' ); ...
         rticks( tick_marks );
 
 
-figure( 'Name', 'Lateral Quadrupole Source - Pressure Versus Angle' ); ...
-
-    plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );  grid on;
-    legend( lateral_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 100 ] );
+% figure( 'Name', 'Lateral Quadrupole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );  grid on;
+%     legend( lateral_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
 
 
 
@@ -268,12 +268,12 @@ figure( 'Name', 'Linear Quadrupole Source - Directivity Pattern' ); ...
         rticks( tick_marks );
 
 
-figure( 'Name', 'Linear Quadrupole Source - Pressure Versus Angle' ); ...
-
-    plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
-    legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 100 ] );
+% figure( 'Name', 'Linear Quadrupole Source - Pressure Versus Angle' ); ...
+% 
+%     plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+%     legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 100 ] );
 
 
 
@@ -290,15 +290,15 @@ figure( 'Name', 'Combined Directivity Patterns - Polar Plot' ); ...
     rlim( [ 0  80 ] );
 
 
-figure( 'Name', 'Combined Directivity Patterns - Pressure Versus Angle' ); ...
-
-    h_1 = plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
-    h_2 = plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
-    h_3 = plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
-    h_4 = plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
-         legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
-    xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
-    axis( [ -10 370  0 90 ] );
+% figure( 'Name', 'Combined Directivity Patterns - Pressure Versus Angle' ); ...
+% 
+%     h_1 = plot( theta.*180./pi, monopole.L, 'Color', [ color_map( 1, : ) 0.8 ] );  hold on;
+%     h_2 = plot( theta.*180./pi, dipole.L, 'Color', [ color_map( 2, : ) 0.8 ] );
+%     h_3 = plot( theta.*180./pi, lateral_quadrupole.L, 'Color', [ color_map( 3, : ) 0.8 ] );
+%     h_4 = plot( theta.*180./pi, linear_quadrupole.L, 'Color', [ color_map( 4, : ) 0.8 ] );  grid on;
+%          legend( linear_quadrupole.label, 'Location', 'North', 'Interpreter', 'Latex' );
+%     xlabel( 'Angle [Degree]' );  ylabel( 'Pressure at 1 m [dB]' );
+%     axis( [ -10 370  0 90 ] );
 
 
 
