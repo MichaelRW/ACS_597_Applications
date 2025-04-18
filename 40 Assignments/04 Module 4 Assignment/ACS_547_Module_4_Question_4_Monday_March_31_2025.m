@@ -44,6 +44,16 @@ pause( 1 );
 
 
 
+%% Define Anonymous Function(s)
+
+h_distance_to_house = @( horizontal_distance, distance_to_house_from_line_source )  sqrt( horizontal_distance^2 + distance_to_house_from_line_source^2 );
+
+h_source_pressure = @( Lw, distance )  Lw - 10*log10( distance );
+
+h_sound_pressure_net = @( levels )  10*log10( sum( 10.^(levels./10) ) );
+
+
+
 %% Contants and Parameters
 
 source_separation_distance = 8;  % m
@@ -52,24 +62,55 @@ average_A_weighted_source_pressure = 86;  % dB SPL A at 1 m
 
 distance_to_house_from_line_source = 200;  % m
 
+D0 = 2;
+
+Lw = 86 - 10*log10( D0 / (4*pi*1^2) );  % 94 dB
+
 
 
 %% Part 4a
 
-L1 = average_A_weighted_source_pressure;
-    L2 = L1;
-        L3 = L1;
+% SOURCE_OFFSET = 1e0;  % 75.74 dB
+% SOURCE_OFFSET = 1e1;  % 84.07 dB
+% SOURCE_OFFSET = 1e2;  % 91.18 dB
+% SOURCE_OFFSET = 1e3;  % 94.38 dB
+% SOURCE_OFFSET = 1e4;  % 96.21 dB
+% SOURCE_OFFSET = 1e5;  % 97.50 dB
+SOURCE_OFFSET = 1e6;  % 98.49 dB
+% SOURCE_OFFSET = 1e7;  % 99.29 dB
+% SOURCE_OFFSET = 1e8;  % 99.97 dB
+% SOURCE_OFFSET = 1e9;  % 100.56 dB
+    x_axis_multiplier = -SOURCE_OFFSET:1:SOURCE_OFFSET;
 
-% sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) + 10^(L3/10 ) );
-sound_pressure_net = 10*log10( 10^(L1/10) + 10^(L2/10 ) )
+
+level_set = nan( numel( x_axis_multiplier ), 1 );
+
+fprintf( 1, '\n' );
+
+for index = 1:1:numel( x_axis_multiplier )
+
+    horizontal_distance = abs( x_axis_multiplier(index)*source_separation_distance );
+
+    working_distance = h_distance_to_house( horizontal_distance, distance_to_house_from_line_source );
+
+    level_set( index ) = h_source_pressure( Lw, working_distance );
+
+    % fprintf( 1, '%d\t%d m\t\tDistance:  %3.1f\t%3.1f\n', x_axis_multiplier(index), horizontal_distance, round( working_distance, 1 ), level_set(index) );
+
+end
+
+fprintf( 1, '\n' );
+
+h_sound_pressure_net( level_set )
 
 
-data = [ L1, L2, L3 ];
+number_of_sources = [ 1e2  1e3  1e4  1e5  1e6  1e7  1e8  1e9 ];
+estimated_levels = [ 91.18  94.38  96.21  97.50  98.49  99.29  99.97  100.56 ];
 
-average_sound_level = 10*log10( mean( 10.^( data./10 ) ) )
-LA_eq = 10*log10( ( 1/numel( data ) ) * sum ( 1.*10.^( data ./ 10 )) )
+figure( ); ...
+    semilogx( number_of_sources, estimated_levels );  grid on;
 
-return
+
 
 %% Part 4b
 
