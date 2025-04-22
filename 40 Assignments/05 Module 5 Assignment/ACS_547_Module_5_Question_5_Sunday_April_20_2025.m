@@ -12,6 +12,8 @@
 
 %% Note(s)
 
+% Plots of all the data.
+
 
 
 %% Environment
@@ -24,7 +26,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 % set( groot, 'DefaultFigurePosition', [ 1.7e3  775    750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'norma' );
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
 set( 0, 'DefaultLineLineWidth', 1.0 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -37,7 +39,7 @@ pause( 1 );
 %% Constants and Parameters
 
 
-color_map = slanCM( 'ColorBlind', 4 );
+% color_map = slanCM( 'ColorBlind', 4 );
 
 
 
@@ -49,9 +51,78 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 %% Visualize Data
 
-% for index = 1:1:11
-%     figure( );  plot( p( :, index ) );  grid on;
-% end
+% close all;  clc;  pause( 1 );
+% 
+% fs;  % sample rate is 80 kHz
+% figure;  plot( mic_angles_degrees );  % 23, 18, 12, 6, 0, -6, -12, -18, -23, -28, -32
+% figure;  plot( trigger );
+
+% return
+
+%% RESAMPLE - time-domain sampling to angular domain
+
+close all;  clc;  pause(1);
+
+threshold = 0.5;
+
+start_angle = 0;  % radians
+end_angle = 2*pi; % radians
+    y_difference = end_angle - start_angle;
+
+
+% Locate the leading edges of the trigger data.
+smoothed_trigger_data = [ 0;  diff( smooth( trigger, 'moving', 5 ) ) ];
+    edge_indices = find( threshold  <  smoothed_trigger_data );
+        lead_edge = edge_indices( 1:2:end );
+
+
+theta = [ ]; 
+
+% Linear interpolation for each interval between the leading edges.
+for index = 1:1:numel( lead_edge )
+
+
+    % fprintf( 1, '\n%d of %d', index, numel( lead_edge ) );
+
+
+    if ( index == 1 )
+        x_difference = lead_edge( index );
+    else
+        x_difference = lead_edge( index ) - lead_edge( index - 1 );
+    end    
+    
+    slope = y_difference / x_difference;
+
+    segment = (0:1:x_difference)*slope;
+        theta = [ theta segment ];
+
+    % keyboard
+    
+end
+
+
+    
+
+figure( ); ...
+    h1 = subplot( 2, 1, 1 ); ...
+        plot( trigger( 1:1:end ) );  hold on;
+        %
+        for index = 1:1:numel(lead_edge)
+            line( [ lead_edge(index) lead_edge(index)], [ 0 4 ], 'Color', 'r' );  grid on;
+        end
+
+    h2 = subplot( 2, 1, 2 ); ...
+        plot( theta );  grid on;
+    %
+    linkaxes( [ h1 h2 ], 'xy' );
+        axis( [ 1 3e5   0 6.5 ] );
+
+return
+
+
+%% Compute Fourier Coefficients Directly for Each Revolution
+
+% block data for each revolution;  used block data directly
 
 
 
@@ -84,7 +155,7 @@ figure( ); ...
     ylim( [ 0 fs/2] );
     % datatip( h_1, 2, +128 );
     % datatip( h_1, 2, -128, 'Location', 'southeast' );
-    
+
 
     
 %% Clean-up
@@ -104,20 +175,6 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 %% Reference(s)
 
-% p = 10 + 1i*5;  % Pascals;  sinusoid
-% 
-% p_mag = abs( p );  % 11.18 Pascals
-% 
-% p_rms = p_mag / sqrt(2);  % 7.91 Pascals RMS
-% 
-% p_dB_SPL = 20*log10( p_rms / 20e-6 );  % 111.94 dB SPL Z
-% 
-% 
-% p_dB_SPL_verify = convert_complex_pressure_to_dB_SPL( p );
-
-
-
-
-%% URLs
+% https://www.mathworks.com/matlabcentral/answers/1439884-evaluate-rising-edge-sample-of-a-signal
 
 
