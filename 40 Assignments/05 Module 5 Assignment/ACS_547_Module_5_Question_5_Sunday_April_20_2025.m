@@ -78,13 +78,13 @@ figure( ); ...
         labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
         colormap parula;  % Option:  Turbo
         set( gca, 'GridColor', 'w', 'GridAlpha', 0.3 );
-    title( 'Double-sided Power Spectral Density', 'Interpreter', 'Latex' );
+    title( 'Order Tracking', 'Interpreter', 'Latex' );
     xlabel( 'Time [seconds]', 'Interpreter', 'Latex' );  ylabel( 'Frequency [Hz]', 'Interpreter', 'Latex' );
     set( gca, 'ydir', 'normal' );
+    ylim( [ 0 fs/2] );
     % datatip( h_1, 2, +128 );
     % datatip( h_1, 2, -128, 'Location', 'southeast' );
-    %
-    % if ( PRINT_FIGURES ),  print( fullfile( '.', 'HS5_Q1_2_Sxx.png' ), '-dpng' );  end
+    
 
     
 %% Clean-up
