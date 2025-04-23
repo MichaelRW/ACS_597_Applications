@@ -14,6 +14,8 @@
 
 % Plots of all the data.
 
+% Include labels on plots for each harmonic order (of blade rotation rate).
+
 
 
 %% Environment
@@ -61,8 +63,6 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 %% RESAMPLE - time-domain sampling to angular domain
 
-close all;  clc;  pause(1);
-
 threshold = 0.5;
 
 start_angle = 0;  % radians
@@ -76,10 +76,10 @@ smoothed_trigger_data = [ 0;  diff( smooth( trigger, 'moving', 5 ) ) ];
         lead_edge = edge_indices( 1:2:end );
 
 
-lead_edge( 1:10 )        
+lead_edge( 1:10 );
 
 temp = diff( lead_edge );
-    temp( 1:10 )
+    temp( 1:10 );
 
 [ indices_to_remove, indices ] = find( temp == 2 );    
 
@@ -124,20 +124,20 @@ end
 
     
 
-figure( ); ...
-    h1 = subplot( 2, 1, 1 ); ...
-        plot( trigger( 1:1:end ) );  hold on;
-        %
-        for index = 1:1:numel(temp2)
-            line( [ temp2(index) temp2(index)], [ 0 4 ], 'Color', 'r' );  grid on;
-        end
-
-    h2 = subplot( 2, 1, 2 ); ...
-        plot( theta );  grid on;
-    %
-    linkaxes( [ h1 h2 ], 'xy' );
-        axis( [ 1 3e5   0 6.5 ] );
-        % axis( [ 1 numel( trigger )   0 6.5 ] );
+% figure( ); ...
+%     h1 = subplot( 2, 1, 1 ); ...
+%         plot( trigger( 1:1:end ) );  hold on;
+%         %
+%         for index = 1:1:numel(temp2)
+%             line( [ temp2(index) temp2(index)], [ 0 4 ], 'Color', 'r' );  grid on;
+%         end
+% 
+%     h2 = subplot( 2, 1, 2 ); ...
+%         plot( theta );  grid on;
+%     %
+%     linkaxes( [ h1 h2 ], 'xy' );
+%         axis( [ 1 5e5   0 6.5 ] );
+%         % axis( [ 1 numel( trigger )   0 6.5 ] );
 
 % return
 
@@ -156,7 +156,34 @@ figure( ); ...
 % soundsc( p( :, 11 ), fs );  % -32 degrees
 
 
-temp2
+temp2;  % 2,296-by-1 elements
+
+% indices = reshape( temp2, 2, numel(temp2)/2 );
+%     indices( :, 1:4 )
+
+indices = temp2;
+    indices( 1:6 )
+
+start_indices = 1:1:( numel( indices ) - 1 );
+end_indices = 2:1:numel( indices );
+
+frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
+    frame_set_indices( 1:4, : );
+
+
+for frame_indices = 1:1:size( frame_set_indices, 1 )
+    segments{ frame_indices } = p( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
+end
+
+
+
+%% Compute Fourier Coefficients
+
+
+
+
+
+%% Hold
 
 % signal = p(:, 1);
 % % signal = p(:, 5);
