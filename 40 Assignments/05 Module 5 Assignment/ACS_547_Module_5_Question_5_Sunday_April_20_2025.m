@@ -171,17 +171,64 @@ frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
     frame_set_indices( 1:4, : );
 
 
+
 for frame_indices = 1:1:size( frame_set_indices, 1 )
     segments{ frame_indices } = p( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
+    working_theta{ frame_indices } = (2*pi) ./ ( ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ):-1:1 );
 end
+
+segments = segments(:);
+working_theta = working_theta(:);
 
 
 
 %% Compute Fourier Coefficients
 
+close all;
+
+number_of_revolutions = size( segments, 1 );
+
+An = nan( number_of_revolutions, 1 );  Bn = nan( number_of_revolutions, 1 );
+
+TRACKING_ORDER = 100;
 
 
+for revolution_index = 1:1:number_of_revolutions
 
+    M = numel( segments{ revolution_index } );
+        n = 0:1:( M - 1 );
+
+
+    temp9 = segments{ revolution_index };
+    temp10 = working_theta{ revolution_index };  temp10 = temp10(:);
+
+    temp12 = cos( TRACKING_ORDER.*temp10 );
+    temp13 = sin( TRACKING_ORDER.*temp10 );
+
+    temp11 = ( 2/M .* temp9 ) * temp12;
+    temp14 = ( 2/M .* temp9 ) * temp13;
+
+        An( revolution_index ) = temp11;
+        Bn( revolution_index ) = temp14;
+
+    % keyboard
+
+end
+
+% Sample time is very high, at 80 kHz.
+
+% return
+
+c = sqrt( An.^2 + Bn.^2 );
+
+figure; ...
+    plot( An, 'Color', 'b' );  hold on;
+    plot( Bn, 'Color', 'r' );  grid on;
+        legend( 'Sine', 'Cosine' );
+
+% figure;  plot( 10*log10(c.^2 ./ 20e-6 ) );  grid on;
+
+% return
 
 %% Hold
 
