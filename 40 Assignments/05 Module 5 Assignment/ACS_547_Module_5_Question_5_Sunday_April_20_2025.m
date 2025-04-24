@@ -55,23 +55,33 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 
 
+%% Sound Pressure Versus Micrphone Angle
+
+% p_rms = 20*log10( rms( p ) / 20e-6 );
+% 
+% figure( 'Name', 'dB SPL Versus Microphone Angle' ); ...
+%     stem( mic_angles_degrees, p_rms );  grid on;
+%         xlabel( 'Microphone Angle [$^\circ$]' );  ylabel( 'Sound Pressure [dB SPL]' );  title( 'Sound Pressure Level Versus Microphone Angle' );
+
+
+
 %% Visualize Experimental Data
 
-% time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
-% 
-% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
-% 
-%     h1 = subplot( 2, 1, 1 ); ...
-%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
-%             ylim( [ -0.5 4 ] );
-%     h2 = subplot( 2, 1, 2 ); ...
-%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
-%             ylim( [ -5 5 ] );
-% 
-%     linkaxes( [ h1 h2 ], 'x' );
-%         xlim( [ -5 50 ] );
+time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
+
+figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+
+    h1 = subplot( 2, 1, 1 ); ...
+        plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
+            ylim( [ -0.5 4 ] );
+    h2 = subplot( 2, 1, 2 ); ...
+        plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
+            ylim( [ -5 5 ] );
+
+    linkaxes( [ h1 h2 ], 'x' );
+        xlim( [ -5 50 ] );
 
 
 
