@@ -40,8 +40,7 @@ pause( 1 );
 
 %% Constants and Parameters
 
-
-% color_map = slanCM( 'ColorBlind', 4 );
+color_map = slanCM( 'ColorBlind', 4 );
 
 
 
@@ -49,17 +48,53 @@ pause( 1 );
 
 load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  trigger
 
+% fs - Sample rate of 80 kHz (scalar).
+% mic_angles_degrees - Microphone angles relative to horizontal plane (1-by-11).
+% p - Recorded pressures for the corresponding microphone angles (3.6e6-by-11).
+% trigger - Shaft rotation synchronization signal (3.6e6-by-11).
 
 
-%% Visualize Data
 
-% close all;  clc;  pause( 1 );
+%% Visualize Experimental Data
+
+% time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
 % 
-% fs;  % sample rate is 80 kHz
-% figure;  plot( mic_angles_degrees );  % 23, 18, 12, 6, 0, -6, -12, -18, -23, -28, -32
-% figure;  plot( trigger );
+% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+% 
+%     h1 = subplot( 2, 1, 1 ); ...
+%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
+%             ylim( [ -0.5 4 ] );
+%     h2 = subplot( 2, 1, 2 ); ...
+%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
+%             ylim( [ -5 5 ] );
+% 
+%     linkaxes( [ h1 h2 ], 'x' );
+%         xlim( [ -5 50 ] );
 
-% return
+
+
+%% Spectrogram
+
+signal = p(:, 5);
+
+frame_length = 8192;
+    frame_hop = floor( 0.20 * frame_length );
+
+a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
+
+figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
+
+    imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 10*log10( a_spectrogram.Sxx.spectrum ), [ -100 -10 ] );
+        labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
+        colormap parula;  % Option:  Turbo
+        set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
+    xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );  title( 'Order Tracking' );
+    set( gca, 'ydir', 'normal' );
+    ylim( [ 0 1e3] );
+
+return
 
 %% RESAMPLE - time-domain sampling to angular domain
 
@@ -190,7 +225,7 @@ number_of_revolutions = size( segments, 1 );
 
 An = nan( number_of_revolutions, 1 );  Bn = nan( number_of_revolutions, 1 );
 
-TRACKING_ORDER = 100;
+TRACKING_ORDER = 2;
 
 
 for revolution_index = 1:1:number_of_revolutions
@@ -229,30 +264,6 @@ figure; ...
 % figure;  plot( 10*log10(c.^2 ./ 20e-6 ) );  grid on;
 
 % return
-
-%% Hold
-
-% signal = p(:, 1);
-% % signal = p(:, 5);
-% 
-% frame_length = 2048;  frame_hop = 1024;
-% 
-% APPLY_HANN_WINDOW = 1;
-%     spectrogram_mrw = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, APPLY_HANN_WINDOW );
-% 
-% figure( ); ...
-%     h_1 = imagesc( spectrogram_mrw.time_indices, spectrogram_mrw.Sxx.frequencies, 10*log10( spectrogram_mrw.Sxx.spectrum ), [ -100 -10 ] );
-%         labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
-%         colormap parula;  % Option:  Turbo
-%         set( gca, 'GridColor', 'w', 'GridAlpha', 0.3 );
-%     title( 'Order Tracking', 'Interpreter', 'Latex' );
-%     xlabel( 'Time [seconds]', 'Interpreter', 'Latex' );  ylabel( 'Frequency [Hz]', 'Interpreter', 'Latex' );
-%     set( gca, 'ydir', 'normal' );
-%     ylim( [ 0 fs/2] );
-%     % datatip( h_1, 2, +128 );
-%     % datatip( h_1, 2, -128, 'Location', 'southeast' );
-
-
     
 %% Clean-up
 
