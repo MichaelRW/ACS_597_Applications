@@ -67,44 +67,44 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 %% Visualize Experimental Data
 
-time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
-
-figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
-
-    h1 = subplot( 2, 1, 1 ); ...
-        plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-            xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
-            ylim( [ -0.5 4 ] );
-    h2 = subplot( 2, 1, 2 ); ...
-        plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-            xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
-            ylim( [ -5 5 ] );
-
-    linkaxes( [ h1 h2 ], 'x' );
-        xlim( [ -5 50 ] );
+% time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
+% 
+% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+% 
+%     h1 = subplot( 2, 1, 1 ); ...
+%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
+%             ylim( [ -0.5 4 ] );
+%     h2 = subplot( 2, 1, 2 ); ...
+%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
+%             ylim( [ -5 5 ] );
+% 
+%     linkaxes( [ h1 h2 ], 'x' );
+%         xlim( [ -5 50 ] );
 
 
 
 %% Spectrogram
 
-signal = p(:, 5);
+% signal = p(:, 5);
+% 
+% frame_length = 8192;
+%     frame_hop = floor( 0.20 * frame_length );
+% 
+% a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
+% 
+% figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
+% 
+%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 10*log10( a_spectrogram.Sxx.spectrum ), [ -100 -10 ] );
+%         labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
+%         colormap parula;  % Option:  Turbo
+%         set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
+%     xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );  title( 'Order Tracking' );
+%     set( gca, 'ydir', 'normal' );
+%     ylim( [ 0 1e3] );
 
-frame_length = 8192;
-    frame_hop = floor( 0.20 * frame_length );
-
-a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
-
-figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
-
-    imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 10*log10( a_spectrogram.Sxx.spectrum ), [ -100 -10 ] );
-        labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
-        colormap parula;  % Option:  Turbo
-        set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
-    xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );  title( 'Order Tracking' );
-    set( gca, 'ydir', 'normal' );
-    ylim( [ 0 1e3] );
-
-return
+% return
 
 %% RESAMPLE - time-domain sampling to angular domain
 
@@ -216,16 +216,18 @@ frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
     frame_set_indices( 1:4, : );
 
 
+WORKING_INDEX = 11;
+    p_temp = p( :, WORKING_INDEX );
 
 for frame_indices = 1:1:size( frame_set_indices, 1 )
-    segments{ frame_indices } = p( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
+    segments{ frame_indices } = p_temp( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
     working_theta{ frame_indices } = (2*pi) ./ ( ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ):-1:1 );
 end
 
 segments = segments(:);
 working_theta = working_theta(:);
 
-
+% return
 
 %% Compute Fourier Coefficients
 
@@ -250,8 +252,8 @@ for revolution_index = 1:1:number_of_revolutions
     temp12 = cos( TRACKING_ORDER.*temp10 );
     temp13 = sin( TRACKING_ORDER.*temp10 );
 
-    temp11 = ( 2/M .* temp9 ) * temp12;
-    temp14 = ( 2/M .* temp9 ) * temp13;
+    temp11 = ( 2/M .* temp9 ).' * temp12;
+    temp14 = ( 2/M .* temp9 ).' * temp13;
 
         An( revolution_index ) = temp11;
         Bn( revolution_index ) = temp14;
