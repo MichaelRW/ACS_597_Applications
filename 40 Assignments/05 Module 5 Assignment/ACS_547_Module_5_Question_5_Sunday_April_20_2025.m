@@ -34,13 +34,9 @@ set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
 
-pause( 1 );
-
-
-
-%% Constants and Parameters
-
 color_map = slanCM( 'ColorBlind', 4 );
+
+pause( 1 );
 
 
 
@@ -49,23 +45,28 @@ color_map = slanCM( 'ColorBlind', 4 );
 load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  trigger
 
 % fs - Sample rate of 80 kHz (scalar).
-% mic_angles_degrees - Microphone angles relative to horizontal plane (1-by-11).
-% p - Recorded pressures for the corresponding microphone angles (3.6e6-by-11).
-% trigger - Shaft rotation synchronization signal (3.6e6-by-11).
+% mic_angles_degrees - Microphone angles relative to horizontal plane (11-by-1;  23, 18, 6, 0, -6, -12, -18, -23, -28, and -32).
+% p - Recorded pressures for the corresponding microphone angles (3,600,000-by-11).
+% trigger - Shaft rotation synchronization signal (3,600,000-by-11).
 
 
 
-%% Sound Pressure Versus Micrphone Angle
+%% RMS dB SPL Per Pressure Recording
 
 % p_rms = 20*log10( rms( p ) / 20e-6 );
 % 
-% figure( 'Name', 'dB SPL Versus Microphone Angle' ); ...
-%     stem( mic_angles_degrees, p_rms );  grid on;
-%         xlabel( 'Microphone Angle [$^\circ$]' );  ylabel( 'Sound Pressure [dB SPL]' );  title( 'Sound Pressure Level Versus Microphone Angle' );
+% figure( 'Name', 'RMS dB SPL Per Pressure Recording' ); ...
+%     stem( mic_angles_degrees, fliplr( p_rms ) );  grid on;
+%         xlabel( 'Microphone Angle [$^\circ$]' );
+%         xticks( fliplr( mic_angles_degrees ) );
+%         ylabel( 'Sound Pressure [dB SPL]' );  title( 'Sound Pressure Level Versus Microphone Angle' );
 
 
 
 %% Visualize Experimental Data
+
+% net_time = size( p, 1 ) / fs;  % 45 seconds
+
 
 % time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
 % 
@@ -77,8 +78,8 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 %             ylim( [ -0.5 4 ] );
 %     h2 = subplot( 2, 1, 2 ); ...
 %         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure' );
-%             ylim( [ -5 5 ] );
+%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
+%             ylim( [ -5 5.5 ] );
 % 
 %     linkaxes( [ h1 h2 ], 'x' );
 %         xlim( [ -5 50 ] );
@@ -87,7 +88,7 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 %% Spectrogram
 
-% signal = p(:, 5);
+% signal = p(:, 1);
 % 
 % frame_length = 8192;
 %     frame_hop = floor( 0.20 * frame_length );
@@ -96,15 +97,15 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 % 
 % figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
 % 
-%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 10*log10( a_spectrogram.Sxx.spectrum ), [ -100 -10 ] );
-%         labelColorbar( 'PSD [dB re: 1 $\frac{Volts^2}{Hz}$]' );  grid on;
+%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
+%         labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
 %         colormap parula;  % Option:  Turbo
 %         set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
 %     xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );  title( 'Order Tracking' );
 %     set( gca, 'ydir', 'normal' );
 %     ylim( [ 0 1e3] );
 
-% return
+
 
 %% RESAMPLE - time-domain sampling to angular domain
 
@@ -216,7 +217,7 @@ frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
     frame_set_indices( 1:4, : );
 
 
-WORKING_INDEX = 11;
+WORKING_INDEX = 1;
     p_temp = p( :, WORKING_INDEX );
 
 for frame_indices = 1:1:size( frame_set_indices, 1 )
