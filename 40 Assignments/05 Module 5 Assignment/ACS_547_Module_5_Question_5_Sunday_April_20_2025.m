@@ -168,8 +168,6 @@ for index = 1:1:numel( lead_edge )
 end
 
 
-    
-
 % figure( ); ...
 %     h1 = subplot( 2, 1, 1 ); ...
 %         plot( trigger( 1:1:end ) );  hold on;
@@ -182,8 +180,6 @@ end
 %         plot( theta );  grid on;
 %     %
 %     linkaxes( [ h1 h2 ], 'xy' );
-%         axis( [ 1 5e5   0 6.5 ] );
-%         % axis( [ 1 numel( trigger )   0 6.5 ] );
 
 % return
 
@@ -217,12 +213,17 @@ frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
     frame_set_indices( 1:4, : );
 
 
-WORKING_INDEX = 1;
+WORKING_INDEX = 5;
     p_temp = p( :, WORKING_INDEX );
 
 for frame_indices = 1:1:size( frame_set_indices, 1 )
     segments{ frame_indices } = p_temp( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
-    working_theta{ frame_indices } = (2*pi) ./ ( ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ):-1:1 );
+
+    % working_theta{ frame_indices } = (2*pi) ./ ( ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ):-1:1 );
+
+    temp_slope = (2*pi) / ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) );
+        working_theta{ frame_indices } = linspace( 0, 2*pi - temp_slope, ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ) );
+
 end
 
 segments = segments(:);
