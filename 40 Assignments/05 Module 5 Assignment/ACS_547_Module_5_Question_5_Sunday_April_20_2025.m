@@ -181,7 +181,7 @@ end
 %     %
 %     linkaxes( [ h1 h2 ], 'xy' );
 
-% return
+return
 
 %% Compute Fourier Coefficients Directly for Each Revolution
 
@@ -295,6 +295,8 @@ fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
 
 %% Reference(s)
+
+% https://www.mathworks.com/help/signal/ref/ordertrack.html#bvaw5ra-1-x
 
 % https://www.mathworks.com/matlabcentral/answers/1439884-evaluate-rising-edge-sample-of-a-signal
 
