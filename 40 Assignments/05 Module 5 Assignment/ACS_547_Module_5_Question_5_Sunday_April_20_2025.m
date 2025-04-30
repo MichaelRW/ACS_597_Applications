@@ -20,15 +20,17 @@
 
 %% Environment
 
+% profile on;
+
 close all; clear; clc;
 % restoredefaultpath;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 230 730  750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 230 730  750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
 set( 0, 'DefaultLineLineWidth', 1.0 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -49,7 +51,7 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 % p - Recorded pressures for the corresponding microphone angles (3,600,000-by-11).
 % trigger - Shaft rotation synchronization signal (3,600,000-by-11).
 
-
+% profile viewer;  return;
 
 %% RMS dB SPL Per Pressure Recording
 
@@ -65,11 +67,12 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 %% Visualize Experimental Data
 
-% net_time = size( p, 1 ) / fs;  % 45 seconds
+net_time = size( p, 1 ) / fs;  % 45 seconds
+
+time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
+    time_indices = time_indices(:);
 
 
-% time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
-% 
 % figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
 % 
 %     h1 = subplot( 2, 1, 1 ); ...
@@ -107,188 +110,146 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 
 
-%% RESAMPLE - time-domain sampling to angular domain
+%% Locate the Leading Edges of the Trigger Data
 
-threshold = 0.5;
-
-start_angle = 0;  % radians
-end_angle = 2*pi; % radians
-    y_difference = end_angle - start_angle;
-
-
-% Locate the leading edges of the trigger data.
+% Smooth data to reduce noise;  supports finding the leading eges.
 smoothed_trigger_data = [ 0;  diff( smooth( trigger, 'moving', 5 ) ) ];
+
+% Threshold smoothed data to located leading edges.
+threshold = 0.5;
     edge_indices = find( threshold  <  smoothed_trigger_data );
-        lead_edge = edge_indices( 1:2:end );
+        leading_edges = edge_indices( 1:2:end );
 
+temp = diff( leading_edges );
+    [ indices_to_remove, indices ] = find( temp == 2 );
+        clear temp;
 
-lead_edge( 1:10 );
+temp = leading_edges;
+    temp( indices_to_remove ) = [ ];
 
-temp = diff( lead_edge );
-    temp( 1:10 );
+leading_edges = temp;
+    clear temp;
 
-[ indices_to_remove, indices ] = find( temp == 2 );    
-
-temp2 = lead_edge;
-    temp2( indices_to_remove ) = [ ];
-
-temp2;    
-
-% figure;  plot( temp2 );
-
-
-
-
-theta = [ ]; 
-
-start_index = [ ];  end_index = [ ];
-
-% Linear interpolation for each interval between the leading edges.
-for index = 1:1:numel( lead_edge )
-
-
-    % fprintf( 1, '\n%d of %d', index, numel( lead_edge ) );
-
-
-    if ( index == 1 )
-        x_difference = lead_edge( index );
-    else
-        x_difference = lead_edge( index ) - lead_edge( index - 1 );
-            start_index = [ start_index  lead_edge( index - 1 ) ];
-            end_index = [ end_index  lead_edge( index )  ];
-    end    
-    
-    slope = y_difference / x_difference;
-
-    segment = (0:1:x_difference)*slope;
-        theta = [ theta segment ];
-
-    % keyboard
-    
-end
+time_indices_leading_edge = leading_edges ./ fs;    
 
 
 % figure( ); ...
-%     h1 = subplot( 2, 1, 1 ); ...
-%         plot( trigger( 1:1:end ) );  hold on;
-%         %
-%         for index = 1:1:numel(temp2)
-%             line( [ temp2(index) temp2(index)], [ 0 4 ], 'Color', 'r' );  grid on;
-%         end
 % 
-%     h2 = subplot( 2, 1, 2 ); ...
-%         plot( theta );  grid on;
+%     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
 %     %
-%     linkaxes( [ h1 h2 ], 'xy' );
-
-return
-
-%% Compute Fourier Coefficients Directly for Each Revolution
-
-% block data for each revolution;  used block data directly
+%     for index = 1:1:numel( leading_edges )
+%         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
+%     end
+% 
+%     axis( [ 1 numel( trigger )  -0.5  4.5 ] );
 
 
 
-%% Listen
+%% Segment Microphone Recording Channels
 
-% soundsc( p( :, 1 ), fs );  % 23 degrees
-
-% i = 5;  figure( );  plot( p( :, i ) );  grid on;  soundsc( p( :, i ), fs );  % 0 degrees
-
-% soundsc( p( :, 11 ), fs );  % -32 degrees
-
-
-temp2;  % 2,296-by-1 elements
-
-% indices = reshape( temp2, 2, numel(temp2)/2 );
-%     indices( :, 1:4 )
-
-indices = temp2;
-    indices( 1:6 )
-
-start_indices = 1:1:( numel( indices ) - 1 );
-end_indices = 2:1:numel( indices );
-
-frame_set_indices = [ indices( start_indices(:) )  indices( end_indices(:) ) ];
-    frame_set_indices( 1:4, : );
+% Channel 1:  0 degrees
+% Channel 2:  18 degrees
+% Channel 3:  12 degrees
+% Channel 4:  6 degrees
+% Channel 5:  0 degrees
+% Channel 6:  -6 degrees
+% Channel 7:  -12 degrees
+% Channel 8:  -18 degrees
+% Channel 9:  -23 degrees
+% Channel 10:  -28 degrees
+% Channal 11:  -32 degrees
 
 
-WORKING_INDEX = 5;
-    p_temp = p( :, WORKING_INDEX );
+start_indices = 1:1:( numel( leading_edges ) - 1 );  end_indices = 2:1:numel( leading_edges );
 
-for frame_indices = 1:1:size( frame_set_indices, 1 )
-    segments{ frame_indices } = p_temp( frame_set_indices( frame_indices, 1 ):1:frame_set_indices( frame_indices, 2 ) );
+frame_set_indices = [ leading_edges( start_indices(:) )  leading_edges( end_indices(:) ) ];
 
-    % working_theta{ frame_indices } = (2*pi) ./ ( ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ):-1:1 );
 
-    temp_slope = (2*pi) / ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) );
-        working_theta{ frame_indices } = linspace( 0, 2*pi - temp_slope, ( frame_set_indices( frame_indices, 2 ) - frame_set_indices( frame_indices, 1 ) + 1 ) );
+for channel_index = 1:1:size( p, 2 )
+
+    for frame_index = 1:1:size( frame_set_indices, 1 )
+    
+        channel_segments{ frame_index, channel_index } = p( frame_set_indices( frame_index, 1 ):1:frame_set_indices( frame_index, 2 ), channel_index );
+    
+        slope_theta = (2*pi) ./ size( channel_segments{ frame_index, channel_index }, 1 );
+            theta{ frame_index, channel_index } = slope_theta .* ( 0:1:size( channel_segments{ frame_index, channel_index }, 1 ) - 1 );
+    
+    end
 
 end
 
-segments = segments(:);
-working_theta = working_theta(:);
 
-% return
 
 %% Compute Fourier Coefficients
 
-close all;
+number_of_revolutions = size( frame_set_indices, 1 );
 
-number_of_revolutions = size( segments, 1 );
+An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
-An = nan( number_of_revolutions, 1 );  Bn = nan( number_of_revolutions, 1 );
 
 TRACKING_ORDER = 2;
 
-
-for revolution_index = 1:1:number_of_revolutions
-
-    M = numel( segments{ revolution_index } );
-        n = 0:1:( M - 1 );
-
-
-    temp9 = segments{ revolution_index };
-    temp10 = working_theta{ revolution_index };  temp10 = temp10(:);
-
-    temp12 = cos( TRACKING_ORDER.*temp10 );
-    temp13 = sin( TRACKING_ORDER.*temp10 );
-
-    temp11 = ( 2/M .* temp9 ).' * temp12;
-    temp14 = ( 2/M .* temp9 ).' * temp13;
-
-        An( revolution_index ) = temp11;
-        Bn( revolution_index ) = temp14;
-
-    % keyboard
+for channel_index = 1:1:size( p, 2 )
+    
+    for frame_index = 1:1:size( frame_set_indices, 1 )
+        
+        M = numel( channel_segments{ frame_index, channel_index } );
+            m = 0:1:( M - 1 );
+    
+        An( frame_index, channel_index ) = ...
+            2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+    
+        Bn( frame_index, channel_index ) = ...
+            2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+    
+    end
 
 end
 
-% Sample time is very high, at 80 kHz.
 
-% return
+figure( ); ...
 
-c = sqrt( An.^2 + Bn.^2 );
+    h1 = subplot( 3, 1, 1 ); ...
+        plot( nan, nan );  hold on;
+        %
+        for channel_index = 1:1:size( p, 2 )
+            plot( An( :, channel_index ), 'Color', 'b' );
+        end
+        %
+        grid on;
 
-figure; ...
-    plot( An, 'Color', 'b' );  hold on;
-    plot( Bn, 'Color', 'r' );  grid on;
-        legend( 'Sine', 'Cosine' );
+    h2 = subplot( 3, 1, 2 ); ...
+        plot( nan, nan );  hold on;
+        %
+        for channel_index = 1:1:size( p, 2 )
+            plot( Bn( :, channel_index ), 'Color', 'r' );  grid on;
+        end
+        %
+        grid on;
 
-% figure;  plot( 10*log10(c.^2 ./ 20e-6 ) );  grid on;
+    h3 = subplot( 3, 1, 3 ); ...
+        plot( nan, nan );  hold on;
+        %
+        for channel_index = 1:1:size( p, 2 )
+            plot( 20*log10( sqrt( An( :, channel_index ).^2 + Bn( :, channel_index ).^2 ) ./ 20e-6 ), 'Color', 'k' );
+        end
+        %
+        grid on;
 
-% return
+    shg;
     
+    
+
 %% Clean-up
 
-if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-    monitors = get( 0, 'MonitorPositions' );
-        if ( size( monitors, 1 ) == 1 )
-            autoArrangeFigures( 3, 4, 1 );
-        elseif ( 1 < size( monitors, 1 ) )
-            autoArrangeFigures( 2, 2, 2 );
-        end
-end
+% if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+%     monitors = get( 0, 'MonitorPositions' );
+%         if ( size( monitors, 1 ) == 1 )
+%             autoArrangeFigures( 3, 4, 1 );
+%         elseif ( 1 < size( monitors, 1 ) )
+%             autoArrangeFigures( 2, 2, 2 );
+%         end
+% end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
