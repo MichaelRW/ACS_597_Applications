@@ -51,7 +51,7 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 % p - Recorded pressures for the corresponding microphone angles (3,600,000-by-11).
 % trigger - Shaft rotation synchronization signal (3,600,000-by-11).
 
-% profile viewer;  return;
+
 
 %% RMS dB SPL Per Pressure Recording
 
@@ -65,6 +65,14 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 
 
+%% Pressure Recordings
+
+% figure( 'Name', 'Pressure Recordings' ); ...
+%     plot( p( :, 1 ) );  grid on;
+%         xlabel( 'Time [WU]' );  ylabel( 'Sound Pressure [Pa]' );
+
+
+
 %% Visualize Experimental Data
 
 net_time = size( p, 1 ) / fs;  % 45 seconds
@@ -73,19 +81,19 @@ time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
     time_indices = time_indices(:);
 
 
-% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
-% 
-%     h1 = subplot( 2, 1, 1 ); ...
-%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
-%             ylim( [ -0.5 4 ] );
-%     h2 = subplot( 2, 1, 2 ); ...
-%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
-%             ylim( [ -5 5.5 ] );
-% 
-%     linkaxes( [ h1 h2 ], 'x' );
-%         xlim( [ -5 50 ] );
+figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+
+    h1 = subplot( 2, 1, 1 ); ...
+        plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
+            ylim( [ -0.5 4 ] );
+    h2 = subplot( 2, 1, 2 ); ...
+        plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
+            ylim( [ -5 5.5 ] );
+
+    linkaxes( [ h1 h2 ], 'x' );
+        xlim( [ -5 50 ] );
 
 
 
@@ -187,7 +195,7 @@ number_of_revolutions = size( frame_set_indices, 1 );
 An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
 
-TRACKING_ORDER = 2;
+TRACKING_ORDER = 1;
 
 for channel_index = 1:1:size( p, 2 )
     
@@ -216,7 +224,9 @@ figure( ); ...
             plot( An( :, channel_index ), 'Color', 'b' );
         end
         %
-        grid on;
+        xlabel( 'Revolution [WU]' );  ylabel( 'An' );
+        %
+        grid on;  axis( [ 1 number_of_revolutions  -1 1 ] );
 
     h2 = subplot( 3, 1, 2 ); ...
         plot( nan, nan );  hold on;
@@ -225,7 +235,9 @@ figure( ); ...
             plot( Bn( :, channel_index ), 'Color', 'r' );  grid on;
         end
         %
-        grid on;
+        xlabel( 'Revolution [WU]' );  ylabel( 'Bn' );
+        %
+        grid on;  axis( [ 1 number_of_revolutions  -1 1 ] );
 
     h3 = subplot( 3, 1, 3 ); ...
         plot( nan, nan );  hold on;
@@ -234,7 +246,9 @@ figure( ); ...
             plot( 20*log10( sqrt( An( :, channel_index ).^2 + Bn( :, channel_index ).^2 ) ./ 20e-6 ), 'Color', 'k' );
         end
         %
-        grid on;
+        xlabel( 'Revolution [WU]' );  ylabel( 'Sound Pressure dB re:20e-6 Pa' );
+        %
+        grid on;  axis( [ 1 number_of_revolutions  50 110 ] );
 
     shg;
     
