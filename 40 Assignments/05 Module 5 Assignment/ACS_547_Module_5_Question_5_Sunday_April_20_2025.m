@@ -12,7 +12,11 @@
 
 %% Note(s)
 
-% Plots of all the data.
+% Angle position is encoded here using a once-per-revolution pulse.
+
+
+
+%% To Do
 
 % Include labels on plots for each harmonic order (of blade rotation rate).
 
@@ -85,7 +89,7 @@ figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
 
     h1 = subplot( 2, 1, 1 ); ...
         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-            xlabel( 'Time [s]' );  ylabel( 'Amplitude [WU]' );  title( 'Shaft Trigger Signal' );
+            xlabel( 'Time [s]' );  ylabel( 'Voltage [V]' );  title( 'Shaft Trigger Signal' );
             ylim( [ -0.5 4 ] );
     h2 = subplot( 2, 1, 2 ); ...
         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
@@ -141,15 +145,15 @@ leading_edges = temp;
 time_indices_leading_edge = leading_edges ./ fs;    
 
 
-% figure( ); ...
-% 
-%     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
-%     %
-%     for index = 1:1:numel( leading_edges )
-%         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
-%     end
-% 
-%     axis( [ 1 numel( trigger )  -0.5  4.5 ] );
+figure( ); ...
+
+    plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
+    %
+    for index = 1:1:numel( leading_edges )
+        line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
+    end
+
+    axis( [ 1 numel( trigger )  -0.5  4.5 ] );
 
 
 
@@ -171,6 +175,7 @@ time_indices_leading_edge = leading_edges ./ fs;
 start_indices = 1:1:( numel( leading_edges ) - 1 );  end_indices = 2:1:numel( leading_edges );
 
 frame_set_indices = [ leading_edges( start_indices(:) )  leading_edges( end_indices(:) ) ];
+    number_of_revolutions = size( frame_set_indices, 1 );
 
 
 for channel_index = 1:1:size( p, 2 )
@@ -188,9 +193,25 @@ end
 
 
 
-%% Compute Fourier Coefficients
+%% Compute Instantaneous RPM
 
-number_of_revolutions = size( frame_set_indices, 1 );
+for channel_index = 1:1:size( p, 2 )
+    for frame_index = 1:1:size( frame_set_indices, 1 )    
+        rpm_estimate{ frame_index, channel_index } = 60 * ( 1 / ( numel( channel_segments{ frame_index, channel_index } ) ./ fs ) );    
+    end
+end
+
+
+figure( ); ...
+    
+    plot( [ rpm_estimate{ :, 1 } ], 'Color', 'k' );  grid on;
+    xlabel( 'Revolution [WU]' );  ylabel( 'RPM' );
+    axis( [ 1 number_of_revolutions  0 3.75e3 ] );
+    shg;
+
+
+
+%% Compute Fourier Coefficients
 
 An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
