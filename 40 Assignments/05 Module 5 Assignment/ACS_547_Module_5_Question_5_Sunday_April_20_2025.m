@@ -29,7 +29,7 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-% set( groot, 'DefaultFigurePosition', [ 230 730  750  500 ] );  % x, y, width, height
+set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
 set( 0, 'DefaultFigureWindowStyle', 'normal' );
@@ -101,22 +101,22 @@ time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
 
 %% Spectrogram
 
-signal = p(:, 5);
-
-frame_length = 8192;
-    frame_hop = floor( 0.20 * frame_length );
-
-a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
-
-figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
-
-    imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
-        labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
-        colormap parula;  % Option:  Turbo
-        set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
-    xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );
-    set( gca, 'ydir', 'normal' );
-    ylim( [ 0 1e3] );
+% signal = p(:, 5);
+% 
+% frame_length = 8192;
+%     frame_hop = floor( 0.20 * frame_length );
+% 
+% a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
+% 
+% figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
+% 
+%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
+%         labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
+%         colormap parula;  % Option:  Turbo
+%         set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
+%     xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );
+%     set( gca, 'ydir', 'normal' );
+%     ylim( [ 0 1e3] );
 
 
 
@@ -143,15 +143,15 @@ leading_edges = temp;
 time_indices_leading_edge = leading_edges ./ fs;    
 
 
-figure( ); ...
-
-    plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
-    %
-    for index = 1:1:numel( leading_edges )
-        line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
-    end
-
-    axis( [ 1 numel( trigger )  -0.5  4.5 ] );
+% figure( ); ...
+% 
+%     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
+%     %
+%     for index = 1:1:numel( leading_edges )
+%         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
+%     end
+% 
+%     axis( [ 1 numel( trigger )  -0.5  4.5 ] );
 
 
 
@@ -223,24 +223,65 @@ end
 An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
 
-TRACKING_ORDER = 1;
+TRACKING_ORDER = 2;
 
-for channel_index = 1:1:size( p, 2 )
+% for channel_index = 1:1:size( p, 2 )
+for channel_index = 5
     
-    for frame_index = 1:1:size( frame_set_indices, 1 )
+    % for frame_index = 1:1:size( frame_set_indices, 1 )
+    for frame_index = 1:1
         
         M = numel( channel_segments{ frame_index, channel_index } );
             m = 0:1:( M - 1 );
     
         An( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+
+            figure;  plot( channel_segments{ frame_index, channel_index } );
+            % figure;  plot( cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' )
+
     
         Bn( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+
+            % figure;  plot( sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' )
+
+    % keyboard
     
     end
 
 end
+
+
+
+%% Verify Segments
+
+% close all;
+
+figure( ); ...
+
+    plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
+    
+
+    for index = 1:1:numel( leading_edges )
+        line( [ leading_edges( index ) leading_edges( index ) ], [ 0 2*pi ], 'Color', 'b' );  grid on;
+    end
+    
+
+    plot( p( :, 5 ) );
+
+
+    
+    for FRAME_INDEX = 1:1:size( frame_set_indices, 1 )
+        plot( frame_set_indices( FRAME_INDEX, 1 ):1:frame_set_indices( FRAME_INDEX, 2 ), theta{ FRAME_INDEX, 5 }, 'Color', 'r' );
+    end
+
+
+    axis( [ 1 2.5e5  -0.5  6.5 ] );
+
+return
+
+%% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level
 
 
 figure( ); ...
