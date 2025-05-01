@@ -24,8 +24,6 @@
 
 %% Environment
 
-% profile on;
-
 close all; clear; clc;
 % restoredefaultpath;
 
@@ -34,7 +32,7 @@ addpath( genpath( './00 Support' ), '-begin' );
 % set( groot, 'DefaultFigurePosition', [ 230 730  750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 1.0 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -65,7 +63,7 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 %     stem( mic_angles_degrees, fliplr( p_rms ) );  grid on;
 %         xlabel( 'Microphone Angle [$^\circ$]' );
 %         xticks( fliplr( mic_angles_degrees ) );
-%         ylabel( 'Sound Pressure [dB SPL]' );  title( 'Sound Pressure Level Versus Microphone Angle' );
+%         ylabel( 'Sound Pressure [dB SPL]' );
 
 
 
@@ -99,7 +97,7 @@ figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
     linkaxes( [ h1 h2 ], 'x' );
         xlim( [ -5 50 ] );
 
-
+return
 
 %% Spectrogram
 
