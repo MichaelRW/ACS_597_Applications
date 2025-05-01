@@ -225,11 +225,11 @@ An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
 TRACKING_ORDER = 2;
 
-% for channel_index = 1:1:size( p, 2 )
-for channel_index = 5
+for channel_index = 1:1:size( p, 2 )
+% for channel_index = 5
     
-    % for frame_index = 1:1:size( frame_set_indices, 1 )
-    for frame_index = 1:1
+    for frame_index = 1:1:size( frame_set_indices, 1 )
+    % for frame_index = 14
         
         M = numel( channel_segments{ frame_index, channel_index } );
             m = 0:1:( M - 1 );
@@ -237,14 +237,14 @@ for channel_index = 5
         An( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
 
-            figure;  plot( channel_segments{ frame_index, channel_index } );
-            % figure;  plot( cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' )
+            % figure;  plot( channel_segments{ frame_index, channel_index } );
+            figure;  plot( cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' );  hold on;  plot( channel_segments{ frame_index, channel_index } );
 
     
         Bn( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
 
-            % figure;  plot( sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' )
+            figure;  plot( sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' );  hold on;  plot( channel_segments{ frame_index, channel_index } );
 
     % keyboard
     
@@ -279,7 +279,7 @@ figure( ); ...
 
     axis( [ 1 2.5e5  -0.5  6.5 ] );
 
-return
+% return
 
 %% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level
 
