@@ -83,40 +83,40 @@ time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
     time_indices = time_indices(:);
 
 
-figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
+% 
+%     h1 = subplot( 2, 1, 1 ); ...
+%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Voltage [V]' );  title( 'Shaft Trigger Signal' );
+%             ylim( [ -0.5 4 ] );
+%     h2 = subplot( 2, 1, 2 ); ...
+%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
+%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
+%             ylim( [ -5 5.5 ] );
+% 
+%     linkaxes( [ h1 h2 ], 'x' );
+%         xlim( [ -5 50 ] );
 
-    h1 = subplot( 2, 1, 1 ); ...
-        plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-            xlabel( 'Time [s]' );  ylabel( 'Voltage [V]' );  title( 'Shaft Trigger Signal' );
-            ylim( [ -0.5 4 ] );
-    h2 = subplot( 2, 1, 2 ); ...
-        plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-            xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
-            ylim( [ -5 5.5 ] );
 
-    linkaxes( [ h1 h2 ], 'x' );
-        xlim( [ -5 50 ] );
-
-return
 
 %% Spectrogram
 
-% signal = p(:, 1);
-% 
-% frame_length = 8192;
-%     frame_hop = floor( 0.20 * frame_length );
-% 
-% a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
-% 
-% figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
-% 
-%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
-%         labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
-%         colormap parula;  % Option:  Turbo
-%         set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
-%     xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );  title( 'Order Tracking' );
-%     set( gca, 'ydir', 'normal' );
-%     ylim( [ 0 1e3] );
+signal = p(:, 5);
+
+frame_length = 8192;
+    frame_hop = floor( 0.20 * frame_length );
+
+a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
+
+figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
+
+    imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
+        labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
+        colormap parula;  % Option:  Turbo
+        set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
+    xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );
+    set( gca, 'ydir', 'normal' );
+    ylim( [ 0 1e3] );
 
 
 
@@ -200,12 +200,21 @@ for channel_index = 1:1:size( p, 2 )
 end
 
 
-figure( ); ...
-    
-    plot( [ rpm_estimate{ :, 1 } ], 'Color', 'k' );  grid on;
-    xlabel( 'Revolution [WU]' );  ylabel( 'RPM' );
-    axis( [ 1 number_of_revolutions  0 3.75e3 ] );
-    shg;
+% figure( ); ...
+% 
+%     yyaxis left; ...
+%         plot( [ rpm_estimate{ :, 1 } ] ./ 60 );  grid on;
+%         ylabel( 'Cycles per second' );
+%         ylim( [ 0 65 ] );
+% 
+%     yyaxis right; ...
+%         plot( [ rpm_estimate{ :, 1 } ] );  grid on;
+%         ylabel( 'RPM' );
+% 
+%     xlabel( 'Revolution [WU]' );
+% 
+%     axis( [ -50 number_of_revolutions+50  0 3.75e3 ] );
+%     shg;
 
 
 
