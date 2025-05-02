@@ -29,11 +29,11 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
-set( 0, 'DefaultLineLineWidth', 1.0 );
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultLineLineWidth', 0.6 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
 format ShortG;
@@ -223,31 +223,20 @@ end
 An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
 
-TRACKING_ORDER = 2;
+TRACKING_ORDER = 1;
 
 for channel_index = 1:1:size( p, 2 )
-% for channel_index = 5
     
-    for frame_index = 1:1:size( frame_set_indices, 1 )
-    % for frame_index = 14
-        
+    for frame_index = 1:1:size( frame_set_indices, 1 )        
+
         M = numel( channel_segments{ frame_index, channel_index } );
-            m = 0:1:( M - 1 );
-    
+            
         An( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
 
-            % figure;  plot( channel_segments{ frame_index, channel_index } );
-            figure;  plot( cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' );  hold on;  plot( channel_segments{ frame_index, channel_index } );
-
-    
         Bn( frame_index, channel_index ) = ...
             2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
 
-            figure;  plot( sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).' );  hold on;  plot( channel_segments{ frame_index, channel_index } );
-
-    % keyboard
-    
     end
 
 end
@@ -258,66 +247,50 @@ end
 
 % close all;
 
-figure( ); ...
+% figure( ); ...
+% 
+%     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
+% 
+% 
+%     for index = 1:1:numel( leading_edges )
+%         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 2*pi ], 'Color', 'b' );  grid on;
+%     end
+% 
+% 
+%     plot( p( :, 1 ) );
+% 
+% 
+% 
+%     for FRAME_INDEX = 1:1:size( frame_set_indices, 1 )
+%         plot( frame_set_indices( FRAME_INDEX, 1 ):1:frame_set_indices( FRAME_INDEX, 2 ), theta{ FRAME_INDEX, 5 }, 'Color', 'r' );
+%     end
+% 
+% 
+%     axis( [ 1 2.5e5  -0.5  6.5 ] );
 
-    plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
-    
 
-    for index = 1:1:numel( leading_edges )
-        line( [ leading_edges( index ) leading_edges( index ) ], [ 0 2*pi ], 'Color', 'b' );  grid on;
-    end
-    
-
-    plot( p( :, 5 ) );
-
-
-    
-    for FRAME_INDEX = 1:1:size( frame_set_indices, 1 )
-        plot( frame_set_indices( FRAME_INDEX, 1 ):1:frame_set_indices( FRAME_INDEX, 2 ), theta{ FRAME_INDEX, 5 }, 'Color', 'r' );
-    end
-
-
-    axis( [ 1 2.5e5  -0.5  6.5 ] );
-
-% return
 
 %% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level
 
 
 figure( ); ...
 
-    h1 = subplot( 3, 1, 1 ); ...
-        plot( nan, nan );  hold on;
-        %
-        for channel_index = 1:1:size( p, 2 )
-            plot( An( :, channel_index ), 'Color', 'b' );
-        end
-        %
-        xlabel( 'Revolution [WU]' );  ylabel( 'An' );
-        %
-        grid on;  axis( [ 1 number_of_revolutions  -1 1 ] );
+    h1 = subplot( 2, 1, 1 ); ...
+        plot( An( :, 1 ), 'Color', 'b' );  hold on;
+        plot( Bn( :, 1 ), 'Color', 'r' );  grid on;
+            legend( '2x SR (cosine)', '2x SR (sine)', 'Location', 'NorthEast' );
+        xlabel( 'Revolution [WU]' );  ylabel( 'Fourier Coefficient' );
+        grid on;  axis( [ 1 number_of_revolutions  -0.3 0.4 ] );
 
-    h2 = subplot( 3, 1, 2 ); ...
-        plot( nan, nan );  hold on;
-        %
-        for channel_index = 1:1:size( p, 2 )
-            plot( Bn( :, channel_index ), 'Color', 'r' );  grid on;
-        end
-        %
-        xlabel( 'Revolution [WU]' );  ylabel( 'Bn' );
-        %
-        grid on;  axis( [ 1 number_of_revolutions  -1 1 ] );
+    h2 = subplot( 2, 1, 2 ); ...
 
-    h3 = subplot( 3, 1, 3 ); ...
-        plot( nan, nan );  hold on;
-        %
-        for channel_index = 1:1:size( p, 2 )
-            plot( 20*log10( sqrt( An( :, channel_index ).^2 + Bn( :, channel_index ).^2 ) ./ 20e-6 ), 'Color', 'k' );
-        end
-        %
+        Ln = 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2  ) / (20e-6)^2 );
+        plot( 20*log10( Ln ), 'Color', 'k' );  grid on;
+
+        % plot( 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2 ) ./ 20e-6 ), 'Color', 'k' );  grid on;
+
         xlabel( 'Revolution [WU]' );  ylabel( 'Sound Pressure dB re:20e-6 Pa' );
-        %
-        grid on;  axis( [ 1 number_of_revolutions  50 110 ] );
+        % axis( [ 1 number_of_revolutions  50 110 ] );
 
     shg;
     
