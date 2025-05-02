@@ -6,19 +6,7 @@
 % Problem 5 - Order Tracking of Mobius Propeller Data
 
 % See Lecture 26
-%   ""D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\26 Monday, April 21, 2025\Lecture 26 - Shafting and bearings.pptx""
-
-
-
-%% Note(s)
-
-% Angle position is encoded here using a once-per-revolution pulse.
-
-
-
-%% To Do
-
-% Include labels on plots for each harmonic order (of blade rotation rate).
+%   "D:\15 Downloads\00 GitHub\ACS_547\35 Lectures\26 Monday, April 21, 2025\Lecture 26 - Shafting and bearings.pptx"
 
 
 
@@ -29,10 +17,10 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-% set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
+set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'docked' );
+set( 0, 'DefaultFigureWindowStyle', 'normal' );
 set( 0, 'DefaultLineLineWidth', 0.6 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -55,26 +43,6 @@ load( 'mobius_prop_data.mat' );  % Variable(s):  fs;  mic_angles_degrees;  p;  t
 
 
 
-%% RMS dB SPL Per Pressure Recording
-
-% p_rms = 20*log10( rms( p ) / 20e-6 );
-% 
-% figure( 'Name', 'RMS dB SPL Per Pressure Recording' ); ...
-%     stem( mic_angles_degrees, fliplr( p_rms ) );  grid on;
-%         xlabel( 'Microphone Angle [$^\circ$]' );
-%         xticks( fliplr( mic_angles_degrees ) );
-%         ylabel( 'Sound Pressure [dB SPL]' );
-
-
-
-%% Pressure Recordings
-
-% figure( 'Name', 'Pressure Recordings' ); ...
-%     plot( p( :, 1 ) );  grid on;
-%         xlabel( 'Time [WU]' );  ylabel( 'Sound Pressure [Pa]' );
-
-
-
 %% Visualize Experimental Data
 
 net_time = size( p, 1 ) / fs;  % 45 seconds
@@ -83,40 +51,40 @@ time_indices = ( 0:1:( numel( trigger ) - 1 ) ) ./ fs;
     time_indices = time_indices(:);
 
 
-% figure( 'Name', 'Trigger signal and Data for Horizontal Plane' ); ...
-% 
-%     h1 = subplot( 2, 1, 1 ); ...
-%         plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Voltage [V]' );  title( 'Shaft Trigger Signal' );
-%             ylim( [ -0.5 4 ] );
-%     h2 = subplot( 2, 1, 2 ); ...
-%         plot( time_indices, p( :, 5 ), 'Color', color_map( 2, : ) );  grid on;
-%             xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 0$^\circ$ Elevation' );
-%             ylim( [ -5 5.5 ] );
-% 
-%     linkaxes( [ h1 h2 ], 'x' );
-%         xlim( [ -5 50 ] );
+figure( 'Name', 'Trigger signal and Channel 1 Pressure Data' ); ...
+
+    h1 = subplot( 2, 1, 1 ); ...
+        plot( time_indices, trigger, 'Color', color_map( 1, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Voltage [V]' );  title( 'Shaft Trigger Signal' );
+            ylim( [ -0.5 4 ] );
+    h2 = subplot( 2, 1, 2 ); ...
+        plot( time_indices, p( :, 1 ), 'Color', color_map( 2, : ) );  grid on;
+            xlabel( 'Time [s]' );  ylabel( 'Pressure [Pa]' );  title( 'Recorded Pressure at 23$^\circ$ Elevation' );
+            ylim( [ -5 5.5 ] );
+
+    linkaxes( [ h1 h2 ], 'x' );
+        xlim( [ -5 50 ] );
 
 
 
 %% Spectrogram
 
-% signal = p(:, 5);
-% 
-% frame_length = 8192;
-%     frame_hop = floor( 0.20 * frame_length );
-% 
-% a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
-% 
-% figure( 'Name', 'Spectrogram of Pressure Signal' ); ...
-% 
-%     imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
-%         labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
-%         colormap parula;  % Option:  Turbo
-%         set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
-%     xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );
-%     set( gca, 'ydir', 'normal' );
-%     ylim( [ 0 1e3] );
+signal = p(:, 1);
+
+frame_length = 8192;
+    frame_hop = floor( 0.20 * frame_length );
+
+a_spectrogram = spectrogram_September_26_2023( signal, frame_length, frame_hop, fs, 0 );
+
+figure( 'Name', 'Spectrogram of Channel 1 Pressure Signal' ); ...
+
+    imagesc( a_spectrogram.time_indices, a_spectrogram.Sxx.frequencies, 20*log10( sqrt(a_spectrogram.Sxx.spectrum)./20e-6 ), [ 0 85 ] );
+        labelColorbar( 'Power Spectral Density [dB re: $\frac{20 \mu Pa^2}{Hz}$]' );  grid on;
+        colormap parula;  % Option:  Turbo
+        set( gca, 'GridColor', 'w', 'GridAlpha', 0.4 );
+    xlabel( 'Time [s]' );  ylabel( 'Frequency [Hz]' );
+    set( gca, 'ydir', 'normal' );
+    ylim( [ 0 1e3] );
 
 
 
@@ -143,10 +111,10 @@ leading_edges = temp;
 time_indices_leading_edge = leading_edges ./ fs;    
 
 
-% figure( ); ...
+% figure( 'Name', 'Revolution Segmentation' ); ...
 % 
 %     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
-%     %
+% 
 %     for index = 1:1:numel( leading_edges )
 %         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 4 ], 'Color', 'b' );  grid on;
 %     end
@@ -157,7 +125,7 @@ time_indices_leading_edge = leading_edges ./ fs;
 
 %% Segment Microphone Recording Channels
 
-% Channel 1:  0 degrees
+% Channel 1:  23 degrees
 % Channel 2:  18 degrees
 % Channel 3:  12 degrees
 % Channel 4:  6 degrees
@@ -200,21 +168,21 @@ for channel_index = 1:1:size( p, 2 )
 end
 
 
-% figure( ); ...
-% 
-%     yyaxis left; ...
-%         plot( [ rpm_estimate{ :, 1 } ] ./ 60 );  grid on;
-%         ylabel( 'Cycles per second' );
-%         ylim( [ 0 65 ] );
-% 
-%     yyaxis right; ...
-%         plot( [ rpm_estimate{ :, 1 } ] );  grid on;
-%         ylabel( 'RPM' );
-% 
-%     xlabel( 'Revolution [WU]' );
-% 
-%     axis( [ -50 number_of_revolutions+50  0 3.75e3 ] );
-%     shg;
+figure( 'Name', 'Shaft Speed' ); ...
+
+    yyaxis left; ...
+        plot( [ rpm_estimate{ :, 1 } ] ./ 60 );  grid on;
+        ylabel( 'Cycles Per Second [CPS]' );
+        ylim( [ 0 65 ] );
+
+    yyaxis right; ...
+        plot( [ rpm_estimate{ :, 1 } ] );  grid on;
+        ylabel( 'Rotations Per Minute [RPM]' );
+
+    xlabel( 'Revolution [WU]' );
+
+    axis( [ -50 number_of_revolutions+50  0 3.75e3 ] );
+    shg;
 
 
 
@@ -223,7 +191,7 @@ end
 An = nan( size( frame_set_indices, 1 ), 11 );  Bn = An;
 
 
-TRACKING_ORDER = 1;
+TRACKING_ORDER = 2;
 
 for channel_index = 1:1:size( p, 2 )
     
@@ -232,10 +200,10 @@ for channel_index = 1:1:size( p, 2 )
         M = numel( channel_segments{ frame_index, channel_index } );
             
         An( frame_index, channel_index ) = ...
-            2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+            2/M * channel_segments{ frame_index, channel_index }.' * cos( TRACKING_ORDER/2 .* theta{ frame_index, channel_index } ).';
 
         Bn( frame_index, channel_index ) = ...
-            2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER .* theta{ frame_index, channel_index } ).';
+            2/M * channel_segments{ frame_index, channel_index }.' * sin( TRACKING_ORDER/2 .* theta{ frame_index, channel_index } ).';
 
     end
 
@@ -243,69 +211,36 @@ end
 
 
 
-%% Verify Segments
-
-% close all;
-
-% figure( ); ...
-% 
-%     plot( trigger( 1:1:end ), 'Color', 'k' );  hold on;
-% 
-% 
-%     for index = 1:1:numel( leading_edges )
-%         line( [ leading_edges( index ) leading_edges( index ) ], [ 0 2*pi ], 'Color', 'b' );  grid on;
-%     end
-% 
-% 
-%     plot( p( :, 1 ) );
-% 
-% 
-% 
-%     for FRAME_INDEX = 1:1:size( frame_set_indices, 1 )
-%         plot( frame_set_indices( FRAME_INDEX, 1 ):1:frame_set_indices( FRAME_INDEX, 2 ), theta{ FRAME_INDEX, 5 }, 'Color', 'r' );
-%     end
-% 
-% 
-%     axis( [ 1 2.5e5  -0.5  6.5 ] );
-
-
-
 %% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level
 
-
-figure( ); ...
+figure( 'Name', 'Second-order Tracking and Associated Sound Pressure Level' ); ...
 
     h1 = subplot( 2, 1, 1 ); ...
         plot( An( :, 1 ), 'Color', 'b' );  hold on;
         plot( Bn( :, 1 ), 'Color', 'r' );  grid on;
-            legend( '2x SR (cosine)', '2x SR (sine)', 'Location', 'NorthEast' );
+            legend( '2x SR (cosine, $A_n$)', '2x SR (sine, $B_n$)', 'Location', 'South', 'Interpreter', 'Latex' );
         xlabel( 'Revolution [WU]' );  ylabel( 'Fourier Coefficient' );
         grid on;  axis( [ 1 number_of_revolutions  -0.3 0.4 ] );
 
     h2 = subplot( 2, 1, 2 ); ...
-
-        Ln = 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2  ) / (20e-6)^2 );
-        plot( 20*log10( Ln ), 'Color', 'k' );  grid on;
-
-        % plot( 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2 ) ./ 20e-6 ), 'Color', 'k' );  grid on;
-
+        plot( 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2 ) ./ 2e-6^2 ), 'Color', 'k' );  grid on;
         xlabel( 'Revolution [WU]' );  ylabel( 'Sound Pressure dB re:20e-6 Pa' );
-        % axis( [ 1 number_of_revolutions  50 110 ] );
+        axis( [ 1 number_of_revolutions  50 110 ] );
 
     shg;
-    
-    
+
+
 
 %% Clean-up
 
-% if ( ~isempty( findobj( 'Type', 'figure' ) ) )
-%     monitors = get( 0, 'MonitorPositions' );
-%         if ( size( monitors, 1 ) == 1 )
-%             autoArrangeFigures( 3, 4, 1 );
-%         elseif ( 1 < size( monitors, 1 ) )
-%             autoArrangeFigures( 2, 2, 2 );
-%         end
-% end
+if ( ~isempty( findobj( 'Type', 'figure' ) ) )
+    monitors = get( 0, 'MonitorPositions' );
+        if ( size( monitors, 1 ) == 1 )
+            autoArrangeFigures( 3, 4, 1 );
+        elseif ( 1 < size( monitors, 1 ) )
+            autoArrangeFigures( 2, 2, 2 );
+        end
+end
 
 fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
 
