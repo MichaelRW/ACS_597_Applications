@@ -17,10 +17,10 @@ close all; clear; clc;
 
 addpath( genpath( './00 Support' ), '-begin' );
 
-set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
+% set( groot, 'DefaultFigurePosition', [ 230 730  3*750  500 ] );  % x, y, width, height
 
 set( 0, 'DefaultFigurePaperPositionMode', 'manual' );
-set( 0, 'DefaultFigureWindowStyle', 'normal' );
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
 set( 0, 'DefaultLineLineWidth', 0.6 );
 set( 0, 'DefaultTextInterpreter', 'Latex' );
 
@@ -211,9 +211,9 @@ end
 
 
 
-%% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level
+%% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level for Channel 1
 
-figure( 'Name', 'Second-order Tracking and Associated Sound Pressure Level' ); ...
+figure( 'Name', 'Second-order Tracking and Associated Sound Pressure Level for Channel 1' ); ...
 
     h1 = subplot( 2, 1, 1 ); ...
         plot( An( :, 1 ), 'Color', 'b' );  hold on;
@@ -226,6 +226,73 @@ figure( 'Name', 'Second-order Tracking and Associated Sound Pressure Level' ); .
         plot( 10*log10( ( An( :, 1 ).^2 + Bn( :, 1 ).^2 ) ./ 2e-6^2 ), 'Color', 'k' );  grid on;
         xlabel( 'Revolution [WU]' );  ylabel( 'Sound Pressure dB re:20e-6 Pa' );
         axis( [ 1 number_of_revolutions  50 110 ] );
+
+    shg;
+
+
+
+%% Plot Fourier Coefficients An and Bn and the Overall Sound Pressure Level for all Channels
+
+close all;
+
+order = 3;  framelen = 11;
+
+
+
+figure( 'Name', 'Second-order Tracking and Associated Sound Pressure Level for all Channels' ); ...
+
+CHANNEL_INDEX = 11;
+
+    h1 = subplot( 2, 2, 1 ); ...
+
+        for channel_index = 1:1:CHANNEL_INDEX
+            if ( channel_index < 5 )
+                plot( sgolayfilt( An( :, channel_index ), order, framelen ) + 1, 'Color', 'b' );  hold on;
+            elseif ( channel_index == 5 )
+                plot( sgolayfilt( An( :, channel_index ), order, framelen ), 'Color', 'b' );  hold on;
+            else
+                plot( sgolayfilt( An( :, channel_index ), order, framelen ) - 1, 'Color', 'b' );  hold on;
+            end
+
+                fprintf( 1, '\n%d - %3.1f', channel_index, mic_angles_degrees( channel_index ) );
+            keyboard
+        end
+        %
+        grid on;
+        %
+        % legend( '2x SR (cosine, $A_n$)', '2x SR (sine, $B_n$)', 'Location', 'South', 'Interpreter', 'Latex' );
+        % xlabel( 'Revolution [WU]' );  ylabel( 'Fourier Coefficient' );
+        % grid on;  axis( [ 1 number_of_revolutions  -0.3 0.4 ] );
+
+    fprintf( 1, '\n\n' );
+
+    h2 = subplot( 2, 2, 3 ); ...
+
+        for channel_index = 1:1:CHANNEL_INDEX
+            plot( sgolayfilt( Bn( :, channel_index ), order, framelen ), 'Color', 'r' );  hold on;
+                fprintf( 1, '\n%d - %3.1f', channel_index, mic_angles_degrees( channel_index ) );
+            keyboard
+        end
+        %
+        grid on;
+        %
+        % legend( '2x SR (cosine, $A_n$)', '2x SR (sine, $B_n$)', 'Location', 'South', 'Interpreter', 'Latex' );
+        % xlabel( 'Revolution [WU]' );  ylabel( 'Fourier Coefficient' );
+        % grid on;  axis( [ 1 number_of_revolutions  -0.3 0.4 ] );
+
+    fprintf( 1, '\n\n' );
+
+    h2 = subplot( 2, 2, [ 2 4 ] ); ...
+
+        for channel_index = 1:1:CHANNEL_INDEX
+            plot( sgolayfilt( 10*log10( ( An( :, channel_index ).^2 + Bn( :, channel_index ).^2 ) ./ 2e-6^2 ), order, framelen ), 'Color', 'k' );  hold on;
+                fprintf( 1, '\n%d - %3.1f', channel_index, mic_angles_degrees( channel_index ) );
+            keyboard
+        end
+        %
+        grid on;
+        % xlabel( 'Revolution [WU]' );  ylabel( 'Sound Pressure dB re:20e-6 Pa' );
+        % axis( [ 1 number_of_revolutions  50 110 ] );
 
     shg;
 
