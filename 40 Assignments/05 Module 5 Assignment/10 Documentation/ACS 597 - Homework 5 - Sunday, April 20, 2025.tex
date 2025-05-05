@@ -73,110 +73,93 @@ The Matlab code for this problem is listed in Appendix~\ref{appendix:problem1}.
 
 
 \vspace{-0.2cm}
-\subsection*{Trigger Signal and Representative Pressure Recording}
+\subsection*{Spectrogram for Channel 1}
 
 \vspace{-0.2cm}
-Figure~\ref{figure:1triggerSignalAndAMicrophoneRecording} shows the angular position trigger signal and the pressure recording for a measurement angle of 0$^\circ$..
+Figure~\ref{figure:2spectrogram} shows the spectrogram for the Channel 1 pressure recording at an angle of +23$^\circ$.
 
-\vspace{-0.2cm}
+\vspace{-0.4cm}
 \begin{figure}[htb!]
-    \vspace{-0.1cm}
     \center
-        \includegraphics[scale = 0.6, keepaspectratio]{Trigger and a Microphone Pressure Recording.pdf}
-    \caption{Trigger signal and a pressure recording at 0$^\circ$.}
-    \label{figure:1triggerSignalAndAMicrophoneRecording}
-\end{figure}
-
-
-
-\vspace{-0.2cm}
-\subsection*{Spectrogram of Recording at the 23$^\circ$ Recording Angle}
-
-\vspace{-0.2cm}
-Figure~\ref{figure:2spectrogram} shows the spectrogram for the Channel 1 pressure recording at an angle of 23$^\circ$.
-
-\vspace{-0.2cm}
-\begin{figure}[htb!]
-    \vspace{-0.1cm}
-    \center
-        \includegraphics[scale = 0.7, keepaspectratio]{Spectrogram.pdf}
-    \caption{Spectrogram for the pressure recording at 23$^\circ$.}
+        \includegraphics[scale = 0.6, keepaspectratio]{Spectrogram.pdf}
+    \caption{Spectrogram for the sound pressure recording at +23$^\circ$.}
     \label{figure:2spectrogram}
 \end{figure}
 
-The bottom trace in the spectrogram, which corresponds to the shaft rotation, is about 58.6 cycles per second.
+\vspace{-0.1cm}
+The bottom trace in the spectrogram, which corresponds to shaft rotation, is about 58.6 cycles per second.
 
 
 
 \vspace{-0.2cm}
-\subsection*{Estimate of Shaft Rotation Speed}
+\subsection*{Shaft Rotation Speed}
 
 \vspace{-0.2cm}
-Figure~\ref{figure:3rpmEstimate} shows the estimated rotation speed of the shaft.
+Figure~\ref{figure:3rpmEstimate} shows the estimated rotation speed of the shaft, calculated on a per revolution basis.
 
 \vspace{-0.2cm}
 \begin{figure}[htb!]
     \vspace{-0.1cm}
     \center
-        \includegraphics[scale = 0.7, keepaspectratio]{RPM Estimate.pdf}
-    \caption{Rotation speed estimation.}
+        \includegraphics[scale = 0.6, keepaspectratio]{RPM Estimate.pdf}
+    \caption{Estimation of shaft rotation speed per revolution.}
     \label{figure:3rpmEstimate}
 \end{figure}
 
-The maximum shaft rotation speed is approximately 58.9 cycles per second, or 3,532 RPM.  This maximum rotation speed occurs in revolution 1,672.
+The maximum shaft rotation speed is approximately 58.9 cycles per second, or 3,532 RPM.
 
 
 
 \vspace{-0.2cm}
-\subsection*{Second-order Tracking for the Channel 1 Pressure Recording}
+\subsection*{Second-order Tracking for Channel 1}
 
 \vspace{-0.2cm}
-Figure~\ref{figure:4orderTracking} shows the second-order tracking profile for the Channel 1 pressure recording.
+Figure~\ref{figure:4orderTracking} shows the second-order tracking profile for the Channel 1 pressure recording at +23$^\circ$.
 
 \vspace{-0.2cm}
 \begin{figure}[htb!]
     \vspace{-0.1cm}
     \center
         \includegraphics[scale = 0.7, keepaspectratio]{Second Order Tracking.pdf}
-    \caption{Rotation speed estimation.}
+    \caption{Second-order tracking for Channel 1.}
     \label{figure:4orderTracking}
 \end{figure}
 
-ph
 
 
 
-\vspace{-0.2cm}
-\subsection*{Second-order Tracking for the Channel 1 Pressure Recording}
 
 \vspace{-0.2cm}
-Figure~\ref{figure:5secondOrderObservations} shows the second-order tracking profile for the Channel 1 pressure recording.
+\subsection*{Second-order Tracking Across Channels}
 
 \vspace{-0.2cm}
+Figure~\ref{figure:5secondOrderObservations} shows the second-order tracking profiles for all of the pressure recording channels.
+
+\vspace{-0.4cm}
 \begin{figure}[htb!]
-    \vspace{-0.1cm}
     \center
-        \includegraphics[scale = 0.85, keepaspectratio]{Second Order Observation.pdf}
-    \caption{Rotation speed estimation.}
+        \includegraphics[scale = 0.7, keepaspectratio]{Second Order Observation.pdf}
+    \caption{Second-order tracking across channels.  A 0.5 offset was used to visually separate the Fourier coefficient profiles.  A 20 dB offset was used to separate the sound pressure level profiles.}
     \label{figure:5secondOrderObservations}
 \end{figure}
 
-ph
+To visualize the tracking behaviour, the second-order tracking profiles have been segregated into three groups:  positive angle channels (1 to 4), a 0$^\circ$ channel (in-plane with the propeller), and negative angle channels (6 to 11).  For the Fourier coefficients, an offset of 0.5 was added to the positive angle channels, no offset for the 0$^\circ$ channel, and an offset of -0.5 was added to the negative angle channels.  For the sound pressure levels, an offset of 20 dB was used to offset the channel groups.
+
 
 
 
 \newpage
-\subsection*{Fourth-order Tracking for the Channel 1 Pressure Recording}
+\subsection*{Fourth-order Tracking Across Channels}
 
 \vspace{-0.2cm}
-Figure~\ref{figure:6fourthOrderObservations} shows the second-order tracking profile for the Channel 1 pressure recording.
+Figure~\ref{figure:6fourthOrderObservations} shows the fourth-order tracking profiles for all of the pressure recording channels.
 
 \vspace{-0.2cm}
 \begin{figure}[htb!]
     \vspace{-0.1cm}
     \center
-        \includegraphics[scale = 0.85, keepaspectratio]{Fourth Order Observation.pdf}
-    \caption{Rotation speed estimation.}
+        \includegraphics[scale = 0.6, keepaspectratio]{Fourth Order Observation.pdf}
+    \caption{Fourth-order tracking across channels.}
     \label{figure:6fourthOrderObservations}
 \end{figure}
 
