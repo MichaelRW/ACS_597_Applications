@@ -143,12 +143,13 @@ Figure~\ref{figure:5secondOrderObservations} shows the second-order tracking pro
     \label{figure:5secondOrderObservations}
 \end{figure}
 
-To visualize the tracking behaviour, the second-order tracking profiles have been segregated into three groups:  positive angle channels (1 to 4), a 0$^\circ$ channel (in-plane with the propeller), and negative angle channels (6 to 11).  For the Fourier coefficients, an offset of 0.5 was added to the positive angle channels, no offset for the 0$^\circ$ channel, and an offset of -0.5 was added to the negative angle channels.  For the sound pressure levels, an offset of 20 dB was used to offset the channel groups.
+To visualize the tracking behaviour, the second-order tracking profiles were put into three groups:  positive angle channels (1 to 4), a 0$^\circ$ channel (in-plane with the propeller), and negative angle channels (6 to 11).  For the respective Fourier coefficients, an offset of 0.5 was added to the positive angle channels, no offset for the 0$^\circ$ channel, and an offset of -0.5 was added to the negative angle channels.  For the sound pressure levels, an offset of 20 dB was used to offset the channel groups in the same fashion.
+
+Based on these groups, there is a discernible difference between the sound level pressure profiles above and below the propeller.  The profiles above the plane show less variation than the profiles below the plane of the propeller.  These larger pressure variations below the plane of the propeller suggest that mobius propellers might make drones more audible and easier to track.
 
 
 
 
-\newpage
 \subsection*{Fourth-order Tracking Across Channels}
 
 \vspace{-0.2cm}
@@ -158,12 +159,14 @@ Figure~\ref{figure:6fourthOrderObservations} shows the fourth-order tracking pro
 \begin{figure}[htb!]
     \vspace{-0.1cm}
     \center
-        \includegraphics[scale = 0.6, keepaspectratio]{Fourth Order Observation.pdf}
-    \caption{Fourth-order tracking across channels.}
+        \includegraphics[scale = 0.7, keepaspectratio]{Fourth Order Observation.pdf}
+    \caption{Fourth-order tracking across channels.  A 1.0 offset was used to visually separate the Fourier coefficient profiles.  A 20 dB offset was used to separate the sound pressure level profiles}
     \label{figure:6fourthOrderObservations}
 \end{figure}
 
-ph
+As with the second-order case, offsets were used to offset the channel angle groups.  For the respective Fourier coefficients, an offset of 1.0 was added to the positive angle channels, no offset for the 0$^\circ$ channel, and an offset of -1.0 was added to the negative angle channels.  For the sound pressure levels, an offset of 20 dB was used to offset the channel groups in the same fashion.
+
+Unlike the second-order case, where there is more sound pressure level variation below the plane of the propeller compared to above the propeller, there is large sound pressure variation below and above the propeller for fourth-order tracking.
 
 
 
